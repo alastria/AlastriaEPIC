@@ -1,0 +1,9 @@
+https://github.com/ethereumjs/ethereumjs-wallet/blob/master/docs/classes/ethereumhdkey.md
+
+https://github.com/web3j/web3j
+
+https://github.com/decentral-ee/web3-hdwallet-provider/blob/master/index.js
+
+!!!!
+https://learnmeabitcoin.com/technical/extended-keys
+
