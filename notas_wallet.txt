@@ -7,3 +7,4 @@ https://github.com/decentral-ee/web3-hdwallet-provider/blob/master/index.js
 !!!!
 https://learnmeabitcoin.com/technical/extended-keys
 
+https://www.npmjs.com/package/ethereum-checksum-address

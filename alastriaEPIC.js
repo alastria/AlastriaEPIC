@@ -247,6 +247,8 @@ hexConversionREAD = "0x"+hexConversionREAD;
 
 console.log("addressRead", hexConversionREAD )
 
+//beware of Ethereum addresses checksum
+//https://www.npmjs.com/package/ethereum-checksum-address
 
 
 
