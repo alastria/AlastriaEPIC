@@ -46,7 +46,7 @@ async function test ()
     fileDataLines = fileData.split("\n");
     i=0;
     fileDataLines.forEach(element => {
-        console.log(("linea "+i+":").padEnd(padSize," "),element);
+        //console.log(("linea "+i+":").padEnd(padSize," "),element);
         i++;
         switch (i) {
             case 1:
@@ -80,7 +80,7 @@ derivacionComprobar = this.hdKeyREAD.derivePath(derivacion);
 walletRead = derivacionComprobar.getWallet();
 
 addressRead = walletRead.getAddress();
-console.log("addressRead".padEnd(padSize," "), addressRead )
+//console.log("addressRead".padEnd(padSize," "), addressRead )
 
 
 hexConversionREAD = "";
@@ -92,7 +92,7 @@ addressRead.forEach(element => {
 
 hexConversionREAD = "0x"+hexConversionREAD;
 
-console.log("addressRead".padEnd(padSize," "), hexConversionREAD )
+//console.log("addressRead".padEnd(padSize," "), hexConversionREAD )
 
 
 
@@ -101,7 +101,7 @@ console.log("addressRead".padEnd(padSize," "), hexConversionREAD )
 
 
 hashAddressFirmante = ethers.utils.verifyMessage(originalData, firma );
-console.log("firmante:".padEnd(padSize," "),hashAddressFirmante);
+//console.log("firmante:".padEnd(padSize," "),hashAddressFirmante);
 
 arc = toChecksumAddress(hexConversionREAD)
 fc = toChecksumAddress(hashAddressFirmante)
@@ -109,14 +109,14 @@ fc = toChecksumAddress(hashAddressFirmante)
 console.log("addressRead Checksum".padEnd(padSize," "), arc)
 console.log("firmante  Checksum:".padEnd(padSize," "), fc);
 
-console.log("comprobacion");
+//console.log("comprobacion");
 if ( arc === fc)
     {
-    console.log ("COINCIDEN:".padEnd(padSize," "), arc);
+    console.log ("COINCIDEN");
 }
 else   
     {
-    console.log ("DIFERENTES:".padEnd(padSize," "), fc, arc);
+    console.log ("DIFERENTES");
 }
 
 

@@ -10,6 +10,8 @@ const fs = require('fs');
 
 const padSize = 20;
 
+
+
 function hexadice(value,i) {
     conversion = value.toString(16).padStart(2,"0");
     //console.log("val[",i,"]: ",value,"\thex:", conversion)
@@ -47,7 +49,7 @@ catch (err)
 fileDataLines = fileData.split("\n");
 i=0;
 fileDataLines.forEach(element => {
-    console.log(("linea "+i+":").padEnd(padSize," "),element);
+    //console.log(("linea "+i+":").padEnd(padSize," "),element);
     i++;
     switch (i) {
         case 1:
@@ -70,14 +72,22 @@ fileDataLines.forEach(element => {
 
 
 //var mnemonic2 = 'used rebel ahead harvest journey steak hub core opera wrong rate loan';
-console.log ("mnemonic 2:".padEnd(padSize," "),mnemonic2);
+//console.log ("mnemonic 2:".padEnd(padSize," "),mnemonic2);
 
 
 const seed = bip39.mnemonicToSeedSync(mnemonic2)
-console.log ("seed:".padEnd(padSize," "), seed);
+//console.log ("seed:".padEnd(padSize," "), seed);
 this.hdwallet = hdkey.fromMasterSeed(seed);
 
 console.log ("-------------------------------------------------------------------------------------");
+
+
+
+  
+
+
+  
+
 console.log("HDWallet created");
 
 privXkey = this.hdwallet.privateExtendedKey();
@@ -145,7 +155,7 @@ console.log ("------------------------------------------------------------------
 //console.log("PubXKey:".padEnd(padSize,""),FP_SD_FDPubXkey);
 //console.log ("-------------------------------------------------------------------------------------");
 
-console.log ("FDPrivXkey:".padEnd(padSize,""),FDPrivXkey);
+//console.log ("FDPrivXkey:".padEnd(padSize,""),FDPrivXkey);
 const bin = base58_to_binary(FDPrivXkey);
 
 
@@ -157,30 +167,30 @@ bin.forEach(element => {
     i++;
 });
 
-console.log("PARSE XPrivKey");
+//console.log("PARSE XPrivKey");
 console.log("FDPrivXkey Hex:".padEnd(padSize,""), hexConversion);
-console.log("FDPrivXkey Hex Len:".padEnd(padSize,""), hexConversion.length);
+//console.log("FDPrivXkey Hex Len:".padEnd(padSize,""), hexConversion.length);
 idx=0;
 len=4*2;
-console.log("idx,len:",idx,len,"\tVersion:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
+//console.log("idx,len:",idx,len,"\tVersion:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
 idx+=len;
 len=1*2;
-console.log("idx,len",idx,len,"\tDepth:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
+//console.log("idx,len",idx,len,"\tDepth:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
 idx+=len;
 len=4*2;
-console.log("idx,len",idx,len,"\tParent Fingerprint:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
+//console.log("idx,len",idx,len,"\tParent Fingerprint:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
 idx+=len;
 len=4*2;
-console.log("idx,len",idx,len,"\tChild Number:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
+//console.log("idx,len",idx,len,"\tChild Number:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
 idx+=len;
 len=32*2;
-console.log("idx,len",idx,len,"\tChain Code:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
+//console.log("idx,len",idx,len,"\tChain Code:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
 idx+=len;
 len=33*2;
-console.log("idx,len",idx,len,"\tKey:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
+//console.log("idx,len",idx,len,"\tKey:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
 idx+=len;
 len=4*2;
-console.log("idx,len",idx,len,"\tchecksum:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
+//console.log("idx,len",idx,len,"\tchecksum:".padEnd(padSize,""),hexConversion.substring(idx,idx+len));
 
 
 
@@ -189,15 +199,15 @@ console.log("idx,len",idx,len,"\tchecksum:".padEnd(padSize,""),hexConversion.sub
 walletPrivK ="0x"+hexConversion.substring(92,92+64)
 myWallet = new ethers.Wallet(walletPrivK)
 //myWallet = new ethers.Wallet.createRandom();
-console.log("myWallet.privateKey:", myWallet.privateKey);
-console.log("myWallet.publicKey:", myWallet.publicKey);
+console.log("myWallet.privateKey:".padEnd(padSize,""), myWallet.privateKey);
+console.log("myWallet.publicKey:".padEnd(padSize,""), myWallet.publicKey);
 
-console.log("antes de firmar");
+//console.log("antes de firmar");
 
 
 let firma =  await myWallet.signMessage(originalData);
 
-console.log ("firma: ", firma);
+console.log ("firma: ".padEnd(padSize,""), firma);
 
 m_s = originalData + "\n" + firma + "\n" + SD1PubK + "\n" + advancedDerivacion;
 
