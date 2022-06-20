@@ -1,10 +1,10 @@
 const bip39 = require("bip39");
-const { fromExtendedKey } = require("ethereum-cryptography/vendor/hdkey-without-crypto");
-const ethJSWallet = require("ethereumjs-wallet");
+//const { fromExtendedKey } = require("ethereum-cryptography/vendor/hdkey-without-crypto");
+//const ethJSWallet = require("ethereumjs-wallet");
 const { hdkey } = require('ethereumjs-wallet')
 const { base58_to_binary } = require('base58-js');
-const { builtinModules } = require("module");
-const { notDeepEqual } = require("assert");
+//const { builtinModules } = require("module");
+//const { notDeepEqual } = require("assert");
 const { ethers } = require("ethers");
 const fs = require('fs');
 
