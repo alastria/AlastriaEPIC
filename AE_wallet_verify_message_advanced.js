@@ -1,4 +1,4 @@
-//const bip39 = require("bip39");
+const bip39 = require("bip39");
 //const { fromExtendedKey } = require("ethereum-cryptography/vendor/hdkey-without-crypto");
 //const ethJSWallet = require("ethereumjs-wallet");
 const { hdkey } = require('ethereumjs-wallet')
@@ -27,7 +27,8 @@ async function test ()
     fileData ="" ;
 
     console.log("INICIO");
-    //const mnemonic = bip39.generateMnemonic();
+    const mnemonic = bip39.generateMnemonic();
+    console.log(mnemonic);
     
     try {
         fileData = fs.readFileSync('EPIC_messageAndSignature_advanced.txt', 'utf8');
