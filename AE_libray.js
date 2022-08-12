@@ -54,11 +54,11 @@ function getPrivateKeyFromExtended(privateExtendedKey) {
         i++;
     });
     walletPrivK ="0x"+hexConversion.substring(92,92+64)
-
+    return walletPrivK;
 }
 
 function getPublicKeyFromExtended(publicExtendedKey) {
-    const bin = base58_to_binary(privateExtendedKey);
+    const bin = base58_to_binary(publicExtendedKey);
 
     hexConversion = "";
     i = 0;
@@ -66,8 +66,8 @@ function getPublicKeyFromExtended(publicExtendedKey) {
         hexConversion+= hexadice(element,i);
         i++;
     });
-    walletPrivK ="0x"+hexConversion.substring(90,90+66)
-    
+    walletPubK ="0x"+hexConversion.substring(90,90+66)
+    return walletPubK;
 }
 
 function getEthereumWalletFromPrivateKey(privateKey) {
@@ -113,9 +113,9 @@ const user_identity_derivation_Z0_A0_A_AcmeAcademy = "m/1037171/131071/0407/1001
 // when connecting with Acme Academy the user will tell Acme witch is his private key for the communications with Acme
 // there are two modes of creting this wallet: either directly from the testing_wallet or creating a derivation, we will choose the second
 // unusef form: user_acme_relationship_wallet = getHDWalletDerivation(testing_wallet, initial_identity_derivation+"m/6385471");
-user_acme_relationship_wallet = getHDWalletDerivation(initial_identity_wallet, "m/"+user_A_AcmeAcademy);
-user_acme_relationship_public_key = getPublicKeyFromExtended(getPublicExtendedKey(user_acme_relationship_wallet));
-// I tell Acme my user_acme_relationship_public_key, that is equivalent to my DID
+user_acme_relationship_wallet = getHDWalletDerivation(user_identity_wallet, "m/"+user_A_AcmeAcademy);
+user_acme_relationship_public_key = getPublicExtendedKey(user_acme_relationship_wallet);
+// I tell Acme my user_acme_relations7hip_public_key, that is equivalent to my DID
 
 // Acme Academy also has its own wallet, with an unique derivation to talk with me
 const mnemonicAcme = "manage wage hill kitten joke buyer topic focus observe valid december oyster"
@@ -133,10 +133,7 @@ acme_user_relationship_wallet = getHDWalletDerivation(acme_identity_wallet, "m/"
 acme_user_relationship_public_key = getPublicExtendedKey(acme_user_relationship_wallet);
 
 // acme sends me a login challenge
-var acme_login_challenge = { 
-    "message"  :  "please sign with your Public Key to login", 
-    "my_publickKey"   :   "replace"
-};
+var acme_login_challenge = "{'message':'please sign with your Public Key to login','my_publicKey':'replace'}";
 acme_login_challenge = acme_login_challenge.replace("replace",acme_user_relationship_public_key);
 
 // common knowledge: "/0" will be the standar derivation for "login"
@@ -153,11 +150,11 @@ user_acme_login_signer_eWallet =
             getPrivateExtendedKey(user_acme_relationship_wallet_login)
         )
     );
-acme_login_challenge_signed = signMessage(user_acme_login_signer_eWallet, acme_login_challenge);
+acme_login_challenge_signed = signMessage(user_acme_login_signer_eWallet, acme_login_challenge.toString());
 
 // Acme has to validate the signature of the message with the "/0" derivation of the user_acme_relationship_public_key that Acme already knows
 // First create a wallet for Public Key derivations
-user_acme_relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(user_acme_relationship_public_key);
+user_acme_relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(acme_user_relationship_public_key);
 // Then derive with "/0"
 
 user_acme_relationship_public_key_wallet_login = getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
