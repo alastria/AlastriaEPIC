@@ -104,10 +104,8 @@ function getAdressFromSignedMessage(message, signature) {
 }
 
 function verifyMessageSignature(message, signature, address) {
-    return (toChecksumAddress(address) == toChecksumAddress(getAdressFromSignedMessage(message, signature)) )    
+    return (toChecksumAddress(address) === toChecksumAddress(getAdressFromSignedMessage(message, signature)) )    
 }
-
-
 
  
 
@@ -188,24 +186,24 @@ let acme_login_challenge_signed = await signMessage(user_acme_login_signer_eWall
 
 // Acme has to validate the signature of the message with the "/0" derivation of the user_acme_relationship_public_key that Acme already knows
 // First create a wallet for Public Key derivations
-//user_acme_relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(acme_user_relationship_public_key);
-user_acme_relationship_public_key_wallet = hdkey.fromExtendedKey(getPublicExtendedKey(user_acme_relationship_wallet));
-//user_acme_relationship_public_key_wallet = hdkey.fromExtendedKey("xpub6BdEKfDqUqG9fyLNvKqEbGXN87G56WJaRQYkNKQeyXPuapA24TjVRqA2AohAQ5sxxvamteg3Cpb8jx7WASvcG6VFTMt6ew4roZLLfqTS5sC");
+user_acme_relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(getPublicExtendedKey(user_acme_relationship_wallet));
 
 
 // Then derive with "/0"
-//user_acme_relationship_public_key_wallet_login = getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
-//user_acme_relationship_public_key_wallet_login = getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
 user_acme_relationship_public_key_wallet_login = getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
-//user_acme_relationship_public_key_wallet_login_validator = getWalletFromHDWallet(user_acme_relationship_public_key_wallet_login);
-walletRead = user_acme_relationship_public_key_wallet_login.getWallet();
+
+
+user_acme_relationship_public_key_wallet_login_validator = getWalletFromHDWallet(user_acme_relationship_public_key_wallet_login);
+
 
 //user_acme_relationship_public_key_wallet_login_address = hexConversionFromBinary(user_acme_relationship_public_key_wallet_login_validator.getAddress());
-addressRead = walletRead.getAddress();
+addressRead = user_acme_relationship_public_key_wallet_login_validator.getAddress();
 
 user_acme_relationship_public_key_wallet_login_address = hexConversionFromBinary(addressRead);
 
 signed_login_address = getAdressFromSignedMessage(acme_login_challenge,acme_login_challenge_signed);
+
+
 if (toChecksumAddress(user_acme_relationship_public_key_wallet_login_address) === toChecksumAddress(signed_login_address)) 
 {
     console.log ("VALID SIGNATURE");
