@@ -1,7 +1,10 @@
 const bip39 = require("bip39");
 const { hdkey } = require("ethereumjs-wallet");
+const Wallet = require('ethereumjs-wallet').default;
 const { base58_to_binary } = require('base58-js');
 const { ethers } = require("ethers");
+const { toChecksumAddress } = require('ethereum-checksum-address')
+
 
 function hexadice(value) {
     conversion = value.toString(16).padStart(2,"0");    
@@ -42,6 +45,23 @@ function getHDWalletDerivation(HDWallet, derivation) {
     return HDWallet.derivePath(derivation);
 }
 
+function hexConversionFromBinary(binaryAddress, init = -1, length = -1)
+ {
+    hexConversionREAD = "";
+    i = 0;
+    binaryAddress.forEach(element => {
+        hexConversionREAD+= hexadice(element,i);
+        i++;
+    });
+
+    if (init == -1 || end == -1) {
+        return "0x"+hexConversionREAD;
+    }
+    else {
+        return "0x"+hexConversion.substring(init, init + length);
+   }
+    
+}
 
 function getPrivateKeyFromExtended(privateExtendedKey) {
     //From: https://learnmeabitcoin.com/technical/extended-keys#:~:text=An%20extended%20key%20is%20a,public%20keys%20in%20your%20wallet.
@@ -74,8 +94,9 @@ function getEthereumWalletFromPrivateKey(privateKey) {
     return new ethers.Wallet(privateKey)
 }
 
-function signMessage(etherumWallet, message) {
-    return etherumWallet.signMessage(message);
+async function signMessage(etherumWallet, message) {
+    return await etherumWallet.signMessage(message);
+
 }
 
 function getAdressFromSignedMessage(message, signature) {
@@ -85,6 +106,13 @@ function getAdressFromSignedMessage(message, signature) {
 function verifyMessageSignature(message, signature, address) {
     return (toChecksumAddress(address) == toChecksumAddress(getAdressFromSignedMessage(message, signature)) )    
 }
+
+
+
+ 
+
+async function main() {
+
 
 
 //const mnemonic = bip39.generateMnemonic();
@@ -105,6 +133,9 @@ console.log ("2nd test: from a HDWallet create initial identity derivation");
 const user_identity_derivation_Z0_A0_A = "m/1037171/131071/0407/10011001/94367/3651441";
 user_identity_wallet = getHDWalletDerivation(user_wallet, user_identity_derivation_Z0_A0_A);
 
+
+
+
 console.log ("3rd test: Login to Acme academy with wallet");
 // in order to login with Acme academy the user will create a new derivation por Acme academy, exteding Z0_A0_A with a random derivation for Acme Academy and remembering / storing it
 // Acme Academy will be 6385471, random number just for this user
@@ -115,7 +146,7 @@ const user_identity_derivation_Z0_A0_A_AcmeAcademy = "m/1037171/131071/0407/1001
 // unusef form: user_acme_relationship_wallet = getHDWalletDerivation(testing_wallet, initial_identity_derivation+"m/6385471");
 user_acme_relationship_wallet = getHDWalletDerivation(user_identity_wallet, "m/"+user_A_AcmeAcademy);
 user_acme_relationship_public_key = getPublicExtendedKey(user_acme_relationship_wallet);
-// I tell Acme my user_acme_relations7hip_public_key, that is equivalent to my DID
+// I tell Acme my user_acme_relationship_public_key, that is equivalent to my DID only for Acme Academy
 
 // Acme Academy also has its own wallet, with an unique derivation to talk with me
 const mnemonicAcme = "manage wage hill kitten joke buyer topic focus observe valid december oyster"
@@ -140,7 +171,7 @@ acme_login_challenge = acme_login_challenge.replace("replace",acme_user_relation
 user_acme_relationship_wallet_login = getHDWalletDerivation(user_acme_relationship_wallet, "m/0");
 user_acme_relationship_public_key_login = getPublicKeyFromExtended(getPublicExtendedKey(user_acme_relationship_wallet_login));
 
-// We do omit Acme Academy public_key validation, that requires KeyRegistry SmartContract or other PKI
+// We do omit Acme Academy public_key validation, that requires KeyRegistry SmartContracts or other PKI
 
 // User signs login challenge with user_acme_relationship_public_key_login
 // prior to that has to create an Ethereum signer wallet
@@ -150,16 +181,30 @@ user_acme_login_signer_eWallet =
             getPrivateExtendedKey(user_acme_relationship_wallet_login)
         )
     );
-acme_login_challenge_signed = signMessage(user_acme_login_signer_eWallet, acme_login_challenge.toString());
+
+let acme_login_challenge_signed = await signMessage(user_acme_login_signer_eWallet, acme_login_challenge);
+
+
 
 // Acme has to validate the signature of the message with the "/0" derivation of the user_acme_relationship_public_key that Acme already knows
 // First create a wallet for Public Key derivations
-user_acme_relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(acme_user_relationship_public_key);
-// Then derive with "/0"
+//user_acme_relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(acme_user_relationship_public_key);
+user_acme_relationship_public_key_wallet = hdkey.fromExtendedKey(getPublicExtendedKey(user_acme_relationship_wallet));
+//user_acme_relationship_public_key_wallet = hdkey.fromExtendedKey("xpub6BdEKfDqUqG9fyLNvKqEbGXN87G56WJaRQYkNKQeyXPuapA24TjVRqA2AohAQ5sxxvamteg3Cpb8jx7WASvcG6VFTMt6ew4roZLLfqTS5sC");
 
+
+// Then derive with "/0"
+//user_acme_relationship_public_key_wallet_login = getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
+//user_acme_relationship_public_key_wallet_login = getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
 user_acme_relationship_public_key_wallet_login = getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
-user_acme_relationship_public_key_wallet_login_validator = getWalletFromHDWallet(user_acme_relationship_public_key_wallet_login);
-user_acme_relationship_public_key_wallet_login_address = user_acme_relationship_public_key_wallet_login_validator.getAddress();
+//user_acme_relationship_public_key_wallet_login_validator = getWalletFromHDWallet(user_acme_relationship_public_key_wallet_login);
+walletRead = user_acme_relationship_public_key_wallet_login.getWallet();
+
+//user_acme_relationship_public_key_wallet_login_address = hexConversionFromBinary(user_acme_relationship_public_key_wallet_login_validator.getAddress());
+addressRead = walletRead.getAddress();
+
+user_acme_relationship_public_key_wallet_login_address = hexConversionFromBinary(addressRead);
+
 signed_login_address = getAdressFromSignedMessage(acme_login_challenge,acme_login_challenge_signed);
 if (toChecksumAddress(user_acme_relationship_public_key_wallet_login_address) === toChecksumAddress(signed_login_address)) 
 {
@@ -171,6 +216,9 @@ else
 }
     
 
+}
+
+main ();
 
 
 
