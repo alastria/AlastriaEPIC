@@ -118,36 +118,8 @@ async function main() {
             )
         );
 
-    let acme_login_challenge_signed = await AE.signMessage(user_acme_login_signer_eWallet, acme_login_challenge);
-
-
-
-    // Acme has to validate the signature of the message with the "/0" derivation of the user_acme_relationship_public_key that Acme already knows
-    // First create a wallet for Public Key derivations
-    user_acme_relationship_public_key_wallet = AE.createRO_HDWalletFromPublicExtendedKey(AcmeAcademy.other_extendedPublicKey);
-   
-
-
-    // Then derive with "/0" that is the derivation for login
-    user_acme_relationship_public_key_wallet_login = AE.getHDWalletDerivation(user_acme_relationship_public_key_wallet, "m/0");
-    // get an Ethereum wallet from the HDWallet
-    user_acme_relationship_public_key_wallet_login_validator = AE.getWalletFromHDWallet(user_acme_relationship_public_key_wallet_login);
-    // get the Address of that wallet
-    user_acme_relationship_public_key_wallet_login_address = user_acme_relationship_public_key_wallet_login_validator.getAddressString();
     
-    // In the other hand get the Address form the signature
-    signed_login_address = AE.getAdressFromSignedMessage(acme_login_challenge,acme_login_challenge_signed);
-
-    // Compare both Addresses, use toChecksumAddress just in case any of them is not normalized
-    if (toChecksumAddress(user_acme_relationship_public_key_wallet_login_address) === toChecksumAddress(signed_login_address)) 
-    {
-        console.log ("VALID SIGNATURE");
-    }
-    else   
-        {
-        console.log ("INCORRECT SIGNATURE");
-    };
-    
+    let acme_login_challenge_signed = await AE.signMessage(user_acme_login_signer_eWallet, acme_login_challenge);    
     AE.verifyLoginMessage(acme_login_challenge,acme_login_challenge_signed,AcmeAcademy.other_extendedPublicKey);
 
     }

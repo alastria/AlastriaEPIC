@@ -12,8 +12,6 @@ module.exports = { hexadice, createHDWalletFromMnemonic, createHDWalletFromSeed,
     verifyMessageSignature, verifyLoginMessage, verifyMessageByDerivation}
 
 
-
-
 function hexadice(value) {
     conversion = value.toString(16).padStart(2,"0");    
     return conversion;
@@ -105,7 +103,7 @@ function verifyLoginMessage(message, signature, extendedPublicKey) {
 
 function verifyMessageByDerivation(message, signature, extendedPublicKey) {
 
-    // Acme has to validate the signature of the message with the "/0" derivation of the user_acme_relationship_public_key that Acme already knows
+    // Entity has to validate the signature of the message with the "/0" derivation of the relationship_public_key that Entity already knows
     // First create a wallet for Public Key derivations
     relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(extendedPublicKey);
     // Then derive with "/0" that is the derivation for login
