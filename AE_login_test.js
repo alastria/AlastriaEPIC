@@ -2,39 +2,20 @@ const AEL = require ("./AE_libray");
 const { toChecksumAddress } = require('ethereum-checksum-address')
 const AEW = require ("./AE_wallet");
 
-const userEpicWallet = {
-    mnemonic: "",
-    base_HDWallet: "",
-    // derivation Z0_A0_A
-    identity_derivation: "",
-    identity_HDWallet: "",
-    Bplus_derivation: []
-};
-
-
-const entityEpicWallet = {
-    mnemonic: "",
-    base_HDWallet: "",
-    // derivation Z0_A0_A
-    identity_derivation: "",
-    identity_HDWallet: "",
-    Bplus_derivation: []
-};
-
 
 async function main() {
 
     console.log ("INIT TESTING");
 
 
-    console.log ("1st test: create HDWallet");
+    console.log ("1st test: create HDWallets");
 
     let newUserEpicWallet = new AEW.AE_wallet();
     let newEntityEpicWallet = new AEW.AE_wallet();
 
     //const mnemonic = bip39.generateMnemonic();
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
-    
+
 
 
     console.log ("2nd test: from a HDWallet create initial identity derivation");
@@ -52,7 +33,7 @@ async function main() {
 
     // in order to login with AcmeAcademy the user will create a new derivation por AcmeAcademy, exteding Z0_A0_A with a random derivation for AcmeAcademy and remembering / storing it
     // AcmeAcademy will be 6385471, random number just for this user
-    // the complete derivation for AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
+    // the complete derivation of AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
     
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his private key for the communications with AcmeAcademy
@@ -78,7 +59,7 @@ async function main() {
     newEntityEpicWallet.addBPlusDerivation("User","241573");
     user = newEntityEpicWallet.getBPlusDerivation("User");
 
-    // AcmeAcademy creates a wallet for its relationship with the user
+    // AcmeAcademy creates a wallet for its relationship with the user <---------------
     acme_user_relationship_wallet = AEL.getHDWalletDerivation(newEntityEpicWallet.identity_HDWallet, "m/"+user.B_derivation);
     acme_user_relationship_public_key = AEL.getPublicExtendedKey(acme_user_relationship_wallet);
 
@@ -95,7 +76,7 @@ async function main() {
     acme_login_challenge = acme_login_challenge.replace("replace", newEntityEpicWallet.getBPlusDerivation("User").own_extendedPublicKey);
 
     // User will create an HDWallet for his communications with ACME Academy
-    // common knowledge: "/0" will be the standar derivation for "login"
+    // common knowledge: "/0" will be the standar derivation for "login" for the user
     user_acme_relationship_wallet_login = AEL.getHDWalletDerivation(user_acme_relationship_wallet, "m/0");
     
     // We do omit Acme Academy public_key validation, that requires KeyRegistry SmartContracts or other PKI
@@ -109,14 +90,12 @@ async function main() {
             )
         );
 
-    
+    // User signs login challenge
     let acme_login_challenge_signed = await AEL.signMessage(user_acme_login_signer_eWallet, acme_login_challenge);    
+
+    // AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
     AEL.verifyLoginMessage(acme_login_challenge,acme_login_challenge_signed,AcmeAcademy.other_extendedPublicKey);
 
     }
 
 main ();
-
-
-
-

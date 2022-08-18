@@ -17,7 +17,7 @@ class AE_wallet {
         // derivation Z0_A0_A
         this.identity_derivation = "",
         this.identity_HDWallet = "",
-        this.Bplus_derivation = [{}]
+        this.Bplus_derivation = []
     }    
     setMnemonic (mnemonicStr) {
         this.mnemonic = mnemonicStr;

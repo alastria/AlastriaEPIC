@@ -9,7 +9,7 @@ const { toChecksumAddress } = require('ethereum-checksum-address')
 module.exports = { hexadice, createHDWalletFromMnemonic, createHDWalletFromSeed, createRO_HDWalletFromPublicExtendedKey, 
     getWalletFromHDWallet, getPrivateExtendedKey, getPublicExtendedKey, getHDWalletDerivation, hexConversionFromBinary, 
     getPrivateKeyFromExtended, getPublicKeyFromExtended, getEthereumWalletFromPrivateKey, signMessage, getAdressFromSignedMessage, 
-    verifyMessageSignature, verifyLoginMessage, verifyMessageByDerivation}
+    verifyMessageSignature, verifyLoginMessage, verifyMessageByPublicKey}
 
 
 function hexadice(value) {
@@ -98,10 +98,10 @@ function verifyMessageSignature(message, signature, address) {
 }
 
 function verifyLoginMessage(message, signature, extendedPublicKey) {
-    return verifyMessageByDerivation(message, signature, extendedPublicKey, "m/0");
+    return verifyMessageByPublicKey(message, signature, extendedPublicKey, "m/0");
 }
 
-function verifyMessageByDerivation(message, signature, extendedPublicKey) {
+function verifyMessageByPublicKey(message, signature, extendedPublicKey) {
 
     // Entity has to validate the signature of the message with the "/0" derivation of the relationship_public_key that Entity already knows
     // First create a wallet for Public Key derivations
