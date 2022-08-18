@@ -51,7 +51,7 @@ function getHDWalletDerivation(HDWallet, derivation) {
     return HDWallet.derivePath(derivation);
 }
 
-function hexConversionFromBinary(binaryAddress, init = -1, length = -1)
+function hexConversionFromBinary(binaryAddress, init, length)
  {
     hexConversionREAD = "";
     i = 0;
@@ -60,7 +60,7 @@ function hexConversionFromBinary(binaryAddress, init = -1, length = -1)
         i++;
     });
 
-    if (init == -1 || length == -1) {
+    if (init === undefined || length === undefined) {
         return "0x"+hexConversionREAD;
     }
     else {
