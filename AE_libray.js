@@ -7,9 +7,9 @@ const { toChecksumAddress } = require('ethereum-checksum-address')
 
 
 module.exports = { hexadice, createHDWalletFromMnemonic, createHDWalletFromSeed, createRO_HDWalletFromPublicExtendedKey, 
-    getWalletFromHDWallet, getPrivateExtendedKey, getPublicExtendedKey, getHDWalletDerivation, hexConversionFromBinary, 
+    getWalletFromHDWallet, getPrivateExtendedKey, getPublicExtendedKey,getAddressFromPublicKey, getHDWalletDerivation, hexConversionFromBinary, 
     getPrivateKeyFromExtended, getPublicKeyFromExtended, getEthereumWalletFromPrivateKey, signMessage, getAdressFromSignedMessage, 
-    verifyMessageSignature, verifyLoginMessage, verifyMessageByPublicKey}
+    verifyMessageSignature,  verifyMessageByPublicExtendedKey}
 
 
 function hexadice(value) {
@@ -40,6 +40,10 @@ function getWalletFromHDWallet(HDWallet) {
 
 function getPrivateExtendedKey(HDWallet) {
     return HDWallet.privateExtendedKey();
+}
+
+function getAddressFromPublicKey(publicKeyStr) {
+    return fromPublicKey(publicKeyStr).getAddressString();
 }
 
 function getPublicExtendedKey(HDWallet) {
@@ -97,19 +101,16 @@ function verifyMessageSignature(message, signature, address) {
     return (toChecksumAddress(address) === toChecksumAddress(getAdressFromSignedMessage(message, signature)) )    
 }
 
-function verifyLoginMessage(message, signature, extendedPublicKey) {
-    return verifyMessageByPublicKey(message, signature, extendedPublicKey, "m/0");
-}
 
-function verifyMessageByPublicKey(message, signature, extendedPublicKey) {
+
+function verifyMessageByPublicExtendedKey(message, signature, extendedPublicKey) {
 
     // Entity has to validate the signature of the message with the "/0" derivation of the relationship_public_key that Entity already knows
     // First create a wallet for Public Key derivations
     relationship_public_key_wallet = createRO_HDWalletFromPublicExtendedKey(extendedPublicKey);
-    // Then derive with "/0" that is the derivation for login
-    relationship_public_key_wallet_login = getHDWalletDerivation(relationship_public_key_wallet, "m/0");
+    
     // get an Ethereum wallet from the HDWallet
-    relationship_public_key_wallet_login_validator = getWalletFromHDWallet(relationship_public_key_wallet_login);
+    relationship_public_key_wallet_login_validator = getWalletFromHDWallet(relationship_public_key_wallet);
     // get the Address of that wallet
     relationship_public_key_wallet_login_address = relationship_public_key_wallet_login_validator.getAddressString();
     
@@ -128,5 +129,3 @@ function verifyMessageByPublicKey(message, signature, extendedPublicKey) {
         return false;
     }
 }
-
- 

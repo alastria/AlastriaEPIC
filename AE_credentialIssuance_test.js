@@ -7,7 +7,7 @@ async function main() {
     console.log ("INIT TESTING");
 
     console.log ("1st test: create HDWallets");
-    let newUserEpicWallet = AE_userWallet();
+    let newUserEpicWallet = new AEW.AE_userWallet();
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
     newUserEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/94367/3651441");
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
@@ -57,11 +57,12 @@ async function main() {
 
     // Also the credential is issued to a subject, the standard is the "m/1" derivation from the subject identity used for the realtionship with the school
     // in this case it would be 241573/1 (as opposed to 241573/0 used for the login)
-
-
+    AcmeAcademy = newUserEpicWallet.getBPlusDerivation("AcmeAcademy");
     user_acme_relationship_wallet = AEL.getHDWalletDerivation(newUserEpicWallet.identity_HDWallet , "m/" + AcmeAcademy.B_derivation);
+
     // I tell AcmeAcademy my user_acme_relationship_public_key, that is equivalent to my DID only for AcmeAcademy
     user_acme_relationship_public_key = AEL.getPublicExtendedKey(user_acme_relationship_wallet);
+
     // Then AcmeAcademy can calculate my ExtendedPublicKey for VC issuance, that would be derivation "m/1"
     // But that will not be the wallet where the user will receive the VC, we need an extra derivation: 
     // At least 2 user generated derivations (D) and one entity generated derivation (E)
@@ -69,8 +70,8 @@ async function main() {
     // so the final DID for the VC for the user will be /1/2128469835/1325276260/0189032074 in addition to his AcmeAcademy already generated Wallet
     user_acme_VC_wallet = AEL.createRO_HDWalletFromPublicExtendedKey(user_acme_relationship_public_key);
     user_acme_VC_wallet = AEL.getHDWalletDerivation(user_acme_VC_wallet, "m/1/2128469835/1325276260/0189032074");
-    subjectPublicKey = AEL.getPrivateExtendedKey(user_acme_VC_wallet);
-    credentialText = credentialText.replace("$SUBJECT",schoolPublicKey);
+    subjectPublicKey = AEL.getPublicExtendedKey(user_acme_VC_wallet);
+    credentialText = credentialText.replace("$SUBJECT",subjectPublicKey);
 
     // AcmeAcademy will also sign the VC, it will use "/1" derivation of his identity to such purposes, this derivation will be independent of the user so it is easy to validate
     acme_vc_signer_eWallet = 
@@ -80,15 +81,22 @@ async function main() {
             )
         );
 
-    let acme_user_VC_signature = await AEL.signMessage(user_acme_login_signer_eWallet, credentialText);   
+    let acme_user_VC_signature = await AEL.signMessage(acme_vc_signer_eWallet, credentialText);   
 
     // and the user (or anyone) can verify the signature
-    
-
-
-
-    
-
+    // we do teh calculation from the getPublicExtendedKey(base_HDWallet) that will be the registered publicKey in the SmartContract
+    AEL.verifyMessageByPublicExtendedKey(credentialText,acme_user_VC_signature, 
+        AEL.getPublicExtendedKey(
+            AEL.getHDWalletDerivation(
+                AEL.createRO_HDWalletFromPublicExtendedKey(
+                    AEL.getPublicExtendedKey(
+                        newEntityEpicWallet.base_HDWallet
+                    )
+                ),
+                "m/1"
+            )
+        )
+    );
 
     console.log(credentialText);
 

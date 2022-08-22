@@ -96,7 +96,14 @@ async function main() {
     let acme_login_challenge_signature = await AEL.signMessage(user_acme_login_signer_eWallet, acme_login_challenge);    
 
     // AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
-    AEL.verifyLoginMessage(acme_login_challenge,acme_login_challenge_signature,AcmeAcademy.other_extendedPublicKey);
+    AEL.verifyMessageByPublicExtendedKey(acme_login_challenge,acme_login_challenge_signature,
+        AEL.getPublicExtendedKey(
+            AEL.getHDWalletDerivation(
+                AEL.createRO_HDWalletFromPublicExtendedKey(AcmeAcademy.other_extendedPublicKey),
+                "m/0"
+            )
+        )       
+    );
 
     }
 
