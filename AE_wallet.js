@@ -53,28 +53,36 @@ class AE_userWallet extends AE_rootWallet{
     }
     addBPlusDerivation (entityStr, derivationStr) {
         let localBPD = {};
+
         localBPD.entity = entityStr;
         localBPD.B_derivation = derivationStr;
+
+        // new, to do most things in a single point
+        let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + localBPD.B_derivation);
+        let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
+        localBPD.own_extendedPublicKey = my_entity_relationship_public_key;
+
         this.Bplus_derivation.push(localBPD);
+
+
     }
     getBPlusDerivation (entityStr) {        
         return this.Bplus_derivation.find(element => element.entity === entityStr);;
     }
-    updateBPlusDerivationExtendedKeys (entityStr, ownExtendedKey, other_extendedKey) {
+
+    updateBPlusDerivationExtendedKeys (entityStr, other_extendedKey) {
+
         let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);
-
-        localBplus.own_extendedPublicKey = ownExtendedKey;
+        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);         
         localBplus.other_extendedPublicKey = other_extendedKey;
-
         this.Bplus_derivation[localBplusIdx] = localBplus;
     }
 
     async signLoginChallenge (entityStr, signLoginChallenge)
     {
 
-        AcmeAcademy = this.getBPlusDerivation(entityStr);
-        let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + AcmeAcademy.B_derivation);
+        let connect_to_entity = this.getBPlusDerivation(entityStr);
+        let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + connect_to_entity.B_derivation);
         // User will create an HDWallet for his communications with the entity
         // common knowledge: "/0" will be the standar derivation for "login" for the user (note: not for entities)
         let entity_relationship_wallet_login = AEL.getHDWalletDerivation(entity_relationship_wallet, "m/0");
@@ -130,19 +138,24 @@ class AE_entityWallet extends AE_rootWallet{
         let localCPD = {};
         localCPD.entity = entityStr;
         localCPD.C_derivation = derivationStr;
+
+
+        // new, to do most things in a single point
+        let user_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + localCPD.C_derivation);
+        let my_user_relationship_public_key = AEL.getPublicExtendedKey(user_relationship_wallet);
+        localCPD.own_extendedPublicKey = my_user_relationship_public_key;
+
         this.Cplus_derivation.push(localCPD);
     }
     getCPlusDerivation (entityStr) {        
         return this.Cplus_derivation.find(element => element.entity === entityStr);;
     }
 
-    updateCPlusDerivationExtendedKeys (entityStr, ownExtendedKey, other_extendedKey) {
-        let localCplus = this.getCPlusDerivation(entityStr);
-        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === entityStr);
+    updateCPlusDerivationExtendedKeys (userStr, other_extendedKey) {
+        let localCplus = this.getCPlusDerivation(userStr);
+        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
 
-        localCplus.own_extendedPublicKey = ownExtendedKey;
         localCplus.other_extendedPublicKey = other_extendedKey;
-
         this.Cplus_derivation[localCplusIdx] = localCplus;
     }
 

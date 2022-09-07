@@ -12,9 +12,11 @@ async function main() {
     let newUserEpicWallet = new AEW.AE_userWallet();
     let newEntityEpicWallet = new AEW.AE_entityWallet();
 
-    //const mnemonic = bip39.generateMnemonic();
+    // const mnemonic = bip39.generateMnemonic();
+    // User wallet
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
-
+    // AcmeAcademy also has its own wallet
+    newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
 
 
     console.log ("2nd test: from a HDWallet create initial identity derivation");
@@ -23,7 +25,13 @@ async function main() {
     // 3651441 is a random number < 2^31 means "Subject's wallet derivation", stands for A derivation path schema
     // full derivation path schema "Z0/A0/A" will be "m/1037171/131071/0407/10011001/94367/3651441"
     newUserEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/94367/3651441");
-    
+
+    // fixed "m/1037171/131071/0407/10011001/" means "Identity/Alastria/quor/redT", stands for Z0 derivation path schemma
+    // 96278543  is a random number < 2^31 means "Subject's wallet identity recovery", stands for A0 derivation path schema
+    // 2564789 is a random number < 2^31 means "Subject's wallet derivation", stands for A derivation path schema
+    // full derivation path schema "Z0/A0/A" will be "m/1037171/131071/0407/10011001/96278543/2564789"
+    newEntityEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/96278543/2564789");
+        
 
 
     console.log ("3rd test: Login to Acme academy with wallet");
@@ -37,38 +45,22 @@ async function main() {
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
     
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
-    // there are two modes of creting this wallet: 
-    // 1. From the base_wallet with the whole derivation
-    // 2. From the identity_wallet using just the B+ derivation for AcmeAcademy, we will choose this one
-    AcmeAcademy = newUserEpicWallet.getBPlusDerivation("AcmeAcademy");
-    user_acme_relationship_wallet = AEL.getHDWalletDerivation(newUserEpicWallet.identity_HDWallet , "m/" + AcmeAcademy.B_derivation);
-    // I tell AcmeAcademy my user_acme_relationship_public_key, that is equivalent to my DID only for AcmeAcademy
-    user_acme_relationship_public_key = AEL.getPublicExtendedKey(user_acme_relationship_wallet);
+    connect_to_acme_academy = newUserEpicWallet.getBPlusDerivation("AcmeAcademy");
+    user_acme_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
     
-
-    // AcmeAcademy also has its own wallet
-    newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
-    
-
-    // fixed "m/1037171/131071/0407/10011001/" means "Identity/Alastria/quor/redT", stands for Z0 derivation path schemma
-    // 96278543  is a random number < 2^31 means "Subject's wallet identity recovery", stands for A0 derivation path schema
-    // 2564789 is a random number < 2^31 means "Subject's wallet derivation", stands for A derivation path schema
-    // full derivation path schema "Z0/A0/A" will be "m/1037171/131071/0407/10011001/96278543/2564789"
-    newEntityEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/96278543/2564789");
-    
+     
     // AcmeAcademy also determines a random derivation for its communications with the user
     // User will be 241573, random number just for this AcmeAcademy
     newEntityEpicWallet.addCPlusDerivation("User","241573");
     user = newEntityEpicWallet.getCPlusDerivation("User");
 
-    // AcmeAcademy creates a wallet for its relationship with the user <--------------- THINK!!!
-    acme_user_relationship_wallet = AEL.getHDWalletDerivation(newEntityEpicWallet.identity_HDWallet, "m/"+user.C_derivation);
-    acme_user_relationship_public_key = AEL.getPublicExtendedKey(acme_user_relationship_wallet);
+    // when connecting with the user AcmeAcademy will tell the user his public key for the communications with AcmeAcademy
+    connecto_to_user = newEntityEpicWallet.getCPlusDerivation("User");
+    acme_user_relationship_public_key = connecto_to_user.own_extendedPublicKey;
 
-
-    // Update wallets with exchanged publicKeys    
-    newUserEpicWallet.updateBPlusDerivationExtendedKeys("AcmeAcademy",acme_user_relationship_public_key,user_acme_relationship_public_key)
-    newEntityEpicWallet.updateCPlusDerivationExtendedKeys("User",user_acme_relationship_public_key,acme_user_relationship_public_key)
+    // Update wallets with exchanged publicKeys        
+    newUserEpicWallet.updateBPlusDerivationExtendedKeys("AcmeAcademy", acme_user_relationship_public_key);
+    newEntityEpicWallet.updateCPlusDerivationExtendedKeys("User",user_acme_relationship_public_key);
 
 
     console.log ("\t3rd test, 2nd step: Login challenge");
@@ -79,15 +71,6 @@ async function main() {
     let acme_login_challenge_signature = await newUserEpicWallet.signLoginChallenge("AcmeAcademy",acme_login_challenge);
 
     //AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
-    AEL.verifyMessageByPublicExtendedKey(acme_login_challenge,acme_login_challenge_signature,
-        AEL.getPublicExtendedKey(
-            AEL.getHDWalletDerivation(
-                AEL.createRO_HDWalletFromPublicExtendedKey(AcmeAcademy.other_extendedPublicKey),
-                "m/0"
-            )
-        )       
-    );
-
     newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
 
     }
