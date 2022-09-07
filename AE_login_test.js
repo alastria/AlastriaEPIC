@@ -71,31 +71,14 @@ async function main() {
     newEntityEpicWallet.updateCPlusDerivationExtendedKeys("User",user_acme_relationship_public_key,acme_user_relationship_public_key)
 
 
-
     console.log ("\t3rd test, 2nd step: Login challenge");
     // acme sends me a login challenge, adding its Extended Public Key acting as DID
     var acme_login_challenge = "{'message':'please sign with your Public Key to login','my_publicKey':'replace'}";
     acme_login_challenge = acme_login_challenge.replace("replace", AEL.getPublicExtendedKey(newEntityEpicWallet.login_HDWallet));
 
-    // User will create an HDWallet for his communications with ACME Academy
-    // common knowledge: "/0" will be the standar derivation for "login" for the user
-    user_acme_relationship_wallet_login = AEL.getHDWalletDerivation(user_acme_relationship_wallet, "m/0");
-    
-    // We do omit Acme Academy public_key validation, that requires KeyRegistry SmartContracts or other PKI
+    let acme_login_challenge_signature = await newUserEpicWallet.signLoginChallenge("AcmeAcademy",acme_login_challenge);
 
-    // User signs login challenge with user_acme_relationship_public_key_login
-    // prior to that has to create an Ethereum signer wallet
-    user_acme_login_signer_eWallet = 
-    AEL.getEthereumWalletFromPrivateKey(
-        AEL.getPrivateKeyFromExtended(
-            AEL.getPrivateExtendedKey(user_acme_relationship_wallet_login)
-            )
-        );
-
-    // User signs login challenge
-    let acme_login_challenge_signature = await AEL.signMessage(user_acme_login_signer_eWallet, acme_login_challenge);    
-
-    // AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
+    //AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
     AEL.verifyMessageByPublicExtendedKey(acme_login_challenge,acme_login_challenge_signature,
         AEL.getPublicExtendedKey(
             AEL.getHDWalletDerivation(
@@ -104,6 +87,8 @@ async function main() {
             )
         )       
     );
+
+    newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
 
     }
 
