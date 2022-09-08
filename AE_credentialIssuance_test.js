@@ -46,14 +46,17 @@ async function main() {
       '}';
     
     // Replace in the credential the ISSUER with Issuer's ExtendedPublicKey
-    issuerPublicKey = AEL.getPublicExtendedKey(newEntityEpicWallet.credencialIssuance_HDWallet);
-    credentialText = credentialText.replace("$ISSUER",issuerPublicKey);
+    // issuerPublicKey = AEL.getPublicExtendedKey(newEntityEpicWallet.credencialIssuance_HDWallet);
+    // credentialText = credentialText.replace("$ISSUER",issuerPublicKey);
+    credentialText = credentialText.replace("$ISSUER",newEntityEpicWallet.login_extPublicKey);
+
 
     // Replace in the credential the SCHOOL with the School's ExtentendedPublicKey
     // in this case Issuer = School but Issuer's ExtendedPublicKey is the credencialIssuance
-    // and the school if the base
+    // and the school is the base, this is atipical 
     schoolPublicKey = AEL.getPublicExtendedKey(newEntityEpicWallet.base_HDWallet);
     credentialText = credentialText.replace("$SCHOOL",schoolPublicKey);
+    
 
     // Also the credential is issued to a subject, the standard is the "m/1" derivation from the subject identity used for the realtionship with the school
     // in this case it would be 241573/1 (as opposed to 241573/0 used for the login)
@@ -99,9 +102,6 @@ async function main() {
     );
 
     console.log(credentialText);
-
-    
-
 
 
 }

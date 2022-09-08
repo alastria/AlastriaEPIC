@@ -1,6 +1,7 @@
 const AEL = require ("./AE_libray");
 const { toChecksumAddress } = require('ethereum-checksum-address')
-const AEW = require ("./AE_wallet");
+const AEUW = require ("./AE_wallet_user");
+const AEEW = require ("./AE_wallet_entity");
 
 
 async function main() {
@@ -9,8 +10,8 @@ async function main() {
 
 
     console.log ("1st test: create HDWallets");
-    let newUserEpicWallet = new AEW.AE_userWallet();
-    let newEntityEpicWallet = new AEW.AE_entityWallet();
+    let newUserEpicWallet = new AEUW.AE_userWallet();
+    let newEntityEpicWallet = new AEEW.AE_entityWallet();
 
     // const mnemonic = bip39.generateMnemonic();
     // User wallet
@@ -55,6 +56,7 @@ async function main() {
     user = newEntityEpicWallet.getCPlusDerivation("User");
 
     // when connecting with the user AcmeAcademy will tell the user his public key for the communications with AcmeAcademy
+    // or I may directly give the user the base identity extentedPublicKey PLUS the derivation for him
     connecto_to_user = newEntityEpicWallet.getCPlusDerivation("User");
     acme_user_relationship_public_key = connecto_to_user.own_extendedPublicKey;
 
