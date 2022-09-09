@@ -9,7 +9,7 @@ const { toChecksumAddress } = require('ethereum-checksum-address')
 module.exports = { hexadice, createHDWalletFromMnemonic, createHDWalletFromSeed, createRO_HDWalletFromPublicExtendedKey, 
     getWalletFromHDWallet, getPrivateExtendedKey, getPublicExtendedKey,getAddressFromPublicKey, getHDWalletDerivation, hexConversionFromBinary, 
     getPrivateKeyFromExtended, getPublicKeyFromExtended, getEthereumWalletFromPrivateKey, signMessage, getAdressFromSignedMessage, 
-    verifyMessageSignature,  verifyMessageByPublicExtendedKey}
+    verifyMessageSignature,  verifyMessageByPublicExtendedKey, getRandomInt, getRandomIntDerivation}
 
 
 function hexadice(value) {
@@ -128,4 +128,17 @@ function verifyMessageByPublicExtendedKey(message, signature, extendedPublicKey)
         console.log ("INCORRECT SIGNATURE");
         return false;
     }
+
+
+    
+      
 }
+
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max);
+}
+
+function getRandomIntDerivation() {
+    return Math.floor(Math.random() * 2147483648);
+}
+

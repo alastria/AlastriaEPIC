@@ -6,6 +6,12 @@ const AEW = require ("./AE_wallet");
 class AE_entityWallet extends AEW.AE_rootWallet{
     constructor() {
         super();        
+
+        // C_derivation fields:
+        // entity: the entity for which this derivation is intented
+        // C_derivation: the selected derivation
+        // own_HDWallet: pre-generated HDWallet for relationships with that entity
+        // own_extendedPublicKey: pre-generated public extended key of this entity with that entity
         this.Cplus_derivation = [];
     }
     
@@ -13,9 +19,9 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         super.setMnemonic(mnemonicStr);
     }
 
-    setIdentityDerivation (identityDerivationStr) {
+    setIdentityDerivation (identityDerivationStr) { 
         super.setIdentityDerivation(identityDerivationStr);
-        // This corresponds to C derivations aka Purpose
+        // This corresponds to C derivations aka Purpose 
         // 0 -> login, may be usefull for C2C interactions or to sign login challenges
         this.login_derivation = "m/0";        
         this.login_HDWallet = AEL.getHDWalletDerivation(this.base_HDWallet, this.login_derivation);

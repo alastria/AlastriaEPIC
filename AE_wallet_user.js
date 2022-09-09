@@ -7,12 +7,26 @@ class AE_userWallet extends AEW.AE_rootWallet{
     constructor() {
         super();
 
+        // B_derivation fields:
+        //  entity: the entity for which this derivation is intented
+        //  B_derivation: the selected derivation
+        //  own_HDWallet: pre-generated HDWallet for relationships with that entity
+        //  own_extendedPublicKey: pre-generated public extended key of this user with that entity
+        //  credential_derivations: array of objects where we do have each FOR each credential of that entity:
+        //      id
+        //      usr_derivation_part
+        //      entity_derivation_part
+        //  
+        this.Bplus_derivation = []
+
+
     }
-    addBPlusDerivation (entityStr, derivationStr) {
+    addBPlusDerivation (entityStr, derivationStr) { 
         let localBPD = {};
 
+
         localBPD.entity = entityStr;
-        localBPD.B_derivation = derivationStr;
+        localBPD.B_derivation = derivationStr; 
 
         // new, to do most things in a single point
         let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + localBPD.B_derivation);
@@ -20,12 +34,14 @@ class AE_userWallet extends AEW.AE_rootWallet{
         let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
         localBPD.own_extendedPublicKey = my_entity_relationship_public_key;
 
+        localBPD.credential_derivations = [];
+
         this.Bplus_derivation.push(localBPD);
 
 
     }
     getBPlusDerivation (entityStr) {        
-        return this.Bplus_derivation.find(element => element.entity === entityStr);;
+        return this.Bplus_derivation.find(element => element.entity === entityStr);
     }
 
     updateBPlusDerivationExtendedKeys (entityStr, other_extendedKey) {
@@ -62,6 +78,58 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let signerRl = this.getBPlusDerivation(signerStr);
         return this.baseVerifyLoginChallenge(challengeStr,signatureStr,signerRl)
+
+    }
+
+
+    setCredentialDerivation(entityStr,credentialID,entityCredDerivation)
+    {
+        //  credential_derivations: array of objects where we do have each FOR each credential of that entity:
+        //      id
+        //      usr_derivation_part
+        //      entity_derivation_part
+        //      extPublicKey
+        let localBplus = this.getBPlusDerivation(entityStr);
+        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
+
+        let credential_meta_info = {};
+        credential_meta_info.id = credentialID;
+        // this are two derivation levels, random (those may be passed as arguments so the device wallet decides instead of the library)
+        credential_meta_info.usr_derivation_part = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
+        credential_meta_info.usr_derivation_part = "810906238/253622342";        
+        credential_meta_info.entity_derivation_part = entityCredDerivation;   
+        localBplus.credential_derivations.push(credential_meta_info);
+        
+        this.Bplus_derivation[localBplusIdx] = localBplus;
+        
+    }
+
+    getCMeta(localBplus, credentialID){
+
+        return localBplus.credential_derivations.find(element => element.id === credentialID);
+    }
+
+    getCredentialExtendedPublicKey(entityStr, credentialID)
+    {
+
+        let localBplus = this.getBPlusDerivation(entityStr);
+        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
+
+        let localCMeta = this.getCMeta(localBplus,credentialID);
+        let localCMetaIdz = localBplus.credential_derivations.findIndex(element => element.id === credentialID); 
+
+        let full_credential_derivation = localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
+        let full_cred_entity_derivation = "m/" + localBplus.B_derivation + "/1/" + full_credential_derivation;
+
+        let credential_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_cred_entity_derivation);
+        let credential_pubExtKey = AEL.getPublicExtendedKey(credential_wallet);
+
+        localCMeta.extPublicKey = credential_pubExtKey;
+        localBplus.credential_derivations[localCMetaIdz] = localCMeta;
+
+        this.Bplus_derivation[localBplusIdx] = localBplus;
+
+        return credential_pubExtKey;
 
     }
 
