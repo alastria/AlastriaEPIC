@@ -62,24 +62,9 @@ async function main() {
     credentialSignature = await newEntityEpicWallet.signCredential(credentialText);
  
 
-    // and the user (or anyone) can verify the signature
-    // we do teh calculation from the getPublicExtendedKey(base_HDWallet) that will be the registered publicKey in the SmartContract
-    AEL.verifyMessageByPublicExtendedKey(credentialText,credentialSignature, 
-        AEL.getPublicExtendedKey(
-            AEL.getHDWalletDerivation(
-                AEL.createRO_HDWalletFromPublicExtendedKey(
-                    AEL.getPublicExtendedKey(
-                        newEntityEpicWallet.base_HDWallet
-                    )
-                ),
-                "m/1"
-            )
-        )
-    );
-
-    console.log(credentialText);
-
-
-}
+    // and the user (or anyone) can verify the signature    
+    // it requires knowing the Public Key, that would be stored in a public shared system, like an smartContact
+    AEL.verifyMessageByPublicExtendedKey(credentialText,credentialSignature,newEntityEpicWallet.credencialIssuance_extPublicKey);
+ }
 
 main ();
