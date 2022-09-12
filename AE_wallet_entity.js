@@ -67,25 +67,11 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
     async signLoginChallenge (entityStr, signLoginChallenge)
     {
-        // TODO: test with example
+        // TODO: this should be similar to user signature?
+        // DISCUSS
 
-        AcmeAcademy = this.getBPlusDerivation(entityStr);
-        // common knowledge: "entity/0" would be the standar derivation for "login" for the user BUT it was already in this.login_derivation
-        // and therefore we should use login_HDWallet
-        let entity_relationship_wallet_login = this.login_HDWallet;
-    
         
-        // Entity signs login challenge with that login_HDWallet
-        // prior to that has to create an Ethereum signer wallet
-        let entity_signer_eWallet = 
-            AEL.getEthereumWalletFromPrivateKey(
-                AEL.getPrivateKeyFromExtended(
-                    AEL.getPrivateExtendedKey(entity_relationship_wallet_login)
-                )
-            );
-
-        let login_challenge_signature = await AEL.signMessage(entity_signer_eWallet, signLoginChallenge);
-        return login_challenge_signature;
+        return ;
     }
 
     verifyLoginChallenge (signerStr, challengeStr, signatureStr){
@@ -93,6 +79,22 @@ class AE_entityWallet extends AEW.AE_rootWallet{
   
         let signerRl = this.getCPlusDerivation(signerStr);
         return this.baseVerifyLoginChallenge(challengeStr,signatureStr,signerRl)
+
+    }
+
+    async signCredential (credentialStr) {
+        // When a company signs a credential it is independent of the subject that credential is created for
+        // this makes easier to verify the credential signtature by the receiver of that credential
+        // DISCUSS
+
+        let signature =  AEL.signMessage(
+                            AEL.getEthereumWalletFromPrivateKey(
+                                AEL.getPrivateKeyFromExtended(
+                                    AEL.getPrivateExtendedKey(this.credencialIssuance_HDWallet)
+                                )
+                            ),
+                            credentialStr);
+        return signature;
 
     }
 }

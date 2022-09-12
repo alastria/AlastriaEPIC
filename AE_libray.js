@@ -128,8 +128,6 @@ function verifyMessageByPublicExtendedKey(message, signature, extendedPublicKey)
         console.log ("INCORRECT SIGNATURE");
         return false;
     }
-
-
     
       
 }
