@@ -3,7 +3,7 @@ const { hdkey } = require("ethereumjs-wallet");
 const Wallet = require('ethereumjs-wallet').default;
 const { base58_to_binary } = require('base58-js');
 const { ethers } = require("ethers");
-const { toChecksumAddress } = require('ethereum-checksum-address')
+const { toChecksumAddress } = require('ethereum-checksum-address');
 
 
 module.exports = { hexadice, createHDWalletFromMnemonic, createHDWalletFromSeed, createRO_HDWalletFromPublicExtendedKey, 
@@ -20,7 +20,7 @@ function hexadice(value) {
 
 // Create HDWallet
 function createHDWalletFromMnemonic(mnemonic) {
-
+    
     const seed = bip39.mnemonicToSeedSync(mnemonic)
     return hdkey.fromMasterSeed(seed);
 
