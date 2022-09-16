@@ -97,6 +97,10 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         return signature;
 
     }
+
+    verifyPresentationSignature(userStr,presentation_derivationStr, credential_setStr, credential_setSignatureStr) {
+
+    }
 }
 
 module.exports = {    
