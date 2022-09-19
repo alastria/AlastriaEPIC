@@ -88,7 +88,7 @@ async function main() {
     
     subjectPublicKey = newUserEpicWallet.getPresentationExtendedPublicKey("ServiceProvider","7c3d4c06-891d-4bdf-aa72-f702aa2e66bc");
 
-    credential_setSignature = newUserEpicWallet.signPresentation("ServiceProvider", "7c3d4c06-891d-4bdf-aa72-f702aa2e66bc", credential_set);
+    credential_setSignature = await newUserEpicWallet.signPresentation("ServiceProvider", "7c3d4c06-891d-4bdf-aa72-f702aa2e66bc", credential_set);
 
     // From the registration PubK to the derivation of the presentation
     presentation_derivation = newUserEpicWallet.getPresentationDerivation("ServiceProvider","7c3d4c06-891d-4bdf-aa72-f702aa2e66bc");

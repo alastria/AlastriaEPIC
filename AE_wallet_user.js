@@ -204,7 +204,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let localBplus = this.getBPlusDerivation(entityStr);
         let localPMeta = this.getPMeta(localBplus,presentationID);
-        let full_presentation_derivation = "m/" + localPMeta.usr_derivation_part + "/2/" + localPMeta.entity_derivation_part;
+        let full_presentation_derivation = "m/" + localBplus.B_derivation + "/2/" + localPMeta.usr_derivation_part  + localPMeta.entity_derivation_part;
         return full_presentation_derivation;
 
     }
@@ -221,9 +221,9 @@ class AE_userWallet extends AEW.AE_rootWallet{
         // let localCMetaIdz = localBplus.presentation_derivations.findIndex(element => element.id === presentationID); 
 
         let full_presentation_derivation = localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
-        let full_cred_entity_derivation = "m/" + localBplus.B_derivation + "/2/" + full_presentation_derivation;
+        let full_pres_entity_derivation = "m/" + localBplus.B_derivation + "/2/" + full_presentation_derivation;
 
-        let presentation_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_cred_entity_derivation);
+        let presentation_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_pres_entity_derivation);
 
 
         // User signs login challenge with entity_relationship_wallet_login
