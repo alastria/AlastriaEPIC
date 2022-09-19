@@ -5,6 +5,7 @@ const AEEW = require ("./AE_wallet_entity");
 
 //const bip39 = require("bip39");
 
+
 async function main() {
 
     console.log ("INIT TESTING");
@@ -22,16 +23,16 @@ async function main() {
     newEntityEpicWallet.addCPlusDerivation("User","241573");
 
     
-    var  baseCredentialText = "{Credential_ID:$ID; Issuer: $ISSUER; Subject: $SUBJECT;}";
+    var  baseCredentialText = "{Credential_ID:$ID; Issuer:$ISSUER; Subject:$SUBJECT;}";
    
     
     // Replace in the credential the ISSUER with Issuer's ExtendedPublicKey
-    credential_1_Text = baseCredentialText.replace("$ISSUER",newEntityEpicWallet.credencialIssuance_extPublicKey);
+    baseCredentialText = baseCredentialText.replace("$ISSUER",newEntityEpicWallet.credencialIssuance_extPublicKey);
     
     // Replace in the credential the SCHOOL with the School's ExtentendedPublicKey
     // in this case Issuer = School but Issuer's ExtendedPublicKey is the credencialIssuance
     // and the school is the base, this is atipical     
-    credential_1_Text = credentialText.replace("$SCHOOL",newEntityEpicWallet.identity_ExtPublicKey);
+    credential_1_Text = baseCredentialText.replace("$SCHOOL",newEntityEpicWallet.identity_ExtPublicKey);
 
     credential_1_Text = credential_1_Text.replace("$ID","87341868-10b0-4a35-971c-b26974b89cb3");
     credential_2_Text = credential_1_Text.replace("$ID","1e0ca9b7-4a20-493a-9f4f-b253febc8379");
@@ -52,6 +53,7 @@ async function main() {
     credential_1_Text = credential_1_Text.replace("$SUBJECT",subjectPublicKey1);
     credential_2_Text = credential_2_Text.replace("$SUBJECT",subjectPublicKey2);
     credential_3_Text = credential_3_Text.replace("$SUBJECT",subjectPublicKey3);
+   
 
     // Lets pack the three credentials together
     let credential_set = "credential_set: [" + credential_1_Text + "," + credential_2_Text + "," +credential_3_Text + "]";
@@ -66,8 +68,8 @@ async function main() {
     newUserEpicWallet.addBPlusDerivation("ServiceProvider","956778396");
     
     // when connecting with ServiceProvider the user will tell ServiceProvider his public key for the communications with ServiceProvider
-    connect_to_service_provdider = newUserEpicWallet.getBPlusDerivation("ServiceProvider");
-    user_sp_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
+    connect_to_service_provider = newUserEpicWallet.getBPlusDerivation("ServiceProvider");
+    user_sp_relationship_public_key = connect_to_service_provider.own_extendedPublicKey;
     
     // when connecting with the user ServiceProvider will tell the user his public key for the communications with ServiceProvider
     // or I may directly give the user the base identity extentedPublicKey PLUS the derivation for him
@@ -93,24 +95,24 @@ async function main() {
     
     // Need to communicate the identity Extended PubK and the derivations to the credentials
     user_identity_pubK = newUserEpicWallet.identity_ExtPublicKey;
-    cred1_der = newUserEpicWallet.getCredentialDerivation("ServiceProvider","87341868-10b0-4a35-971c-b26974b89cb3");
-    cred2_der = newUserEpicWallet.getCredentialDerivation("ServiceProvider","1e0ca9b7-4a20-493a-9f4f-b253febc8379");
-    cred3_der = newUserEpicWallet.getCredentialDerivation("ServiceProvider","aed59aca-d62d-4e0a-a576-c2b34a8e6d8a");
+    cred1_der = newUserEpicWallet.getCredentialDerivation("AcmeAcademy","87341868-10b0-4a35-971c-b26974b89cb3");
+    cred2_der = newUserEpicWallet.getCredentialDerivation("AcmeAcademy","1e0ca9b7-4a20-493a-9f4f-b253febc8379");
+    cred3_der = newUserEpicWallet.getCredentialDerivation("AcmeAcademy","aed59aca-d62d-4e0a-a576-c2b34a8e6d8a");
    
     // TODO: Presentation packaging (or not) and entityWallet verifications
     // Presentation verification
-    // - send the SP the derivation of the presentation
-    //  * presentation_derivation
+    // - send the SP the derivation of the presentation *stored in THIS VARIABLE* presentation_derivation
     // - Calculate PresentationPubk form the Pubk he registered for the user    
     // - verify signature of the presentation with the PresentationPubK
     newSPWallet.verifyPresentationSignature("User",presentation_derivation,credential_set,credential_setSignature)
-    // - send the SP my IdentityPubK and the derivation to the PubK registered for the user
-    //  * user_identity_pubK
+
+    // - send the SP my IdentityPubK and the derivation to the PubK registered for the user *stored in THIS VARIABLE* user_identity_pubK  
     // - send the SP the derivations from the IdentityPubK to each one the DIDs/PubK in the credentials
-    //  * cred1_der
-    //  * cred2_der
-    //  * cred3_der
+    //      *stored in THIS VARIABLES*  cred1_der, cred2_der, cred3_der
     // - verify that each Pubk+derivation generated the avobe mentioned credentials PubK
+    cred_der_set = [cred1_der, cred2_der, cred3_der];
+    newSPWallet.verifyChainOfTrust(user_identity_pubK,cred_der_set,credential_set);
+
     // - verify each credential Issuer signature
 
 

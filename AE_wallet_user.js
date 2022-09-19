@@ -35,6 +35,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
         localBPD.own_extendedPublicKey = my_entity_relationship_public_key;
 
         localBPD.credential_derivations = [];
+        localBPD.presentation_derivations = [];
 
         this.Bplus_derivation.push(localBPD);
 
@@ -109,6 +110,11 @@ class AE_userWallet extends AEW.AE_rootWallet{
         return localBplus.credential_derivations.find(element => element.id === credentialID);
     }
 
+    getPMeta(localBplus, presentationID){
+
+        return localBplus.presentation_derivations.find(element => element.id === presentationID);
+    }
+
     getCredentialExtendedPublicKey(entityStr, credentialID)
     {
 
@@ -158,7 +164,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
         presentation_meta_info.usr_derivation_part = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
         presentation_meta_info.usr_derivation_part = "192572143/423682035";        
         presentation_meta_info.entity_derivation_part = entityPresDerivation;   
-        localBplus.credential_derivations.push(presentation_meta_info);
+        localBplus.presentation_derivations.push(presentation_meta_info);
         
         this.Bplus_derivation[localBplusIdx] = localBplus;
 
@@ -170,17 +176,17 @@ class AE_userWallet extends AEW.AE_rootWallet{
         let localBplus = this.getBPlusDerivation(entityStr);
         let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
 
-        let localCMeta = this.getCMeta(localBplus,presentationID);
-        let localCMetaIdz = localBplus.presentation_derivations.findIndex(element => element.id === presentationID); 
+        let localPMeta = this.getPMeta(localBplus,presentationID);
+        let localPMetaIdz = localBplus.presentation_derivations.findIndex(element => element.id === presentationID); 
 
-        let full_presentation_derivation = localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
+        let full_presentation_derivation = localPMeta.usr_derivation_part + "/" + localPMeta.entity_derivation_part;
         let full_cred_entity_derivation = "m/" + localBplus.B_derivation + "/2/" + full_presentation_derivation;
 
         let presentation_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_cred_entity_derivation);
         let presentation_pubExtKey = AEL.getPublicExtendedKey(presentation_wallet);
 
-        localCMeta.extPublicKey = presentation_pubExtKey;
-        localBplus.presentation_derivations[localCMetaIdz] = localCMeta;
+        localPMeta.extPublicKey = presentation_pubExtKey;
+        localBplus.presentation_derivations[localPMetaIdz] = localPMeta;
 
         this.Bplus_derivation[localBplusIdx] = localBplus;
 
@@ -198,7 +204,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let localBplus = this.getBPlusDerivation(entityStr);
         let localPMeta = this.getPMeta(localBplus,presentationID);
-        let full_presentation_derivation = localPMeta.usr_derivation_part + "/" + localPMeta.entity_derivation_part;
+        let full_presentation_derivation = "m/" + localPMeta.usr_derivation_part + "/2/" + localPMeta.entity_derivation_part;
         return full_presentation_derivation;
 
     }
@@ -211,7 +217,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
         let localBplus = this.getBPlusDerivation(entityStr);
         // let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
 
-        let localCMeta = this.getCMeta(localBplus,presentationID);
+        let localCMeta = this.getPMeta(localBplus,presentationID);
         // let localCMetaIdz = localBplus.presentation_derivations.findIndex(element => element.id === presentationID); 
 
         let full_presentation_derivation = localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;

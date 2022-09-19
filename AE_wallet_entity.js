@@ -99,6 +99,42 @@ class AE_entityWallet extends AEW.AE_rootWallet{
     }
 
     verifyPresentationSignature(userStr,presentation_derivationStr, credential_setStr, credential_setSignatureStr) {
+        let localCplus = this.getCPlusDerivation(userStr);
+        let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(localCplus.other_extendedPublicKey);
+        let user_presentation_wallet = AEL.getHDWalletDerivation(user_Cplus_Wallet,presentation_derivationStr);
+        return AEL.verifyMessageByPublicExtendedKey(credential_setStr,credential_setSignatureStr,AEL.getPublicExtendedKey(user_presentation_wallet));
+
+    }
+
+    aux_getPubkeyFromDummyCred(dummyCredStr)
+    {
+        idx_Subject = dummyCredStr.indexOf("Subject:");
+        return  dummyCredStr.substring(idx_Subject+8,idx_Subject+119);
+    }
+
+    verifyChainOfTrust(user_base_identity_pubK,cred_der_set,credential_set) {
+        cred_pubK_set = [aux_getPubkeyFromDummyCred(credential_1_Text),aux_getPubkeyFromDummyCred(credential_2_Text),aux_getPubkeyFromDummyCred(credential_3_Text)];
+
+        let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(user_base_identity_pubK);
+        let cred_derived_pubK_array = [];
+        i = 0;
+        cred_der_set.forEach(element => {
+            let cred_derived_pubK = getPublicExtendedKey(AEL.getHDWalletDerivation(user_Cplus_Wallet,cred_der_set[i]));
+            cred_derived_pubK_array.push(cred_derived_pubK);
+            i++;            
+        });
+
+        i = 0;
+        cred_derived_pubK_array.forEach(element => {
+            if (!(element === cred_derived_pubK_array[1])){
+                console.log ("ERROR validating Chain Of Trust for credentials")
+                return false;
+            }            
+            i++;
+        });
+
+        console.log ("Validation Chain Of Trust for credentials CORRECT")
+        return true;
 
     }
 }
