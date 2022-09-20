@@ -24,18 +24,18 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         // This corresponds to C derivations aka Purpose 
         // 0 -> login, may be usefull for C2C interactions or to sign login challenges
         this.login_derivation = "m/0";        
-        this.login_HDWallet = AEL.getHDWalletDerivation(this.base_HDWallet, this.login_derivation);
+        this.login_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, this.login_derivation);
         this.login_extPublicKey = AEL.getPublicExtendedKey(this.login_HDWallet);
         
 
         // 1 -> credencial issuance
         this.credencialIssuance_derivation = "m/1";
-        this.credencialIssuance_HDWallet = AEL.getHDWalletDerivation(this.base_HDWallet, this.credencialIssuance_derivation);
+        this.credencialIssuance_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, this.credencialIssuance_derivation);
         this.credencialIssuance_extPublicKey = AEL.getPublicExtendedKey(this.credencialIssuance_HDWallet);
         // 2 -> presentations
 
         this.presentations_derivation = "m/2";
-        this.presentations_HDWallet = AEL.getHDWalletDerivation(this.base_HDWallet, this.presentations_derivation);
+        this.presentations_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, this.presentations_derivation);
         this.presentations_extPublicKey = AEL.getPublicExtendedKey(this.presentations_HDWallet);
     }
 
