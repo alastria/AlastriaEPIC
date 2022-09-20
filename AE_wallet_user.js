@@ -144,7 +144,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let localBplus = this.getBPlusDerivation(entityStr);
         let localCMeta = this.getCMeta(localBplus,credentialID);
-        let full_presentation_derivation = localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
+        let full_presentation_derivation = "m/" + localBplus.B_derivation + "/1/" + localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
         return full_presentation_derivation;
 
     }
@@ -204,7 +204,8 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let localBplus = this.getBPlusDerivation(entityStr);
         let localPMeta = this.getPMeta(localBplus,presentationID);
-        let full_presentation_derivation = "m/" + localBplus.B_derivation + "/2/" + localPMeta.usr_derivation_part  + localPMeta.entity_derivation_part;
+        // Omit localBplus.B_derivation because the SP will derive from the pubK he already knows I sent him that is the localBplus.B_derivation
+        let full_presentation_derivation = "m/" + "2/" + localPMeta.usr_derivation_part + "/" + localPMeta.entity_derivation_part;
         return full_presentation_derivation;
 
     }

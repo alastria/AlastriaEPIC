@@ -5,6 +5,13 @@ const AEEW = require ("./AE_wallet_entity");
 
 //const bip39 = require("bip39");
 
+// This may be part of a future Credential class, also including EIP-712 signatures like Lacchain does
+function aux_getPubkeyFromDummyCred(dummyCredStr)
+{
+    idx_Subject = dummyCredStr.indexOf("Subject:");
+    return  dummyCredStr.substring(idx_Subject+8,idx_Subject+119);
+}
+
 
 async function main() {
 
@@ -95,6 +102,8 @@ async function main() {
     
     // Need to communicate the identity Extended PubK and the derivations to the credentials
     user_identity_pubK = newUserEpicWallet.identity_ExtPublicKey;
+
+    // A la credential derivation le falta la derivacion de la entidad que emitió la credencial
     cred1_der = newUserEpicWallet.getCredentialDerivation("AcmeAcademy","87341868-10b0-4a35-971c-b26974b89cb3");
     cred2_der = newUserEpicWallet.getCredentialDerivation("AcmeAcademy","1e0ca9b7-4a20-493a-9f4f-b253febc8379");
     cred3_der = newUserEpicWallet.getCredentialDerivation("AcmeAcademy","aed59aca-d62d-4e0a-a576-c2b34a8e6d8a");
@@ -111,7 +120,10 @@ async function main() {
     //      *stored in THIS VARIABLES*  cred1_der, cred2_der, cred3_der
     // - verify that each Pubk+derivation generated the avobe mentioned credentials PubK
     cred_der_set = [cred1_der, cred2_der, cred3_der];
-    newSPWallet.verifyChainOfTrust(user_identity_pubK,cred_der_set,credential_set);
+
+    credential_pubk_set = [aux_getPubkeyFromDummyCred(credential_1_Text) ,aux_getPubkeyFromDummyCred(credential_2_Text),aux_getPubkeyFromDummyCred(credential_3_Text)];
+
+    newSPWallet.verifyChainOfTrust(user_identity_pubK,cred_der_set,credential_pubk_set);
 
     // - verify each credential Issuer signature
 

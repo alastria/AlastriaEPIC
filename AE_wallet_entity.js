@@ -106,35 +106,36 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
     }
 
-    aux_getPubkeyFromDummyCred(dummyCredStr)
-    {
-        idx_Subject = dummyCredStr.indexOf("Subject:");
-        return  dummyCredStr.substring(idx_Subject+8,idx_Subject+119);
-    }
+ 
 
-    verifyChainOfTrust(user_base_identity_pubK,cred_der_set,credential_set) {
-        cred_pubK_set = [aux_getPubkeyFromDummyCred(credential_1_Text),aux_getPubkeyFromDummyCred(credential_2_Text),aux_getPubkeyFromDummyCred(credential_3_Text)];
+    verifyChainOfTrust(user_base_identity_pubK,cred_der_set,credential_pubK_set) {
+
+        let result = true;
 
         let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(user_base_identity_pubK);
         let cred_derived_pubK_array = [];
         i = 0;
         cred_der_set.forEach(element => {
-            let cred_derived_pubK = getPublicExtendedKey(AEL.getHDWalletDerivation(user_Cplus_Wallet,cred_der_set[i]));
+            
+            let cred_derived_pubK = AEL.getPublicExtendedKey(AEL.getHDWalletDerivation(user_Cplus_Wallet,cred_der_set[i]));
             cred_derived_pubK_array.push(cred_derived_pubK);
             i++;            
         });
 
         i = 0;
-        cred_derived_pubK_array.forEach(element => {
-            if (!(element === cred_derived_pubK_array[1])){
+        cred_derived_pubK_array.every(element => {
+            if (!(element === credential_pubK_set[i])){
                 console.log ("ERROR validating Chain Of Trust for credentials")
-                return false;
+                result = false; 
             }            
             i++;
         });
 
-        console.log ("Validation Chain Of Trust for credentials CORRECT")
-        return true;
+        if (result) {
+            console.log ("Validation Chain Of Trust for credentials CORRECT")
+        };
+
+        return result;
 
     }
 }
