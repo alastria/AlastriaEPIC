@@ -16,7 +16,7 @@ async function main() {
     let newEntityEpicWallet = new AEEW.AE_entityWallet();    
     newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
     newEntityEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/96278543/2564789");
-    newEntityEpicWallet.addCPlusDerivation("User","241573");
+    newEntityEpicWallet.addCPlusDerivation("User");
 
   
     
