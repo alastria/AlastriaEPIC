@@ -118,22 +118,16 @@ async function main() {
     // - send the SP my IdentityPubK and the derivation to the PubK registered for the user *stored in THIS VARIABLE* user_identity_pubK  
     // - send the SP the derivations from the IdentityPubK to each one the DIDs/PubK in the credentials
     //      *stored in THIS VARIABLES*  cred1_der, cred2_der, cred3_der
+    // - send the SP the pubk/DID of the credentials (this is external as the credential may store the DID in different ways and positions)
     // - verify that each Pubk+derivation generated the avobe mentioned credentials PubK
-    cred_der_set = [cred1_der, cred2_der, cred3_der];
-
+    cred_derivation_set = [cred1_der, cred2_der, cred3_der];
     credential_pubk_set = [aux_getPubkeyFromDummyCred(credential_1_Text) ,aux_getPubkeyFromDummyCred(credential_2_Text),aux_getPubkeyFromDummyCred(credential_3_Text)];
-
-    newSPWallet.verifyChainOfTrust(user_identity_pubK,cred_der_set,credential_pubk_set);
+    newSPWallet.verifyChainOfTrust(user_identity_pubK,cred_derivation_set,credential_pubk_set);
 
     // - verify each credential Issuer signature
-
-
-
-    let presentation_text = "";
-
-    // and the user (or anyone) can verify the signature    
+    // this has been already made at AE_crentialIssuance_test.js example
     // it requires knowing the Public Key, that would be stored in a public shared system, like an smartContact
-    AEL.verifyMessageByPublicExtendedKey(credentialText,credentialSignature,newEntityEpicWallet.credencialIssuance_extPublicKey);
+
  }
 
 main ();
