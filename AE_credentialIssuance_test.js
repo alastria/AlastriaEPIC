@@ -57,6 +57,8 @@ async function main() {
     newUserEpicWallet.setCredentialDerivation("AcmeAcademy","4b860b60-dd5a-4c3c-ab59-f02252b42772","1251679543");
     subjectPublicKey = newUserEpicWallet.getCredentialExtendedPublicKey("AcmeAcademy","4b860b60-dd5a-4c3c-ab59-f02252b42772","1251679543");
 
+    // The issuer saves the user related info for the credential, just in case is needed in the future (like revocations)
+    newEntityEpicWallet.setCredentialInfo("User", "4b860b60-dd5a-4c3c-ab59-f02252b42772", subjectPublicKey);
    
     credentialText = credentialText.replace("$SUBJECT",subjectPublicKey);
     credentialSignature = await newEntityEpicWallet.signCredential(credentialText);

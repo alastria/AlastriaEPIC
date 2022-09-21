@@ -53,10 +53,17 @@ async function main() {
     newUserEpicWallet.setCredentialDerivation("AcmeAcademy","1e0ca9b7-4a20-493a-9f4f-b253febc8379","518358247");
     newUserEpicWallet.setCredentialDerivation("AcmeAcademy","aed59aca-d62d-4e0a-a576-c2b34a8e6d8a","2135079704");
 
+    // The user public keys for each credential has to be sent to the Issuer
     subjectPublicKey1 = newUserEpicWallet.getCredentialExtendedPublicKey("AcmeAcademy","87341868-10b0-4a35-971c-b26974b89cb3");
     subjectPublicKey2 = newUserEpicWallet.getCredentialExtendedPublicKey("AcmeAcademy","1e0ca9b7-4a20-493a-9f4f-b253febc8379");
     subjectPublicKey3 = newUserEpicWallet.getCredentialExtendedPublicKey("AcmeAcademy","aed59aca-d62d-4e0a-a576-c2b34a8e6d8a");
+  
+    // The issuer saves the user related info for the credential, just in case is needed in the future (like revocations)
+    newEntityEpicWallet.setCredentialInfo("User", "87341868-10b0-4a35-971c-b26974b89cb3", subjectPublicKey1);
+    newEntityEpicWallet.setCredentialInfo("User", "1e0ca9b7-4a20-493a-9f4f-b253febc8379", subjectPublicKey2);
+    newEntityEpicWallet.setCredentialInfo("User", "aed59aca-d62d-4e0a-a576-c2b34a8e6d8a", subjectPublicKey3);
 
+    // The issuer composes the final credential
     credential_1_Text = credential_1_Text.replace("$SUBJECT",subjectPublicKey1);
     credential_2_Text = credential_2_Text.replace("$SUBJECT",subjectPublicKey2);
     credential_3_Text = credential_3_Text.replace("$SUBJECT",subjectPublicKey3);

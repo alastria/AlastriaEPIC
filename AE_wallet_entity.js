@@ -50,6 +50,8 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         let my_user_relationship_public_key = AEL.getPublicExtendedKey(user_relationship_wallet);
         localCPD.own_extendedPublicKey = my_user_relationship_public_key;
 
+        localCPD.credentials = [];
+
         this.Cplus_derivation.push(localCPD);
     }
     getCPlusDerivation (entityStr) {        
@@ -61,6 +63,21 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
 
         localCplus.other_extendedPublicKey = other_extendedKey;
+        this.Cplus_derivation[localCplusIdx] = localCplus;
+    }
+
+    setCredentialInfo(userStr, credentialID, userExtPubK )
+    {
+
+        let localCplus = this.getCPlusDerivation(userStr);
+        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+
+        let credential_meta_info = {};
+        credential_meta_info.credentialID = credentialID;
+        credential_meta_info.userExtPubK = userExtPubK;
+
+        localCplus.credentials.push(credential_meta_info);
+        
         this.Cplus_derivation[localCplusIdx] = localCplus;
     }
 
