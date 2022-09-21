@@ -50,9 +50,8 @@ async function main() {
     user_acme_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
     
      
-    // AcmeAcademy also determines a random derivation for its communications with the user
-    // User will be 241573, random number just for this AcmeAcademy
-    newEntityEpicWallet.addCPlusDerivation("User","241573");
+    // AcmeAcademy as an entity does not have different derivations for users 
+    newEntityEpicWallet.addCPlusDerivation("User");
     user = newEntityEpicWallet.getCPlusDerivation("User");
 
     // when connecting with the user AcmeAcademy will tell the user his public key for the communications with AcmeAcademy
