@@ -85,7 +85,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     setCredentialDerivation(entityStr,credentialID,entityCredDerivation)
     {
-        //  credential_derivations: array of objects where we do have each FOR each credential of that entity:
+        //  credential_derivations: array of objects where we do have each FOR each credential from that entity:
         //      id
         //      usr_derivation_part
         //      entity_derivation_part
