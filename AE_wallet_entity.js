@@ -43,12 +43,13 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         let localCPD = {};
         localCPD.entity = entityStr;
 
-        // new, to do most things in a single point
-        // removing B derivations for entities
-        let user_relationship_wallet = this.identity_HDWallet;
-        localCPD.own_HDWallet = user_relationship_wallet;
-        let my_user_relationship_public_key = AEL.getPublicExtendedKey(user_relationship_wallet);
-        localCPD.own_extendedPublicKey = my_user_relationship_public_key;
+        // Issue 9        
+        // removing B derivations for entities, own_extentedPublicKey has been removed in this version
+        // also remove own_HDWallet, it is also useless
+        // let user_relationship_wallet = this.identity_HDWallet;
+        // localCPD.own_HDWallet = user_relationship_wallet;
+        // let my_user_relationship_public_key = AEL.getPublicExtendedKey(user_relationship_wallet);
+        // localCPD.own_extendedPublicKey = my_user_relationship_public_key;
 
         localCPD.credentials = [];
 

@@ -85,13 +85,16 @@ async function main() {
     connect_to_service_provider = newUserEpicWallet.getBPlusDerivation("ServiceProvider");
     user_sp_relationship_public_key = connect_to_service_provider.own_extendedPublicKey;
     
+
     // when connecting with the user ServiceProvider will tell the user his public key for the communications with ServiceProvider
     // or I may directly give the user the base identity extentedPublicKey PLUS the derivation for him
-    connect_to_user = newSPWallet.getCPlusDerivation("User");
-    sp_user_relationship_public_key = connect_to_user.own_extendedPublicKey;
+    // Issue 9 has changed this
+    //connect_to_user = newSPWallet.getCPlusDerivation("User");
+    //sp_user_relationship_public_key = connect_to_user.own_extendedPublicKey;
+    // Instead Entity has to send (or User has to query a PKI/Smartcontrac) the three Entity Keys
 
     // Update wallets with exchanged publicKeys        
-    newUserEpicWallet.updateBPlusDerivationExtendedKeys("ServiceProvider", sp_user_relationship_public_key);
+    newUserEpicWallet.updateBPlusDerivationExtendedKeys("ServiceProvider", newSPWallet.login_extPublicKey, newSPWallet.credencialIssuance_extPublicKey, newSPWallet.presentations_extPublicKey);
     newSPWallet.updateCPlusDerivationExtendedKeys("User",user_sp_relationship_public_key);
 
     // Now the user will sign the Presentation with a /2/derivation/derivation/derivation

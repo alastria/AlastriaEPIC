@@ -45,11 +45,13 @@ class AE_userWallet extends AEW.AE_rootWallet{
         return this.Bplus_derivation.find(element => element.entity === entityStr);
     }
 
-    updateBPlusDerivationExtendedKeys (entityStr, other_extendedKey) {
+    updateBPlusDerivationExtendedKeys (entityStr, other_ext_login_key, other_ext_cred_key, other_ext_pres_key) {
 
         let localBplus = this.getBPlusDerivation(entityStr);
         let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);         
-        localBplus.other_extendedPublicKey = other_extendedKey;
+        localBplus.other_ext_login_key = other_ext_login_key;
+        localBplus.other_ext_cred_key = other_ext_cred_key;
+        localBplus.other_ext_pres_key = other_ext_pres_key;
         this.Bplus_derivation[localBplusIdx] = localBplus;
     }
 
