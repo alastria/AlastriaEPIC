@@ -56,11 +56,13 @@ async function main() {
 
     // when connecting with the user AcmeAcademy will tell the user his public key for the communications with AcmeAcademy
     // or I may directly give the user the base identity extentedPublicKey PLUS the derivation for him
-    connecto_to_user = newEntityEpicWallet.getCPlusDerivation("User");
-    acme_user_relationship_public_key = connecto_to_user.own_extendedPublicKey;
+    // Issue 9, as B derivations for Entities have been removed this no longer makes sense
+    // connecto_to_user = newEntityEpicWallet.getCPlusDerivation("User");
+    // acme_user_relationship_public_key = connecto_to_user.own_extendedPublicKey;
+    // Instead Entity has to send (or User has to query a PKI/Smartcontrac) the three Entity Keys
 
     // Update wallets with exchanged publicKeys        
-    newUserEpicWallet.updateBPlusDerivationExtendedKeys("AcmeAcademy", acme_user_relationship_public_key);
+    newUserEpicWallet.updateBPlusDerivationExtendedKeys("AcmeAcademy", newEntityEpicWallet.login_extPublicKey, newEntityEpicWallet.credencialIssuance_extPublicKey, newEntityEpicWallet.presentations_extPublicKey);
     newEntityEpicWallet.updateCPlusDerivationExtendedKeys("User",user_acme_relationship_public_key);
 
 
