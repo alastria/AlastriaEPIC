@@ -28,19 +28,43 @@ class AE_userWallet extends AEW.AE_rootWallet{
         localBPD.entity = entityStr;
         localBPD.B_derivation = derivationStr; 
 
-        // new, to do most things in a single point
         let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + localBPD.B_derivation);
         localBPD.own_HDWallet = entity_relationship_wallet;
         let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
         localBPD.own_extendedPublicKey = my_entity_relationship_public_key;
 
+        // This will hold the credentials information for this Entity, an structure itself
         localBPD.credential_derivations = [];
+        // This will hold the presentations information for this Entity, an structure itself
         localBPD.presentation_derivations = [];
+        // This will hold the old derivations we have used for for this Entity, but that we have revoked
+        localBPD.oldDerivations= [];
 
         this.Bplus_derivation.push(localBPD);
 
+    }
+
+    renewBPlusDerivation (entityStr, newDerivationStr) {
+        let localBplus = this.getBPlusDerivation(entityStr);
+        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);         
+
+        let oldDerivation = localBplus.B_derivation;
+        localBplus.B_derivation = newDerivationStr;
+
+        let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + localBplus.B_derivation);
+        localBplus.own_HDWallet = entity_relationship_wallet;
+        let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
+        localBplus.own_extendedPublicKey = my_entity_relationship_public_key;
+                
+        localBplus.oldDerivations.push(oldDerivation);
+        this.Bplus_derivation[localBplusIdx] = localBplus;
+
+        return oldDerivation;
 
     }
+
+
+
     getBPlusDerivation (entityStr) {        
         return this.Bplus_derivation.find(element => element.entity === entityStr);
     }
@@ -97,7 +121,13 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let credential_meta_info = {};
         credential_meta_info.id = credentialID;
+        
+        // It is necessary to store the original BPlus derivation for the credential because we may rotate the entity derivation for
+        // security reasons but without having to re-issue all the credentials
+        // TODO: see other changes needed like get credential derivation for chain of trust
+        credential_meta_info.entity_interacting_derivation = localBplus.B_derivation;
         // this are two derivation levels, random (those may be passed as arguments so the device wallet decides instead of the library)
+        // refers to EE derivation pattern
         credential_meta_info.usr_derivation_part = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
         credential_meta_info.usr_derivation_part = "810906238/253622342";        
         credential_meta_info.entity_derivation_part = entityCredDerivation;   
@@ -119,6 +149,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     getCredentialExtendedPublicKey(entityStr, credentialID)
     {
+        // The ExtendedPublicKey to be used in the DID for emitting this credential
 
         let localBplus = this.getBPlusDerivation(entityStr);
         let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
@@ -146,7 +177,9 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let localBplus = this.getBPlusDerivation(entityStr);
         let localCMeta = this.getCMeta(localBplus,credentialID);
-        let full_presentation_derivation = "m/" + localBplus.B_derivation + "/1/" + localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
+        // Instead of using localBplus.B_derivation that is the CURRENT B derivation for that entity we will have 
+        // to use the original B derivation, that was stored in Entity_interacting_derivation
+        let full_presentation_derivation = "m/" + localCMeta.entity_interacting_derivation + "/1/" + localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
         return full_presentation_derivation;
 
     }
@@ -162,6 +195,9 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let presentation_meta_info = {};
         presentation_meta_info.id = presentationID;
+        // presentations should also store the original B derivation of the presentation for the deletion purposes
+        presentation_meta_info.entity_interacting_derivation = localBplus.B_derivation;
+
         // this are two derivation levels, random (those may be passed as arguments so the device wallet decides instead of the library)
         presentation_meta_info.usr_derivation_part = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
         presentation_meta_info.usr_derivation_part = "192572143/423682035";        
@@ -182,7 +218,10 @@ class AE_userWallet extends AEW.AE_rootWallet{
         let localPMetaIdz = localBplus.presentation_derivations.findIndex(element => element.id === presentationID); 
 
         let full_presentation_derivation = localPMeta.usr_derivation_part + "/" + localPMeta.entity_derivation_part;
-        let full_cred_entity_derivation = "m/" + localBplus.B_derivation + "/2/" + full_presentation_derivation;
+
+        // Instead of using localBplus.B_derivation that is the CURRENT B derivation for that entity we will have 
+        // to use the original B derivation, that was stored in Entity_interacting_derivation
+        let full_cred_entity_derivation = "m/" + localPMeta.entity_interacting_derivation + "/2/" + full_presentation_derivation;
 
         let presentation_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_cred_entity_derivation);
         let presentation_pubExtKey = AEL.getPublicExtendedKey(presentation_wallet);
