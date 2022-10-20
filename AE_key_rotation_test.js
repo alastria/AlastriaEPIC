@@ -44,9 +44,20 @@ async function main() {
     user_entity_relationship_public_key = connect_to_entity.own_extendedPublicKey;
 
     console.log("New ExtendedPublicKey:", user_entity_relationship_public_key);
-
     // Register in Blockchain the old ExtendedPublicKey as "revocated"
-    // using old_user_entity_relationship_public_key
+    // using old_user_entity_relationship_public_key, signing with the old private key
+
+    console.log("3rd test: CASE 2: user rotates his main identity key");
+    // this rotation invalidates all the credentials and presentations
+    // as the credentials are always packed into a presentation
+    // and the presentation requires user_identity_pubK to check the Chain_of_trust
+    // invalidation of user_identity_pubK invalidates the whole presentation
+    // Credentials can be revoked by the user by the state change in the registry
+    // Would Credentials be "invalidated" with a main identity key rotation?
+    // -> That would require multiple invalidations either at key registry level or credential level
+    // THIS IS STILL UNDER DISCUSSION
+    
+
 
 
 }

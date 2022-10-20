@@ -126,7 +126,7 @@ class AE_entityWallet extends AEW.AE_rootWallet{
  
 
     verifyChainOfTrust(user_base_identity_pubK,cred_der_set,credential_pubK_set) {
-
+        
         let result = true;
 
         let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(user_base_identity_pubK);
@@ -151,6 +151,8 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         if (result) {
             console.log ("Validation Chain Of Trust for credentials CORRECT")
         };
+
+        // This requires later validation of user_base_identity_pubK in the blockchain network in case it has been revoked by the user
 
         return result;
 
