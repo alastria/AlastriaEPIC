@@ -15,9 +15,6 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         this.Cplus_derivation = [];
     }
     
-    setMnemonic (mnemonicStr) {
-        super.setMnemonic(mnemonicStr);
-    }
 
     setIdentityDerivation (identityDerivationStr) { 
         super.setIdentityDerivation(identityDerivationStr);

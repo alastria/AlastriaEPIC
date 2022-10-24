@@ -24,7 +24,6 @@ class AE_userWallet extends AEW.AE_rootWallet{
     addBPlusDerivation (entityStr, derivationStr) { 
         let localBPD = {};
 
-
         localBPD.entity = entityStr;
         localBPD.B_derivation = derivationStr; 
 
@@ -44,6 +43,8 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     }
 
+
+
     renewBPlusDerivation (entityStr, newDerivationStr) {
         let localBplus = this.getBPlusDerivation(entityStr);
         let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);         
@@ -62,8 +63,6 @@ class AE_userWallet extends AEW.AE_rootWallet{
         return oldDerivation;
 
     }
-
-
 
     getBPlusDerivation (entityStr) {        
         return this.Bplus_derivation.find(element => element.entity === entityStr);

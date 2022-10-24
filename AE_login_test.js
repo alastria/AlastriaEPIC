@@ -21,17 +21,20 @@ async function main() {
 
 
     console.log ("2nd test: from a HDWallet create initial identity derivation");
-    // fixed "m/1037171/131071/0407/10011001/" means "Identity/Alastria/quor/redT", stands for Z0 derivation path schemma
-    // 94367 is a random number < 2^31 means "Subject's wallet identity recovery", stands for A0 derivation path schema
-    // 3651441 is a random number < 2^31 means "Subject's wallet derivation", stands for A derivation path schema
-    // full derivation path schema "Z0/A0/A" will be "m/1037171/131071/0407/10011001/94367/3651441"
-    newUserEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/94367/3651441");
+    // New derivation schemas
+    // Z: Identity: "m/1037171", fixed
+    // R: Recovery derivation: 94367
+    // SSSSS: Security by Isolation: 36514417/1996133064/444811548/120132567/3152038
+    // W: Main identity: 848215
+    // M: Method: 131071
+    // T: Network Technical: 0407
+    // N: Network Name: 10011001
+    // Full derivation: "m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001"
+    newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
+    
 
-    // fixed "m/1037171/131071/0407/10011001/" means "Identity/Alastria/quor/redT", stands for Z0 derivation path schemma
-    // 96278543  is a random number < 2^31 means "Subject's wallet identity recovery", stands for A0 derivation path schema
-    // 2564789 is a random number < 2^31 means "Subject's wallet derivation", stands for A derivation path schema
-    // full derivation path schema "Z0/A0/A" will be "m/1037171/131071/0407/10011001/96278543/2564789"
-    newEntityEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/96278543/2564789");
+    // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
+    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
         
 
 
