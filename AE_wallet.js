@@ -44,7 +44,7 @@ class AE_rootWallet {
                     AEL.getPublicExtendedKey(
                         AEL.getHDWalletDerivation(
                             AEL.createRO_HDWalletFromPublicExtendedKey(derivationObj.other_extendedPublicKey),
-                            "m/0"
+                            "m/0/"+derivationObj.loginDerivation
                         )
                     )       
                 );

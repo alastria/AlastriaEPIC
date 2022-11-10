@@ -48,6 +48,7 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         // let my_user_relationship_public_key = AEL.getPublicExtendedKey(user_relationship_wallet);
         // localCPD.own_extendedPublicKey = my_user_relationship_public_key;
 
+        localCPD.loginDerivation = "";
         localCPD.credentials = [];
 
         this.Cplus_derivation.push(localCPD);
@@ -62,6 +63,16 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
         localCplus.other_extendedPublicKey = other_extendedKey;
         this.Cplus_derivation[localCplusIdx] = localCplus;
+    }
+
+    addRenewCplusLoginDerivation(userStr, loginDerivationStr) {
+        // works for adding or renewing, as we won't keep the old login derivation once updated
+        let localCplus = this.getCPlusDerivation(userStr);
+        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+        
+        localCplus.loginDerivation = loginDerivationStr;
+        this.Cplus_derivation[localCplusIdx] = localCplus;
+
     }
 
     setCredentialInfo(userStr, credentialID, userExtPubK )
@@ -92,7 +103,7 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         //review derivations of Entities and Users, that are different
   
         let signerRl = this.getCPlusDerivation(signerStr);
-        return this.baseVerifyLoginChallenge(challengeStr,signatureStr,signerRl)
+        return this.baseVerifyLoginChallenge(challengeStr,signatureStr,signerRl);
 
     }
 

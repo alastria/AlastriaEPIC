@@ -17,7 +17,10 @@ class AE_userWallet extends AEW.AE_rootWallet{
         //      usr_derivation_part
         //      entity_derivation_part
         //  
-        this.Bplus_derivation = []
+        this.Bplus_derivation = [];
+
+        // Hold historic data of old, revoked derivation interactions
+        this.Old_Bplus_derivation = [];
 
 
     }
@@ -36,36 +39,80 @@ class AE_userWallet extends AEW.AE_rootWallet{
         localBPD.credential_derivations = [];
         // This will hold the presentations information for this Entity, an structure itself
         localBPD.presentation_derivations = [];
-        // This will hold the old derivations we have used for for this Entity, but that we have revoked
-        localBPD.oldDerivations= [];
 
         this.Bplus_derivation.push(localBPD);
 
     }
 
+    addRenewBplusLoginDerivation(entityStr, loginDerivationStr) {
 
-
-    renewBPlusDerivation (entityStr, newDerivationStr) {
+        // works for adding or renewing, as we won't keep the old login derivation once updated
         let localBplus = this.getBPlusDerivation(entityStr);
         let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);         
 
-        let oldDerivation = localBplus.B_derivation;
-        localBplus.B_derivation = newDerivationStr;
+        localBplus.loginDerivation = loginDerivationStr;
+        let entity_login_wallet = AEL.getHDWalletDerivation(localBplus.own_HDWallet, "m/0/"+ localBplus.loginDerivation);
+        localBplus.loginWallet = entity_login_wallet;
+        let entity_login_wallet_public_key = AEL.getPublicExtendedKey(localBplus.loginWallet);
+        localBplus.loginExtendedPublicKey = entity_login_wallet_public_key;
 
-        let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + localBplus.B_derivation);
-        localBplus.own_HDWallet = entity_relationship_wallet;
-        let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
-        localBplus.own_extendedPublicKey = my_entity_relationship_public_key;
-                
-        localBplus.oldDerivations.push(oldDerivation);
         this.Bplus_derivation[localBplusIdx] = localBplus;
+
+    }
+
+    renewBPlusDerivation (entityStr, newDerivationStr) {
+        let localBplus = this.getBPlusDerivation(entityStr);
+        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
+        
+        let oldDerivation = localBplus.B_derivation;
+        
+        // Copy current BPlusDerivation data into old data array
+        this.Old_Bplus_derivation.push(localBplus);   
+        // Delete current BPlusDerivation           
+        this.Bplus_derivation.splice(localBplusIdx,1);
+        // Create a new BPlusDerivation
+        this.addBPlusDerivation(entityStr,newDerivationStr);
+
+
+        //localBplus.B_derivation = newDerivationStr;
+        //let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet, "m/" + localBplus.B_derivation);
+        //localBplus.own_HDWallet = entity_relationship_wallet;
+        //let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
+        //localBplus.own_extendedPublicKey = my_entity_relationship_public_key;
+
+        //localBplus.oldDerivations.push(oldDerivation);
+
+        //// Also move the credentials and presentations to old_credentials and old_presentations
+        //delete localBplus.credential_derivations;
+        //delete localBplus.presentation_derivations;
+
+        //this.Bplus_derivation[localBplusIdx] = localBplus;
 
         return oldDerivation;
 
     }
 
+    getOldCredentials(entityStr) {
+        let localOldBplus = this.getOldBPlusDerivation(entityStr);
+        let localOldBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
+        
+        return localOldBplus.credential_derivations;
+    }
+
+    getOldPresentations(entityStr) {
+        let localOldBplus = this.getOldBPlusDerivation(entityStr);
+        let localOldBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
+        
+        return localOldBplus.presentation_derivations;
+    }
+
+
     getBPlusDerivation (entityStr) {        
         return this.Bplus_derivation.find(element => element.entity === entityStr);
+    }
+
+    getOldBPlusDerivation(entityStr) {        
+        return this.Old_Bplus_derivation.find(element => element.entity === entityStr);
     }
 
     updateBPlusDerivationExtendedKeys (entityStr, other_ext_login_key, other_ext_cred_key, other_ext_pres_key) {
@@ -78,20 +125,15 @@ class AE_userWallet extends AEW.AE_rootWallet{
         this.Bplus_derivation[localBplusIdx] = localBplus;
     }
 
+
     async signLoginChallenge (entityStr, signLoginChallenge)
-    {
+    {        
 
         let connect_to_entity = this.getBPlusDerivation(entityStr);
-        let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + connect_to_entity.B_derivation);
-        // User will create an HDWallet for his communications with the entity
-        // common knowledge: "/0" will be the standar derivation for "login" for the user (note: not for entities)
-        let entity_relationship_wallet_login = AEL.getHDWalletDerivation(entity_relationship_wallet, "m/0");
-        // User signs login challenge with entity_relationship_wallet_login
-        // prior to that has to create an Ethereum signer wallet
         let entity_signer_eWallet = 
             AEL.getEthereumWalletFromPrivateKey(
                 AEL.getPrivateKeyFromExtended(
-                    AEL.getPrivateExtendedKey(entity_relationship_wallet_login)
+                    AEL.getPrivateExtendedKey(connect_to_entity.loginWallet)
                 )
             );
 

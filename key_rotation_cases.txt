@@ -1,0 +1,10 @@
+1. Login derivation rotation.
+    For security and hygenic uses, I rotate my login derivation, this mean I change my login keys. Credentials are not affected.
+    This is rougly the same of changing my password if I suspect that my login security has been breached.
+2. Entity derivation rotation.
+    For more serious damage contention. I think that the private key for my interactions with an Entity has leaked. In this case I change the whole
+    derivation for that entity. This affects login, the pre-existing credentials and presentations. Those must be revoked.
+3. Identity derivation rotation.
+    The most serious situation. My wallet has been compromised and I need to change my identity wallet, 
+    generating the new security levels and the new identity wallet levels
+    

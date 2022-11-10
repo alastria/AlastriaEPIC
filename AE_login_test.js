@@ -47,14 +47,22 @@ async function main() {
     // AcmeAcademy will be 6385471, random number just for this user
     // the complete derivation of AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
+
+    // Add the two levels for login
+    newUserEpicWallet.addRenewBplusLoginDerivation("AcmeAcademy","233612745/1482382413")
     
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
     connect_to_acme_academy = newUserEpicWallet.getBPlusDerivation("AcmeAcademy");
     user_acme_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
+
     
      
     // AcmeAcademy as an entity does not have different derivations for users 
     newEntityEpicWallet.addCPlusDerivation("User");
+    
+    // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"    
+    newEntityEpicWallet.addRenewCplusLoginDerivation("User","233612745/1482382413");   
+
     user = newEntityEpicWallet.getCPlusDerivation("User");
 
     // when connecting with the user AcmeAcademy will tell the user his public key for the communications with AcmeAcademy
@@ -76,7 +84,9 @@ async function main() {
 
     let acme_login_challenge_signature = await newUserEpicWallet.signLoginChallenge("AcmeAcademy",acme_login_challenge);
 
-    //AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
+    //AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation
+    // login derviation is something the user has to tell the Entity prior to login exchange
+    let login_derivation = connect_to_acme_academy.loginDerivation;
     newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
 
     }
