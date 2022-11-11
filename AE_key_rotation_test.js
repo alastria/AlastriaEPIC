@@ -72,7 +72,7 @@ async function main() {
 
     // How are the credentials affected?
     // They should be revoked, keep a list of them
-    // They are stored under BPlus[entity].old_credentials and old_derivations;
+    // They are stored under BPlus[entity].old_credentials and old_derivations; An entity many have only one or both types
     let oldCreds = newUserEpicWallet.getOldCredentials("AcmeAcademy");
     let oldPres = newUserEpicWallet.getOldPresentations("AcmeAcademy");
 

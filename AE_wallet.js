@@ -30,7 +30,12 @@ class AE_rootWallet {
         // IF NECESSARY for recovery Seed + identityDerivationStr will be asked to the user
         // this.identity_derivation = identityDerivationStr;
         this.identity_HDWallet = AEL.getHDWalletDerivation(this.base_HDWallet, identityDerivationStr);
-        // base_HDWallet won't be necesary either, it is more secure to delete it
+
+
+        // Prior to base_HDWallet deletion we must offer an external storage solution for recovery
+        // This external solution should store mnemonic and identityDerivationStr 
+        
+        // base_HDWallet won't be necesary either, it is more secure to delete it        
         delete this.base_HDWallet;
         this.identity_ExtPublicKey = AEL.getPublicExtendedKey(this.identity_HDWallet);
     }
