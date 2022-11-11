@@ -21,12 +21,16 @@ async function main() {
     console.log ("1st test: create HDWallets");
     let newUserEpicWallet = new AEUW.AE_userWallet();
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
-    newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
+    // mZR_der, SSSSSW_der, MTN_der
+    //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
+    newUserEpicWallet.setIdentityDerivation("m/1037171/94367","/36514417/1996133064/444811548/120132567/3152038/848215","/131071/0407/10011001");
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
 
     let newEntityEpicWallet = new AEEW.AE_entityWallet();    
     newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
-    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
+    // mZR_der, SSSSSW_der, MTN_der
+    //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001"); 
+    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766","/1152697438/415781155/342717333/307131644/1042827527/324692716","/131071/0407/10011001");
     newEntityEpicWallet.addCPlusDerivation("User");
 
     
@@ -75,7 +79,9 @@ async function main() {
     // Create a Wallet for the ServiceProvider
     let newSPWallet = new AEEW.AE_entityWallet();    
     newSPWallet.setMnemonic("hunt angle stage hurt promote daring burger loan ignore kind reform dry");
-    newSPWallet.setIdentityDerivation("m/1037171/415581744/1687453124/2141050260/1229666004/344302187/2118467628/304801079/131071/0407/10011001");
+    // mZR_der, SSSSSW_der, MTN_der
+    //newSPWallet.setIdentityDerivation("m/1037171/415581744/1687453124/2141050260/1229666004/344302187/2118467628/304801079/131071/0407/10011001");
+    newSPWallet.setIdentityDerivation("m/1037171/415581744","/1687453124/2141050260/1229666004/344302187/2118467628/304801079","/131071/0407/10011001");
 
     // Exchange between user and service provider
     newSPWallet.addCPlusDerivation("User","2112332019");    

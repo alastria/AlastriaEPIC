@@ -2,7 +2,7 @@ const AEL = require ("./AE_libray");
 const { toChecksumAddress } = require('ethereum-checksum-address')
 const AEUW = require ("./AE_wallet_user");
 const AEEW = require ("./AE_wallet_entity");
-
+const AEWS = require ("./AE_wallet_storage");
 
 async function main() {
 
@@ -15,14 +15,19 @@ async function main() {
 
     // const mnemonic = bip39.generateMnemonic();
     // User wallet
+    newUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
+    newUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
+
     // AcmeAcademy also has its own wallet
+    newEntityEpicWallet.setWalletRecoveryFile("./Entity_recovery_wallet,txt");
+    newEntityEpicWallet.setWalletStoreFile("./Entity_store_wallet.txt")
     newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
 
 
     console.log ("2nd test: from a HDWallet create initial identity derivation");
     // New derivation schemas
-    // Z: Identity: "m/1037171", fixed
+    // Z: Identity: "m/1037171", fixed for identity
     // R: Recovery derivation: 94367
     // SSSSS: Security by Isolation: 36514417/1996133064/444811548/120132567/3152038
     // W: Main identity: 848215
@@ -30,11 +35,14 @@ async function main() {
     // T: Network Technical: 0407
     // N: Network Name: 10011001
     // Full derivation: "m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001"
-    newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
-    
+    // mZR_der, SSSSSW_der, MTN_der
+    //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
+    newUserEpicWallet.setIdentityDerivation("m/1037171/94367","/36514417/1996133064/444811548/120132567/3152038/848215","/131071/0407/10011001");
 
+  
     // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
-    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
+    //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
+    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766","/1152697438/415781155/342717333/307131644/1042827527/324692716","/131071/0407/10011001");
         
 
 
@@ -89,6 +97,9 @@ async function main() {
     let login_derivation = connect_to_acme_academy.loginDerivation;
     newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
 
+    newUserEpicWallet.storeIdentityWallet();
+    newUserEpicWallet.readIdentityWallet();
+    
     }
 
 main ();

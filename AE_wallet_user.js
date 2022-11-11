@@ -1,6 +1,7 @@
 const AEL = require ("./AE_libray");
 //AE_rootWallet
 const AEW = require ("./AE_wallet");
+const AEWS = require ("./AE_wallet_storage");
 
 
 class AE_userWallet extends AEW.AE_rootWallet{
@@ -326,6 +327,15 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let presentation_signature = await AEL.signMessage(entity_signer_eWallet, presentationStr);
         return presentation_signature;
+
+    }
+
+    readIdentityWallet () {
+        let wallet = AEWS.readIdentityWallet(this.walletStoreFile);
+
+        this.Bplus_derivation = wallet.Bplus_derivation;
+        this.Old_Bplus_derivation = wallet.Old_Bplus_derivation;
+        super.readIdentityWallet();
 
     }
 

@@ -16,8 +16,9 @@ class AE_entityWallet extends AEW.AE_rootWallet{
     }
     
 
-    setIdentityDerivation (identityDerivationStr) { 
-        super.setIdentityDerivation(identityDerivationStr);
+    setIdentityDerivation (mZR_der, SSSSSW_der, MTN_der) { 
+
+        super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
         // This corresponds to C derivations aka Purpose 
         // 0 -> login, may be usefull for C2C interactions or to sign login challenges
         this.login_derivation = "m/0";        
