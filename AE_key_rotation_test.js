@@ -12,16 +12,39 @@ async function main() {
     console.log ("1st test: create HDWallets");
     let newUserEpicWallet = new AEUW.AE_userWallet();
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
-    newUserEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/94367/3651441");
+    newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
 
     let newEntityEpicWallet = new AEEW.AE_entityWallet();    
     newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
-    newEntityEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/96278543/2564789");
+    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
     newEntityEpicWallet.addCPlusDerivation("User");
 
 
-    console.log("2nd test: CASE 1: user rotates key for a single entity");
+    console.log("2nd test: CASE 1: user rotates login key for a given entity");
+    // Changing de login derivation does affect only to login, never to credentials
+    // Add the two levels for login
+    newUserEpicWallet.addRenewBplusLoginDerivation("AcmeAcademy","233612745/1482382413")
+    // Communicate to entity
+    newEntityEpicWallet.addCPlusDerivation("User");
+    newEntityEpicWallet.addRenewCplusLoginDerivation("User","233612745/1482382413");
+
+    // Renew the two levels for login, old levels discarded
+    newUserEpicWallet.addRenewBplusLoginDerivation("AcmeAcademy","324871539/2002010179")
+    // Communicate the Entity the new levels
+    newEntityEpicWallet.addRenewCplusLoginDerivation("User","324871539/2002010179");
+
+
+    // TODO: Rework from here
+    console.log("3rd test: CASE 2: user rotates key for a single entity");
+
+    console.log("3rd test: CASE 2: Step 1. Assign a dummy credential and presentation to user");
+   
+    newUserEpicWallet.setCredentialDerivation("AcmeAcademy","4b860b60-dd5a-4c3c-ab59-f02252b42772","1251679543");
+    
+    newUserEpicWallet.addBPlusDerivation("ServiceProvider","956778396");
+    newUserEpicWallet.setPresentationDerivation("ServiceProvider","7c3d4c06-891d-4bdf-aa72-f702aa2e66bc","47807");
+
 
     // Key rotation for a single entity would be:
     // Keep old data
@@ -47,7 +70,14 @@ async function main() {
     // Register in Blockchain the old ExtendedPublicKey as "revocated"
     // using old_user_entity_relationship_public_key, signing with the old private key
 
-    console.log("3rd test: CASE 2: user rotates his main identity key");
+    // How are the credentials affected?
+    // They should be revoked, keep a list of them
+    // They are stored under BPlus[entity].old_credentials and old_derivations; An entity many have only one or both types
+    let oldCreds = newUserEpicWallet.getOldCredentials("AcmeAcademy");
+    let oldPres = newUserEpicWallet.getOldPresentations("AcmeAcademy");
+
+
+    console.log("4th test: CASE 2: user rotates his main identity key");
     // this rotation invalidates all the credentials and presentations
     // as the credentials are always packed into a presentation
     // and the presentation requires user_identity_pubK to check the Chain_of_trust

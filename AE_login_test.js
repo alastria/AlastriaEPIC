@@ -21,17 +21,20 @@ async function main() {
 
 
     console.log ("2nd test: from a HDWallet create initial identity derivation");
-    // fixed "m/1037171/131071/0407/10011001/" means "Identity/Alastria/quor/redT", stands for Z0 derivation path schemma
-    // 94367 is a random number < 2^31 means "Subject's wallet identity recovery", stands for A0 derivation path schema
-    // 3651441 is a random number < 2^31 means "Subject's wallet derivation", stands for A derivation path schema
-    // full derivation path schema "Z0/A0/A" will be "m/1037171/131071/0407/10011001/94367/3651441"
-    newUserEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/94367/3651441");
+    // New derivation schemas
+    // Z: Identity: "m/1037171", fixed
+    // R: Recovery derivation: 94367
+    // SSSSS: Security by Isolation: 36514417/1996133064/444811548/120132567/3152038
+    // W: Main identity: 848215
+    // M: Method: 131071
+    // T: Network Technical: 0407
+    // N: Network Name: 10011001
+    // Full derivation: "m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001"
+    newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
+    
 
-    // fixed "m/1037171/131071/0407/10011001/" means "Identity/Alastria/quor/redT", stands for Z0 derivation path schemma
-    // 96278543  is a random number < 2^31 means "Subject's wallet identity recovery", stands for A0 derivation path schema
-    // 2564789 is a random number < 2^31 means "Subject's wallet derivation", stands for A derivation path schema
-    // full derivation path schema "Z0/A0/A" will be "m/1037171/131071/0407/10011001/96278543/2564789"
-    newEntityEpicWallet.setIdentityDerivation("m/1037171/131071/0407/10011001/96278543/2564789");
+    // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
+    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
         
 
 
@@ -44,14 +47,22 @@ async function main() {
     // AcmeAcademy will be 6385471, random number just for this user
     // the complete derivation of AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
+
+    // Add the two levels for login
+    newUserEpicWallet.addRenewBplusLoginDerivation("AcmeAcademy","233612745/1482382413")
     
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
     connect_to_acme_academy = newUserEpicWallet.getBPlusDerivation("AcmeAcademy");
     user_acme_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
+
     
      
     // AcmeAcademy as an entity does not have different derivations for users 
     newEntityEpicWallet.addCPlusDerivation("User");
+    
+    // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"    
+    newEntityEpicWallet.addRenewCplusLoginDerivation("User","233612745/1482382413");   
+
     user = newEntityEpicWallet.getCPlusDerivation("User");
 
     // when connecting with the user AcmeAcademy will tell the user his public key for the communications with AcmeAcademy
@@ -73,7 +84,9 @@ async function main() {
 
     let acme_login_challenge_signature = await newUserEpicWallet.signLoginChallenge("AcmeAcademy",acme_login_challenge);
 
-    //AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
+    //AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation
+    // login derviation is something the user has to tell the Entity prior to login exchange
+    let login_derivation = connect_to_acme_academy.loginDerivation;
     newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
 
     }
