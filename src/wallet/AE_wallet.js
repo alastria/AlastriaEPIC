@@ -1,4 +1,4 @@
-const AEL = require ("../AE_libray");
+const AEL = require ("../AE_library");
 const AEU = require ("./utils/AE_utils");
 const AEWS = require ("./AE_wallet_storage");
 
