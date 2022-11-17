@@ -1,0 +1,29 @@
+{
+  "name": "alastriaepic",
+  "version": "1.0.0",
+  "description": "Library for HDWallets",
+  "main": "src/AE_library.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/alastria/AlastriaEPIC.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/alastria/AlastriaEPIC/issues"
+  },
+  "homepage": "https://github.com/alastria/AlastriaEPIC#readme",
+  "dependencies": {
+    "base58-js": "^1.0.5",
+    "bip39": "^3.0.4",
+    "ethereum-checksum-address": "^0.0.8",
+    "ethereumjs-wallet": "^1.0.2",
+    "ethers": "^5.7.2"
+  }
+}
