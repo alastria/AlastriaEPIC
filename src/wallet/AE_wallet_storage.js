@@ -2,7 +2,7 @@
 const fs = require('fs');
 
 module.exports = {storeRecoveryWallet, readRecoveryWallet, storeIdentityWallet, readIdentityWallet}
-  
+
 
 function storeRecoveryWallet(mnemonic, mZR_der, SSSSSW_der, MTN_der, recoveryWalletFile) {
    

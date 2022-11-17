@@ -2,7 +2,7 @@
   "name": "alastriaepic",
   "version": "1.0.0",
   "description": "Library for HDWallets",
-  "main": "src/AE_library.js",
+  "main": "src/index.js",
   "directories": {
     "doc": "docs"
   },
@@ -24,6 +24,7 @@
     "bip39": "^3.0.4",
     "ethereum-checksum-address": "^0.0.8",
     "ethereumjs-wallet": "^1.0.2",
-    "ethers": "^5.7.2"
+    "ethers": "^5.7.2",
+    "fs": "^0.0.1-security"
   }
 }
