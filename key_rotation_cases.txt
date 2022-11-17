@@ -7,4 +7,6 @@
 3. Identity derivation rotation.
     The most serious situation. My wallet has been compromised and I need to change my identity wallet, 
     generating the new security levels and the new identity wallet levels
+    Chaning my identity requires new values for SSSSSW in the derivation schema (mZRSSSSSWMTN)
+    Also my old key at mZRSSSSSW and mZRSSSSSWMTN has to be revoked, all the derived mZRSSSSSWB and subsequent keys algo have to be considered revoked
     
