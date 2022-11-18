@@ -1,8 +1,6 @@
 const AEL = require ("../src/AE_library");
-const { toChecksumAddress } = require('ethereum-checksum-address')
 const AEUW = require ("../src/wallet/AE_wallet_user");
 const AEEW = require ("../src/wallet/AE_wallet_entity");
-const AEWS = require ("../src/wallet/AE_wallet_storage");
 
 async function main() {
 
@@ -15,13 +13,13 @@ async function main() {
 
     // const mnemonic = bip39.generateMnemonic();
     // User wallet
-    newUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
-    newUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
+    newUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.json");
+    newUserEpicWallet.setWalletStoreFile("./User_store_wallet.json")
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
 
     // AcmeAcademy also has its own wallet
-    newEntityEpicWallet.setWalletRecoveryFile("./Entity_recovery_wallet,txt");
-    newEntityEpicWallet.setWalletStoreFile("./Entity_store_wallet.txt")
+    newEntityEpicWallet.setWalletRecoveryFile("./Entity_recovery_wallet.json");
+    newEntityEpicWallet.setWalletStoreFile("./Entity_store_wallet.json")
     newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
 
 

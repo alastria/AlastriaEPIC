@@ -11,7 +11,7 @@ class AE_rootWallet {
         this.identity_pattern = "mZRSSSSSWMTN"
         this.identity_derivation = "",
         this.identity_HDWallet = "",
-        this.walletRecoveryFile = "./User_recovery_wallet.txt"
+        this.walletRecoveryFile = "./User_recovery_wallet.json"
     }    
     
     setWalletRecoveryFile (fileStr) {

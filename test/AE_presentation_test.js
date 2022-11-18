@@ -1,7 +1,7 @@
 const AEL = require ("../src/AE_library");
 const { toChecksumAddress } = require('ethereum-checksum-address')
-const AEUW = require ("../src/AE_wallet_user");
-const AEEW = require ("../src/AE_wallet_entity");
+const AEUW = require ("../src/wallet/AE_wallet_user");
+const AEEW = require ("../src/wallet/AE_wallet_entity");
 
 //const bip39 = require("bip39");
 
