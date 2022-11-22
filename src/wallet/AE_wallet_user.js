@@ -1,7 +1,6 @@
 const AEL = require ("../AE_library");
 //AE_rootWallet
 const AEW = require ("./AE_wallet");
-const AEWS = require ("./AE_wallet_storage");
 
 
 class AE_userWallet extends AEW.AE_rootWallet{
@@ -330,12 +329,12 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     }
 
-    readIdentityWallet () {
-        let wallet = AEWS.readIdentityWallet(this.walletStoreFile);
+    readIdentityWallet (walletStoreData) {
+        let wallet = walletStoreData;
 
         this.Bplus_derivation = wallet.Bplus_derivation;
         this.Old_Bplus_derivation = wallet.Old_Bplus_derivation;
-        super.readIdentityWallet();
+        super.readIdentityWallet(walletStoreData);
 
     }
 

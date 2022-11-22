@@ -1,7 +1,5 @@
 const AEL = require ("../AE_library");
 const AEU = require ("../utils/AE_utils");
-const AEWS = require ("./AE_wallet_storage");
-
 
 class AE_rootWallet {
     constructor() {
@@ -10,8 +8,7 @@ class AE_rootWallet {
         this.base_HDWallet = "",
         this.identity_pattern = "mZRSSSSSWMTN"
         this.identity_derivation = "",
-        this.identity_HDWallet = "",
-        this.walletRecoveryFile = "./User_recovery_wallet.json"
+        this.identity_HDWallet = ""
     }    
     
     setWalletRecoveryFile (fileStr) {
@@ -47,12 +44,6 @@ class AE_rootWallet {
         // this.identity_derivation = identityDerivationStr;
         this.identity_HDWallet = AEL.getHDWalletDerivation(this.base_HDWallet, identityDerivationStr);
 
-
-        // Prior to base_HDWallet deletion we must offer an external storage solution for recovery
-        // This external solution should store mnemonic, mZR_der and SSSSSW_der 
-        AEWS.storeRecoveryWallet(this.mnemonic, mZR_der,SSSSSW_der, MTN_der, this.walletRecoveryFile);
-
-
         // base_HDWallet and mnemonic won't be necesary either, it is more secure to delete it        
         delete this.base_HDWallet;
         delete this.mnemonic;
@@ -60,18 +51,18 @@ class AE_rootWallet {
         this.identity_ExtPublicKey = AEL.getPublicExtendedKey(this.identity_HDWallet);
     }
 
-    recoverIdentityWallet ()  {
+    recoverIdentityWallet (walletRecoveryFile)  {
 
-        let identityWallet = AEWS.readRecoveryWallet(this.walletRecoveryFile);
+        let identityWallet = walletRecoveryFile;
         this.setMnemonic(identityWallet.mnemonic);
         this.setIdentityDerivation(identityWallet.mZR_der, identityWallet.SSSSSW_der, identityWallet.MTN_der);
         
     }
     
-    rotateIdentity(NewSSSSSW_der) {
+    rotateIdentity(NewSSSSSW_der, walletRecoveryData) {
 
         // 1st step: recover wallet
-        let identityWallet = AEWS.readRecoveryWallet(this.walletRecoveryFile);
+        let identityWallet = walletRecoveryData;
         this.setMnemonic(identityWallet.mnemonic);
         // 2nd step: apply new SSSSSW derivation
         this.setIdentityDerivation(identityWallet.mZR_der, NewSSSSSW_der, identityWallet.MTN_der);
@@ -94,18 +85,12 @@ class AE_rootWallet {
 
     }
 
-    storeIdentityWallet () {
-
-        AEWS.storeIdentityWallet(this,this.walletStoreFile);
-    }
-
-    readIdentityWallet () {
-        let wallet = AEWS.readIdentityWallet(this.walletStoreFile);
+    readIdentityWallet (walletStoreData) {
+        let wallet = walletStoreData;
 
         this.identity_pattern = wallet.identity_pattern;
         this.identity_derivation = wallet.identity_derivation;
         this.identity_HDWallet = wallet.identity_HDWallet;
-        this.walletRecoveryFile = wallet.walletRecoveryFile;
 
     }
 
