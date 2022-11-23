@@ -61,7 +61,8 @@ async function main() {
     
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
     connect_to_acme_academy = newUserEpicWallet.getBPlusDerivation("AcmeAcademy");
-    user_acme_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
+    //user_acme_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
+    user_acme_relationship_public_key = connect_to_acme_academy.data.own_extendedPublicKey;
 
     
      
@@ -88,17 +89,22 @@ async function main() {
     console.log ("\t3rd test, 2nd step: Login challenge");
     // acme sends me a login challenge, adding its Extended Public Key acting as DID
     var acme_login_challenge = "{'message':'please sign with your Public Key to login','my_publicKey':'replace'}";
-    acme_login_challenge = acme_login_challenge.replace("replace", AEL.getPublicExtendedKey(newEntityEpicWallet.login_HDWallet));
+    let acme_W_wallet = newEntityEpicWallet.getDerivation("W");
+
+
+
+    acme_login_challenge = acme_login_challenge.replace("replace", AEL.getPublicExtendedKey(acme_W_wallet.data.login_HDWallet));
 
     let acme_login_challenge_signature = await newUserEpicWallet.signLoginChallenge("AcmeAcademy",acme_login_challenge);
 
     //AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation
     // login derviation is something the user has to tell the Entity prior to login exchange
-    let login_derivation = connect_to_acme_academy.loginDerivation;
+    //let login_derivation = connect_to_acme_academy.data.loginDerivation;
+    let login_derivation = newEntityEpicWallet.getLoginDerivation("User");
     newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
 
-    newUserEpicWallet.storeIdentityWallet();
-    newUserEpicWallet.readIdentityWallet();
+    //newUserEpicWallet.storeIdentityWallet();
+    //newUserEpicWallet.readIdentityWallet();
     
     }
 

@@ -3,13 +3,15 @@ const AEU = require ("./AE_utils.js");
 const AEWS = require ("./AE_wallet_storage");
 
 
+
 class AE_rootWallet {
     constructor() {
         
         this.mnemonic = "",
         this.base_HDWallet = "",
         this.identity_pattern = "mZRSSSSSWMTN"
-        this.identity_derivation = "",
+        // 20221117 for security reasons identity derivation is no longer stored
+        //this.identity_derivation = "",
         this.identity_HDWallet = "",
         this.walletRecoveryFile = "./User_recovery_wallet.txt"
     }    
@@ -44,20 +46,20 @@ class AE_rootWallet {
         // 20221024 Do not store identityDerivationStr, it is not necessary to use the wallet after the inizialization, this is more secure
         // identity_HDWallet is the only necessary working point
         // IF NECESSARY for recovery Seed + identityDerivationStr will be asked to the user
+        // 20221117 for security reasons identity derivation is no longer stored
         // this.identity_derivation = identityDerivationStr;
         this.identity_HDWallet = AEL.getHDWalletDerivation(this.base_HDWallet, identityDerivationStr);
+        this.identity_ExtPublicKey = AEL.getPublicExtendedKey(this.identity_HDWallet);
 
 
         // Prior to base_HDWallet deletion we must offer an external storage solution for recovery
         // This external solution should store mnemonic, mZR_der and SSSSSW_der 
         AEWS.storeRecoveryWallet(this.mnemonic, mZR_der,SSSSSW_der, MTN_der, this.walletRecoveryFile);
 
-
         // base_HDWallet and mnemonic won't be necesary either, it is more secure to delete it        
         delete this.base_HDWallet;
         delete this.mnemonic;
-
-        this.identity_ExtPublicKey = AEL.getPublicExtendedKey(this.identity_HDWallet);
+        
     }
 
     recoverIdentityWallet ()  {
@@ -79,15 +81,15 @@ class AE_rootWallet {
 
     }
 
-    baseVerifyLoginChallenge (challengeStr, signatureStr, derivationObj){
+    baseVerifyLoginChallenge (challengeStr, signatureStr, other_extendedPublicKey, loginDerivation){
         // YET not working
 
         // AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
         return AEL.verifyMessageByPublicExtendedKey(challengeStr,signatureStr,
                     AEL.getPublicExtendedKey(
                         AEL.getHDWalletDerivation(
-                            AEL.createRO_HDWalletFromPublicExtendedKey(derivationObj.other_extendedPublicKey),
-                            "m/0/"+derivationObj.loginDerivation
+                            AEL.createRO_HDWalletFromPublicExtendedKey(other_extendedPublicKey),
+                            "m/0"+loginDerivation
                         )
                     )       
                 );
@@ -103,7 +105,8 @@ class AE_rootWallet {
         let wallet = AEWS.readIdentityWallet(this.walletStoreFile);
 
         this.identity_pattern = wallet.identity_pattern;
-        this.identity_derivation = wallet.identity_derivation;
+        // 20221117 for security reasons identity derivation is no longer stored
+        // this.identity_derivation = wallet.identity_derivation;
         this.identity_HDWallet = wallet.identity_HDWallet;
         this.walletRecoveryFile = wallet.walletRecoveryFile;
 

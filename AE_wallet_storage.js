@@ -32,6 +32,11 @@ function readRecoveryWallet(recoveryWalletFile) {
 
 function storeIdentityWallet(wallet, identityWalletFile) {
 
+
+    // 20221117 for tree structure, that has circular references parent->descendant and child->parent
+    // we will require a replacer function? https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/JSON/stringify#parameters
+    // and later re-construction of parents
+    
     let identityWalletData  = JSON.stringify(wallet);
     fs.writeFileSync( identityWalletFile, identityWalletData, {mode:0o600});
 
