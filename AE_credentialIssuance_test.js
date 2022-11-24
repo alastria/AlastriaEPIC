@@ -59,7 +59,7 @@ async function main() {
     // third level, this can change to more levels for security against pre-image attacks
     // Also for identification issues each sigle credential should have a different ID
     newUserEpicWallet.setCredentialDerivation("AcmeAcademy","4b860b60-dd5a-4c3c-ab59-f02252b42772","1251679543");
-    subjectPublicKey = newUserEpicWallet.getCredentialExtendedPublicKey("AcmeAcademy","4b860b60-dd5a-4c3c-ab59-f02252b42772","1251679543");
+    subjectPublicKey = newUserEpicWallet.getCredentialExtendedPublicKey("AcmeAcademy","4b860b60-dd5a-4c3c-ab59-f02252b42772");
 
     // The issuer saves the user related info for the credential, just in case is needed in the future (like revocations)
     newEntityEpicWallet.setCredentialInfo("User", "4b860b60-dd5a-4c3c-ab59-f02252b42772", subjectPublicKey);
@@ -70,7 +70,8 @@ async function main() {
 
     // and the user (or anyone) can verify the signature    
     // it requires knowing the Public Key, that would be stored in a public shared system, like an smartContact
-    AEL.verifyMessageByPublicExtendedKey(credentialText,credentialSignature,newEntityEpicWallet.credencialIssuance_extPublicKey);
+    let peK = AEL.getPrivateExtendedKey(newEntityEpicWallet.getHDWalletByPurpose("credencialIssuance_HDWallet"));
+    AEL.verifyMessageByPublicExtendedKey(credentialText,credentialSignature,peK);
  }
 
 main ();

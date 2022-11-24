@@ -13,7 +13,7 @@ class AE_rootWallet {
         // 20221117 for security reasons identity derivation is no longer stored
         //this.identity_derivation = "",
         this.identity_HDWallet = "",
-        this.walletRecoveryFile = "./User_recovery_wallet.txt"
+        this.walletRecoveryFile = "./Recovery_wallet.txt"
     }    
     
     setWalletRecoveryFile (fileStr) {

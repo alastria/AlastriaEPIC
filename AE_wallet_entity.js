@@ -1,24 +1,19 @@
 const AEL = require ("./AE_libray");
 const AEW = require ("./AE_wallet");
 const AEA = require("./AE_Alastree");
+const { id } = require("ethers/lib/utils");
 
 
 class AE_entityWallet extends AEW.AE_rootWallet{
     constructor() {
         super();        
 
-        // C_derivation fields:
-        // entity: the entity for which this derivation is intented
-        // C_derivation: the selected derivation
-        // own_HDWallet: pre-generated HDWallet for relationships with that entity
-        // own_extendedPublicKey: pre-generated public extended key of this entity with that entity
-        this.Cplus_derivation = [];
-
         // 20221122 new DTree data structure
         let data ={};
         data.derivationName = "m";
         data.path = "m";        
         this.DTree = new AEA.AE_Alastree(data);
+        this.walletRecoveryFile = "./Entity_Recovery_wallet.txt"
     }
     
 
@@ -144,15 +139,15 @@ class AE_entityWallet extends AEW.AE_rootWallet{
     {
 
         let localCplus = this.getCPlusDerivation(userStr);
-        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
-
+        // let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+        
         let credential_meta_info = {};
         credential_meta_info.credentialID = credentialID;
         credential_meta_info.userExtPubK = userExtPubK;
 
-        localCplus.credentials.push(credential_meta_info);
-        
-        this.Cplus_derivation[localCplusIdx] = localCplus;
+        localCplus.data.credentials = [];
+        localCplus.data.credentials.push(credential_meta_info);
+
     }
 
     async signLoginChallenge (entityStr, signLoginChallenge)
@@ -173,15 +168,29 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
     }
 
+    getHDWalletByPurpose(purpose) {
+        let identityW = this.getDerivation("W");
+        let fIdentityW = identityW;
+        if (Array.isArray(identityW)) {
+            fIdentityW = identityW.filter(x => x.data.validStatus == true);
+        }        
+                
+        let peK = fIdentityW.data[purpose];
+        return peK;
+
+    }
+
     async signCredential (credentialStr) {
         // When a company signs a credential it is independent of the subject that credential is created for
         // this makes easier to verify the credential signtature by the receiver of that credential
         // DISCUSS
+        
+        let peK = this.getHDWalletByPurpose("credencialIssuance_HDWallet");
 
         let signature =  AEL.signMessage(
                             AEL.getEthereumWalletFromPrivateKey(
                                 AEL.getPrivateKeyFromExtended(
-                                    AEL.getPrivateExtendedKey(this.credencialIssuance_HDWallet)
+                                    AEL.getPrivateExtendedKey(peK)
                                 )
                             ),
                             credentialStr);
