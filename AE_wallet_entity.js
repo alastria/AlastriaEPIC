@@ -200,7 +200,7 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
     verifyPresentationSignature(userStr,presentation_derivationStr, credential_setStr, credential_setSignatureStr) {
         let localCplus = this.getCPlusDerivation(userStr);
-        let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(localCplus.other_extendedPublicKey);
+        let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(localCplus.data.other_extendedPublicKey);
         let user_presentation_wallet = AEL.getHDWalletDerivation(user_Cplus_Wallet,presentation_derivationStr);
         return AEL.verifyMessageByPublicExtendedKey(credential_setStr,credential_setSignatureStr,AEL.getPublicExtendedKey(user_presentation_wallet));
 
@@ -239,6 +239,27 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
         return result;
 
+    }
+
+
+    getPurposePublicKey(purpose)
+    {
+        let fIdentityW;
+        if (purpose == "identity_ExtPublicKey") {
+            return this.identity_ExtPublicKey;
+
+        }
+        else
+        {
+
+            let identityW = this.getDerivation("W");
+            fIdentityW = identityW;
+            if (Array.isArray(identityW)) {
+                fIdentityW = identityW.filter(x => x.data.validStatus == true);
+            }
+        }   
+
+        return fIdentityW.data[purpose];
     }
 }
 

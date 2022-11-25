@@ -46,13 +46,17 @@ async function main() {
       '}';
     
     // Replace in the credential the ISSUER with Issuer's ExtendedPublicKey
-    credentialText = credentialText.replace("$ISSUER",newEntityEpicWallet.credencialIssuance_extPublicKey);
+    let purpose = "credencialIssuance_extPublicKey";
+    let puK = newEntityEpicWallet.getPurposePublicKey(purpose);
+    credentialText = credentialText.replace("$ISSUER",puK);
 
 
     // Replace in the credential the SCHOOL with the School's ExtentendedPublicKey
     // in this case Issuer = School but Issuer's ExtendedPublicKey is the credencialIssuance
     // and the school is the base, this is atipical     
-    credentialText = credentialText.replace("$SCHOOL",newEntityEpicWallet.identity_ExtPublicKey);
+    purpose = "identity_ExtPublicKey";
+    puK = newEntityEpicWallet.getPurposePublicKey(purpose);
+    credentialText = credentialText.replace("$SCHOOL",puK);
    
     // The credential is issued to a subject, we must use the subject DID or ExtendedPublicKey in the subject
     // To get the ExtendedPublicKey the subject should create a three level derivation: he chooses the first to levels and the entity tells the user the

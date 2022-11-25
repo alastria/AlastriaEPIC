@@ -38,11 +38,16 @@ async function main() {
    
     
     // Replace in the credential the ISSUER with Issuer's ExtendedPublicKey
-    baseCredentialText = baseCredentialText.replace("$ISSUER",newEntityEpicWallet.credencialIssuance_extPublicKey);
+    let purpose = "credencialIssuance_extPublicKey";
+    let puK = newEntityEpicWallet.getPurposePublicKey(purpose);
+    baseCredentialText = baseCredentialText.replace("$ISSUER",puK);
     
     // Replace in the credential the SCHOOL with the School's ExtentendedPublicKey
     // in this case Issuer = School but Issuer's ExtendedPublicKey is the credencialIssuance
     // and the school is the base, this is atipical     
+
+    purpose = "identity_ExtPublicKey";
+    puK = newEntityEpicWallet.getPurposePublicKey(purpose);
     credential_1_Text = baseCredentialText.replace("$SCHOOL",newEntityEpicWallet.identity_ExtPublicKey);
 
     credential_1_Text = credential_1_Text.replace("$ID","87341868-10b0-4a35-971c-b26974b89cb3");
@@ -84,12 +89,12 @@ async function main() {
     newSPWallet.setIdentityDerivation("m/1037171/415581744","/1687453124/2141050260/1229666004/344302187/2118467628/304801079","/131071/0407/10011001");
 
     // Exchange between user and service provider
-    newSPWallet.addCPlusDerivation("User","2112332019");    
+    newSPWallet.addCPlusDerivation("User");    
     newUserEpicWallet.addBPlusDerivation("ServiceProvider","956778396");
     
     // when connecting with ServiceProvider the user will tell ServiceProvider his public key for the communications with ServiceProvider
     connect_to_service_provider = newUserEpicWallet.getBPlusDerivation("ServiceProvider");
-    user_sp_relationship_public_key = connect_to_service_provider.own_extendedPublicKey;
+    user_sp_relationship_public_key = connect_to_service_provider.data.own_extendedPublicKey;
     
 
     // when connecting with the user ServiceProvider will tell the user his public key for the communications with ServiceProvider
@@ -99,8 +104,15 @@ async function main() {
     //sp_user_relationship_public_key = connect_to_user.own_extendedPublicKey;
     // Instead Entity has to send (or User has to query a PKI/Smartcontrac) the three Entity Keys
 
-    // Update wallets with exchanged publicKeys        
-    newUserEpicWallet.updateBPlusDerivationExtendedKeys("ServiceProvider", newSPWallet.login_extPublicKey, newSPWallet.credencialIssuance_extPublicKey, newSPWallet.presentations_extPublicKey);
+    // Update wallets with exchanged publicKeys     
+    purpose = "login_extPublicKey";
+    let login_puK = newSPWallet.getPurposePublicKey(purpose);
+    purpose = "credencialIssuance_extPublicKey";
+    let cred_puK = newSPWallet.getPurposePublicKey(purpose);
+    purpose = "presentations_extPublicKey";
+    let pres_puK = newSPWallet.getPurposePublicKey(purpose);
+
+    newUserEpicWallet.updateBPlusDerivationExtendedKeys("ServiceProvider", login_puK, cred_puK, pres_puK);
     newSPWallet.updateCPlusDerivationExtendedKeys("User",user_sp_relationship_public_key);
 
     // Now the user will sign the Presentation with a /2/derivation/derivation/derivation
@@ -110,11 +122,10 @@ async function main() {
     newUserEpicWallet.setPresentationDerivation("ServiceProvider","7c3d4c06-891d-4bdf-aa72-f702aa2e66bc","47807");
     
     subjectPublicKey = newUserEpicWallet.getPresentationExtendedPublicKey("ServiceProvider","7c3d4c06-891d-4bdf-aa72-f702aa2e66bc");
-
+   
     credential_setSignature = await newUserEpicWallet.signPresentation("ServiceProvider", "7c3d4c06-891d-4bdf-aa72-f702aa2e66bc", credential_set);
 
-    // From the registration PubK to the derivation of the presentation
-    presentation_derivation = newUserEpicWallet.getPresentationDerivation("ServiceProvider","7c3d4c06-891d-4bdf-aa72-f702aa2e66bc");
+
     
     // Need to communicate the identity Extended PubK and the derivations to the credentials
     user_identity_pubK = newUserEpicWallet.identity_ExtPublicKey;
@@ -129,6 +140,9 @@ async function main() {
     // - send the SP the derivation of the presentation *stored in THIS VARIABLE* presentation_derivation
     // - Calculate PresentationPubk form the Pubk he registered for the user    
     // - verify signature of the presentation with the PresentationPubK
+
+    // From the registration PubK to the derivation of the presentation
+    presentation_derivation = newUserEpicWallet.getPresentationDerivation("ServiceProvider","7c3d4c06-891d-4bdf-aa72-f702aa2e66bc");
     newSPWallet.verifyPresentationSignature("User",presentation_derivation,credential_set,credential_setSignature)
 
     // - send the SP my IdentityPubK and the derivation to the PubK registered for the user *stored in THIS VARIABLE* user_identity_pubK  
