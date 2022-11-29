@@ -68,12 +68,25 @@ class AE_userWallet extends AEW.AE_rootWallet{
         child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
     }
 
+    getBPlusLoginDerivation(entityStr) {
+        let user = this.getBPlusDerivation(entityStr);
+        let derivationNodes = user.findChildByData("derivationName","D");
+        let derivations = derivationNodes.map(x => x.data.derivationValue);
+        let loginDer = derivations.reduce( (accumulator, currentValue) => accumulator + "/" + currentValue, "");
+        // remove first character if "/"
+        if (loginDer.charAt(0) == "/" )
+        {
+            return loginDer.substring(1);
+        }
+        return loginDer;
 
+    }
 
     addRenewBplusLoginDerivation(entityStr, loginDerivationStr) {
 
         // works for adding or renewing, as we won't keep the old login derivation once updated
         let localBplus = this.getBPlusDerivation(entityStr);
+       
 
         // This updates directly the user wallet
         localBplus.data.loginDerivation = loginDerivationStr;
@@ -84,7 +97,23 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
         let data = {};   
 
-        let child = this.findNodeByDerivation("C","0");
+        // Cogemos la C/0 que cuelgue de Entity (localBPlus) no cualquiera
+        let child;
+        // child = this.findNodeByDerivation("C","0");        
+
+        let wTree = localBplus.findChildByData("derivationName","C");
+        if (wTree.length == 0) {
+            child = wTree;        
+        }
+        let fTree = wTree.filter(x => (x.data.derivationValue == "0" && x.data.validStatus == true));
+        if (Array.isArray(fTree)) {
+            child = fTree[0];
+        }
+        else {
+            child = fTree;
+        }
+ 
+
         if ((typeof child == 'undefined') || child.length == 0) {
             // Add one child for "0" derivation, that holds login
                      
@@ -95,6 +124,15 @@ class AE_userWallet extends AEW.AE_rootWallet{
             child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
 
         }      
+        else {
+            // Find the other "D" derivations and set to validStatus = false
+            let invalidate = child.findChildByData("derivationName","D");
+            invalidate.forEach(element => {
+                element.data.validStatus = false;
+                
+            });
+
+        }
 
         // Add some levels for login derivation for that entity
         let derivations = loginDerivationStr.split("/");
@@ -112,32 +150,57 @@ class AE_userWallet extends AEW.AE_rootWallet{
     renewBPlusDerivation (entityStr, newDerivationStr) {
         let localBplus = this.getBPlusDerivation(entityStr);
         
-        let oldDerivation = localBplus.B_derivation;        
-        
+        let oldDerivation = localBplus.data.derivationValue;        
+        // Invalidate this entity derivation
         localBplus.data.validStatus = false;
+
+        // TODO: invalidate all login, credentials and presentations from this entity
+        // Find the other "D" adn "E" derivations and set to validStatus = false
+        let invalidate = localBplus.findChildByData("derivationName","D");
+        invalidate.forEach(element => {
+            element.data.validStatus = false;
+            
+        });
+
+        invalidate = localBplus.findChildByData("derivationName","E");
+        invalidate.forEach(element => {
+            element.data.validStatus = false;
+            
+        });
+
         this.addBPlusDerivation(entityStr,newDerivationStr);
 
         return oldDerivation;
 
     }
 
-    getOldCredentials(entityStr) {
-        let localOldBplus = this.getOldBPlusDerivation(entityStr);
-        //let localOldBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
-        
+    getLeafData(entityStr) {
+        let localBPlus = this.getBPlusDerivation(entityStr);
+        let leafs = localBPlus.findChildByData();
+
+    }
+
+    getCredentials(entityStr) {
+
+
+
+    }
+
+    getOldCredentials(entityStr, oldDerivation) {
+        let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
+                
         return localOldBplus.credential_derivations;
     }
 
-    getOldPresentations(entityStr) {
-        let localOldBplus = this.getOldBPlusDerivation(entityStr);
-        //let localOldBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
+    getOldPresentations(entityStr, oldDerivation) {
+        let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
         
         return localOldBplus.presentation_derivations;
     }
 
 
-    getBPlusDerivation (entityStr) {        
-        //return this.Bplus_derivation.find(element => element.entity === entityStr);
+    getBPlusDerivation (entityStr, oldDerivation) {        
+        
         let wTree = this.DTree.findChildByData("derivationName","B");
         let fTree = wTree.filter( nodo => nodo.data.entity == entityStr );
         return fTree[0];
@@ -145,7 +208,11 @@ class AE_userWallet extends AEW.AE_rootWallet{
     }
 
     getOldBPlusDerivation(entityStr) {        
-        return this.Old_Bplus_derivation.find(element => element.entity === entityStr);
+
+        let wTree = this.DTree.findChildByData("derivationName","B");
+        let fTree = wTree.filter( nodo => (nodo.data.entity == entityStr && nodo.data.derivationValue == oldDerivation ) );
+        return fTree[0];
+        
     }
 
     updateBPlusDerivationExtendedKeys (entityStr, other_ext_login_key, other_ext_cred_key, other_ext_pres_key) {

@@ -68,9 +68,10 @@ async function main() {
      
     // AcmeAcademy as an entity does not have different derivations for users 
     newEntityEpicWallet.addCPlusDerivation("User");
+
     
-    // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"    
-    newEntityEpicWallet.addRenewCplusLoginDerivation("User","233612745/1482382413");   
+    // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"        
+    newEntityEpicWallet.addRenewCplusLoginDerivation("User",newUserEpicWallet.getBPlusLoginDerivation("AcmeAcademy"));   
 
     user = newEntityEpicWallet.getCPlusDerivation("User");
 

@@ -100,7 +100,7 @@ class AE_entityWallet extends AEW.AE_rootWallet{
     }
 
     addRenewCplusLoginDerivation(userStr, loginDerivationStr) {
-        // works for adding or renewing, as we won't keep the old login derivation once updated
+        // works for adding or renewing        
         let localCplus = this.getDerivation("C");
         let child;
         // Check is it is an array to see the userStr
@@ -112,6 +112,15 @@ class AE_entityWallet extends AEW.AE_rootWallet{
                 child = localCplus;
             }
         }
+
+        // TODO: revoke older derivations for this userStr
+        // Find the other "D" derivations and set to validStatus = false
+        let invalidate = child.findChildByData("derivationName","D");
+        invalidate.forEach(element => {
+            element.data.validStatus = false;
+            
+        });
+
         let data = {};
         let derivations = loginDerivationStr.split("/");
         derivations.forEach(element => {
