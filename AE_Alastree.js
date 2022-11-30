@@ -27,11 +27,12 @@ class AE_Alastree {
     
     }
 
-    findAllChild() {
+    findAllDescendants() {
       let nodes = [];
+      nodes.push(this);
       for( let i = 0; i < this.descendants.length; i++)
       {
-        let rNodes = this.descendants[i].findChildByData(property, propertyValue);
+        let rNodes = this.descendants[i].findAllDescendants();
         nodes.push(...rNodes);
       }
       return nodes;    

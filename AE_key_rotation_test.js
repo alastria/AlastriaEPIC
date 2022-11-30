@@ -92,8 +92,8 @@ async function main() {
     // Would Credentials be "invalidated" with a main identity key rotation?
     // -> That would require multiple invalidations either at key registry level or credential level
     // THIS IS STILL UNDER DISCUSSION
-    
-
+    let allDescendants = newUserEpicWallet.DTree.findAllDescendants();
+    console("descendant count:", allDescendants.length)
 
 
 }

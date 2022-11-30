@@ -104,8 +104,12 @@ async function main() {
     let login_derivation = newEntityEpicWallet.getLoginDerivation("User");
     newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
 
-    //newUserEpicWallet.storeIdentityWallet();
-    //newUserEpicWallet.readIdentityWallet();
+    newUserEpicWallet.storeIdentityWallet();
+
+    let copyUserEpicWallet = new AEUW.AE_userWallet();
+    copyUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
+    copyUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
+    copyUserEpicWallet.readIdentityWallet();
     
     }
 

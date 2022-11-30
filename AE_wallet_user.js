@@ -495,8 +495,6 @@ class AE_userWallet extends AEW.AE_rootWallet{
     readIdentityWallet () {
         let wallet = AEWS.readIdentityWallet(this.walletStoreFile);
 
-        this.Bplus_derivation = wallet.Bplus_derivation;
-        this.Old_Bplus_derivation = wallet.Old_Bplus_derivation;
         super.readIdentityWallet();
 
     }
