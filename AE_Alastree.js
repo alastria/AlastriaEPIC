@@ -27,6 +27,34 @@ class AE_Alastree {
     
     }
 
+    findAllChild() {
+      let nodes = [];
+      for( let i = 0; i < this.descendants.length; i++)
+      {
+        let rNodes = this.descendants[i].findChildByData(property, propertyValue);
+        nodes.push(...rNodes);
+      }
+      return nodes;    
+    
+    }
+
+    findAllLeafs() {
+      let nodes = [];
+
+      if (this.descendants.length == 0) {
+        nodes.push(this);
+      }
+      else
+      {
+        this.descendants.forEach(element => {
+          let rNodes = element.findAllLeafs();
+          nodes.push(...rNodes);
+        });
+      }
+
+      return nodes;
+    }
+
 }
 
 

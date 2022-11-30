@@ -3,6 +3,7 @@ const AEL = require ("./AE_libray");
 const AEW = require ("./AE_wallet");
 const AEWS = require ("./AE_wallet_storage");
 const AEA = require("./AE_Alastree");
+const AEU = require("./AE_utils");
 
 
 class AE_userWallet extends AEW.AE_rootWallet{
@@ -53,6 +54,10 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     addBPlusDerivation (entityStr, derivationStr) { 
 
+        if ( !AEU.check_require("id_derivation",derivationStr)) {
+            throw 'Invalid derivation';
+        }
+
         let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + derivationStr);
         let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
         
@@ -84,6 +89,9 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     addRenewBplusLoginDerivation(entityStr, loginDerivationStr) {
 
+        if ( !AEU.check_require("id_derivation",loginDerivationStr)) {
+            throw 'Invalid derivation';
+        }
         // works for adding or renewing, as we won't keep the old login derivation once updated
         let localBplus = this.getBPlusDerivation(entityStr);
        
@@ -148,13 +156,18 @@ class AE_userWallet extends AEW.AE_rootWallet{
     }
 
     renewBPlusDerivation (entityStr, newDerivationStr) {
+
+
+        if ( !AEU.check_require("id_derivation",newDerivationStr)) {
+            throw 'Invalid derivation';
+        }
+
         let localBplus = this.getBPlusDerivation(entityStr);
         
         let oldDerivation = localBplus.data.derivationValue;        
         // Invalidate this entity derivation
         localBplus.data.validStatus = false;
 
-        // TODO: invalidate all login, credentials and presentations from this entity
         // Find the other "D" adn "E" derivations and set to validStatus = false
         let invalidate = localBplus.findChildByData("derivationName","D");
         invalidate.forEach(element => {
@@ -176,34 +189,90 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     getLeafData(entityStr) {
         let localBPlus = this.getBPlusDerivation(entityStr);
-        let leafs = localBPlus.findChildByData();
+        let findAllChild = localBPlus.findAllLeafs();        
 
     }
 
     getCredentials(entityStr) {
+        let leafs = this.getLeafData(entityStr);
+        let fLeafs = [];
+        if (Array.isArray(leafs))
+        {
+            fLeafs = leafs.filter( x => (x.data.objectKind == "Credential"))            
+        }
+        else {
+            if (leafs.data.objectKind == "Credential") {
+                fLeafs.push(leafs);                
+            }
+        }
 
+        return fLeafs;        
 
+    }
 
+    getPresentations(entityStr) {
+        let leafs = this.getLeafData(entityStr);
+        let fLeafs = [];
+        if (Array.isArray(leafs))
+        {
+            fLeafs = leafs.filter( x => (x.data.objectKind == "Presentation"))            
+        }
+        else {
+            if (leafs.data.objectKind == "Presentation") {
+                fLeafs.push(leafs);                
+            }
+        }
+        return fLeafs;        
     }
 
     getOldCredentials(entityStr, oldDerivation) {
         let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
-                
-        return localOldBplus.credential_derivations;
+        let leafs = localOldBplus.findAllLeafs(entityStr);
+        let fLeafs = [];
+        if (Array.isArray(leafs))
+        {
+            fLeafs = leafs.filter( x => (x.data.objectKind == "Credential"))            
+        }
+        else {
+            if (leafs.data.objectKind == "Credential") {
+                fLeafs.push(leafs);                
+            }
+        }
+
+        return fLeafs;    
     }
 
     getOldPresentations(entityStr, oldDerivation) {
         let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
-        
-        return localOldBplus.presentation_derivations;
+        let leafs = localOldBplus.findAllLeafs(entityStr);
+        let fLeafs = [];
+        if (Array.isArray(leafs))
+        {
+            fLeafs = leafs.filter( x => (x.data.objectKind == "Presentation"))            
+        }
+        else {
+            if (leafs.data.objectKind == "Presentation") {
+                fLeafs.push(leafs);                
+            }
+        }
+
+        return fLeafs;  
     }
 
 
-    getBPlusDerivation (entityStr, oldDerivation) {        
+    getBPlusDerivation (entityStr, oldDerivation = "none") {        
         
+        let vTree = [];
         let wTree = this.DTree.findChildByData("derivationName","B");
         let fTree = wTree.filter( nodo => nodo.data.entity == entityStr );
-        return fTree[0];
+        if (oldDerivation == "none"){
+            vTree = fTree.filter( x => (x.data.validStatus == true))
+        }
+        else {
+            vTree = fTree.filter( x => (x.data.derivationValue == oldDerivation))
+        }
+        
+        return vTree[0];
 
     }
 
@@ -250,6 +319,12 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     setObjectDerivation(entityStr,objectID, entityObjectDerivation, objectKind)
     {
+
+
+        if ( !AEU.check_require("id_derivation",entityObjectDerivation)) {
+            throw 'Invalid derivation';
+        }
+
         //      TODO: Maybe add credential HASH?
         // Pending if the wallet should store the presentation itself or if it should be an storage helper
         let localBplus = this.getBPlusDerivation(entityStr);
@@ -315,6 +390,11 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     setCredentialDerivation(entityStr,credentialID,entityCredDerivation)
     {
+
+        if ( !AEU.check_require("id_derivation",entityCredDerivation)) {
+            throw 'Invalid derivation';
+        }
+
         return this.setObjectDerivation(entityStr,credentialID,entityCredDerivation, "Credential");
     }
 
@@ -358,6 +438,10 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     setPresentationDerivation (entityStr,presentationID,entityPresDerivation) {
 
+        if ( !AEU.check_require("id_derivation",entityPresDerivation)) {
+            throw 'Invalid derivation';
+        }
+
         return this.setObjectDerivation(entityStr,presentationID,entityPresDerivation, "Presentation");
 
     }
@@ -382,9 +466,6 @@ class AE_userWallet extends AEW.AE_rootWallet{
         let derivacion = wholePath.substring(0,primer)+wholePath.substring(segundo);
         return derivacion;
 
-        return this.getObjectDerivation(entityStr, presentationID);
-
-        
 
     }
 

@@ -57,7 +57,8 @@ async function main() {
     // UserWallet changes BPlusDerivation for that entity
     oldDerivation = newUserEpicWallet.renewBPlusDerivation("AcmeAcademy", "14876572");
 
-    // TODO: assign new login derivation
+    //Assign new login derivation, old levels discarded
+    newUserEpicWallet.addRenewBplusLoginDerivation("AcmeAcademy","32814639/52854179")
 
     console.log("Old derivation:", oldDerivation);
     console.log("New derivation:", "14876572");
