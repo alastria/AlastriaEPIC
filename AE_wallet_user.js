@@ -1,7 +1,6 @@
 const AEL = require ("./AE_libray");
 //AE_rootWallet
 const AEW = require ("./AE_wallet");
-const AEWS = require ("./AE_wallet_storage");
 const AEA = require("./AE_Alastree");
 const AEU = require("./AE_utils");
 
@@ -10,12 +9,9 @@ class AE_userWallet extends AEW.AE_rootWallet{
     constructor() {
         super();
 
-        // 20221122 new tree data structure                
-        // DTree should start at level "W" so it can hold "revoked identities"
         let data ={};
         data.derivationName = "m";
-        this.DTree = new AEA.AE_Alastree(data);
-        this.walletRecoveryFile = "./User_recovery_wallet.json"
+        this.DTree = new AEA.AE_Alastree(data);        
 
     }
 
@@ -504,8 +500,8 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     }
 
-    readIdentityWallet () {
-        let wallet = super.readIdentityWallet();
+    readIdentityWallet (wallet) {
+        // let wallet = super.readIdentityWallet();
         // As "this" object cannot be assigned we do need to reconstruct it
         this.DTree = wallet.DTree;
         this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;        
@@ -516,24 +512,63 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     }
 
-    readRecoveryWallet () {
-        let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
+    readRecoveryWallet (wallet) {
+        //let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
         // As "this" object cannot be assigned we do need to reconstruct it
         this.setMnemonic(wallet.mnemonic);
         this.setIdentityDerivation(wallet.mZR_der,wallet.SSSSSW_der,wallet.MTN_der);
     }
 
-    generateNewIdentity( SSSSSW_der = "") {
-        let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
+    generateNewIdentity(old_wallet, SSSSSW_der = "") {
+        
         // As "this" object cannot be assigned we do need to reconstruct it
-        this.setMnemonic(wallet.mnemonic);
+        this.setMnemonic(old_wallet.mnemonic);
         if ( SSSSSW_der == "")
         {
             SSSSSW_der = "/"+ AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation() + "/" +AEL.getRandomIntDerivation() + "/" +AEL.getRandomIntDerivation();
 
         }        
-        this.setIdentityDerivation(wallet.mZR_der,SSSSSW_der,wallet.MTN_der);
+        this.setIdentityDerivation(old_wallet.mZR_der,SSSSSW_der,old_wallet.MTN_der);
 
+    }
+
+
+    getEntities() {
+        return this.DTree.findChildByData("derivationName","B");
+    }
+
+    revokeCurrentWallet() {
+        let wNode = this.findNodeByDerivation("W");
+        let descendants = wNode.findAllDescendants();
+        descendants.forEach(element => {
+            element.data.validStatus = false;
+        });
+        wNode.validStatus = false;
+        // TODO: Listar todo lo revocado: Credenciales, Presentaciones y Login
+        let entities = this.getEntities();
+        // Credentials in revoked identity
+        let credentials = [];
+        // Presentations in revoked identity
+        let presentations = [];
+        let uCred = [];
+        let fCred = [];        
+        let fPres = [];
+        
+        entities.forEach(element => {
+            uCred = element.findChildByData("derivationName","E");
+            fCred = uCred.filter( x => ( x.data.objectKind == "Credential"))
+            fPres = uCred.filter( x => ( x.data.objectKind == "Presentation"))
+            credentials.push(...fCred);
+            presentations.push(...fPres);
+        });
+
+        let revocations = {};
+        revocations.entities = entities;
+        revocations.credentials = credentials;
+        revocations.presentations = presentations;
+
+        return revocations;
+    
     }
 
 }

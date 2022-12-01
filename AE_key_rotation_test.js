@@ -2,6 +2,7 @@ const AEL = require ("./AE_libray");
 const { toChecksumAddress } = require('ethereum-checksum-address')
 const AEUW = require ("./AE_wallet_user");
 const AEEW = require ("./AE_wallet_entity");
+const AEWS = require ("./AE_wallet_storage");
 
 async function main() {
 
@@ -15,6 +16,14 @@ async function main() {
     // mZR_der, SSSSSW_der, MTN_der
     //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
     newUserEpicWallet.setIdentityDerivation("m/1037171/94367","/36514417/1996133064/444811548/120132567/3152038/848215","/131071/0407/10011001");
+
+    AEWS.storeRecoveryWallet("used rebel ahead harvest journey steak hub core opera wrong rate loan",
+                            "m/1037171/94367",
+                            "/36514417/1996133064/444811548/120132567/3152038/848215", 
+                            "/131071/0407/10011001", 
+                            "./User_recovery_wallet.json");
+
+
     newUserEpicWallet.addBPlusDerivation("AcmeAcademy","6385471");
 
     let newEntityEpicWallet = new AEEW.AE_entityWallet();    
@@ -85,14 +94,15 @@ async function main() {
 
     console.log("4th test: CASE 2: user rotates his main identity key");
 
-    let wNode = newUserEpicWallet.findNodeByDerivation("W");
-    let descendants = wNode.findAllDescendants();
-    descendants.forEach(element => {
-        element.data.validStatus = false;
-    });
-    wNode.validStatus = false;
-    newUserEpicWallet.generateNewIdentity("/1698616024/1400660049/59846251/1797304183/58448343/1152581465");
-    // TODO: Listar todo lo revocado: Credenciales, Presentaciones y Login
+    let revocations = newUserEpicWallet.revokeCurrentWallet();
+
+    let storedRecoveryWallet = AEWS.readRecoveryWallet("./User_recovery_wallet.json");
+    newUserEpicWallet.generateNewIdentity(storedRecoveryWallet, "/1698616024/1400660049/59846251/1797304183/58448343/1152581465"); 
+    AEWS.storeRecoveryWallet("used rebel ahead harvest journey steak hub core opera wrong rate loan",
+                            "m/1037171/94367",
+                            "/1698616024/1400660049/59846251/1797304183/58448343/1152581465", 
+                            "/131071/0407/10011001", 
+                            "./User_recovery_wallet.json");
 
     console.log("COMPLETADO");
 

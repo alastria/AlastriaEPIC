@@ -15,13 +15,14 @@ async function main() {
 
     // const mnemonic = bip39.generateMnemonic();
     // User wallet
-    newUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
-    newUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
+    //newUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
+    //newUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan");
+    
 
     // AcmeAcademy also has its own wallet
-    newEntityEpicWallet.setWalletRecoveryFile("./Entity_recovery_wallet,txt");
-    newEntityEpicWallet.setWalletStoreFile("./Entity_store_wallet.txt")
+    //newEntityEpicWallet.setWalletRecoveryFile("./Entity_recovery_wallet,txt");
+    //newEntityEpicWallet.setWalletStoreFile("./Entity_store_wallet.txt")
     newEntityEpicWallet.setMnemonic("manage wage hill kitten joke buyer topic focus observe valid december oyster");
 
 
@@ -38,11 +39,21 @@ async function main() {
     // mZR_der, SSSSSW_der, MTN_der
     //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/407/10011001");
     newUserEpicWallet.setIdentityDerivation("m/1037171/94367","/36514417/1996133064/444811548/120132567/3152038/848215","/131071/407/10011001");
+    AEWS.storeRecoveryWallet("used rebel ahead harvest journey steak hub core opera wrong rate loan",
+                            "m/1037171/94367",
+                            "/36514417/1996133064/444811548/120132567/3152038/848215", 
+                            "/131071/0407/10011001", 
+                            "./User_recovery_wallet.json");
 
   
     // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
     //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/407/10011001");
     newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766","/1152697438/415781155/342717333/307131644/1042827527/324692716","/131071/407/10011001");
+    AEWS.storeRecoveryWallet("manage wage hill kitten joke buyer topic focus observe valid december oyster",
+                            "m/1037171/94367",
+                            "/1152697438/415781155/342717333/307131644/1042827527/324692716", 
+                            "/131071/0407/10011001", 
+                            "./Entity_recovery_wallet.json");
         
 
 
@@ -103,18 +114,20 @@ async function main() {
     //let login_derivation = connect_to_acme_academy.data.loginDerivation;
     let login_derivation = newEntityEpicWallet.getLoginDerivation("User");
     newEntityEpicWallet.verifyLoginChallenge("User",acme_login_challenge,acme_login_challenge_signature);
+    
+    
+    AEWS.storeIdentityWallet(newUserEpicWallet,"./User_store_wallet.json");
 
-    newUserEpicWallet.storeIdentityWallet();
 
     let copyUserEpicWallet = new AEUW.AE_userWallet();
-    copyUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
-    copyUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
-    copyUserEpicWallet.readIdentityWallet();
+    let userIdentityWallet = AEWS.readIdentityWallet("./User_store_wallet.json");
+    copyUserEpicWallet.readIdentityWallet(userIdentityWallet);
 
-    let recoveredUserEpicWallet = new AEUW.AE_userWallet();
-    recoveredUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
-    recoveredUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
-    recoveredUserEpicWallet.readRecoveryWallet();
+    let recoveredUserEpicWallet = new AEUW.AE_userWallet();    
+    let otherWallet = AEWS.readRecoveryWallet("./User_recovery_wallet.json");
+    recoveredUserEpicWallet.readRecoveryWallet(otherWallet);
+    recoveredUserEpicWallet.readIdentityWallet(userIdentityWallet);
+    
     
     }
 
