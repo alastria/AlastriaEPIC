@@ -15,7 +15,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
         let data ={};
         data.derivationName = "m";
         this.DTree = new AEA.AE_Alastree(data);
-        this.walletRecoveryFile = "./User_recovery_wallet.txt"
+        this.walletRecoveryFile = "./User_recovery_wallet.json"
 
     }
 

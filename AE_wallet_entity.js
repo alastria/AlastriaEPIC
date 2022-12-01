@@ -13,7 +13,7 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         data.derivationName = "m";
         data.path = "m";        
         this.DTree = new AEA.AE_Alastree(data);
-        this.walletRecoveryFile = "./Entity_Recovery_wallet.txt"
+        this.walletRecoveryFile = "./Entity_recovery_wallet.json"
     }
     
 
