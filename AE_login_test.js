@@ -36,13 +36,13 @@ async function main() {
     // N: Network Name: 10011001
     // Full derivation: "m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001"
     // mZR_der, SSSSSW_der, MTN_der
-    //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
-    newUserEpicWallet.setIdentityDerivation("m/1037171/94367","/36514417/1996133064/444811548/120132567/3152038/848215","/131071/0407/10011001");
+    //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/407/10011001");
+    newUserEpicWallet.setIdentityDerivation("m/1037171/94367","/36514417/1996133064/444811548/120132567/3152038/848215","/131071/407/10011001");
 
   
     // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
-    //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
-    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766","/1152697438/415781155/342717333/307131644/1042827527/324692716","/131071/0407/10011001");
+    //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/407/10011001");
+    newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766","/1152697438/415781155/342717333/307131644/1042827527/324692716","/131071/407/10011001");
         
 
 
@@ -110,6 +110,11 @@ async function main() {
     copyUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
     copyUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
     copyUserEpicWallet.readIdentityWallet();
+
+    let recoveredUserEpicWallet = new AEUW.AE_userWallet();
+    recoveredUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
+    recoveredUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
+    recoveredUserEpicWallet.readRecoveryWallet();
     
     }
 

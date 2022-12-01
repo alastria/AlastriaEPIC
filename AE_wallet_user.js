@@ -15,7 +15,7 @@ class AE_userWallet extends AEW.AE_rootWallet{
         let data ={};
         data.derivationName = "m";
         this.DTree = new AEA.AE_Alastree(data);
-        this.walletRecoveryFile = "./User_Recovery_wallet.txt"
+        this.walletRecoveryFile = "./User_recovery_wallet.txt"
 
     }
 
@@ -37,19 +37,29 @@ class AE_userWallet extends AEW.AE_rootWallet{
 
     }
 
-    findNodeByDerivation(derivationName, derivationValue) {
-        
+    findNodeByDerivation(derivationName, derivationValue = "") {
+        let fTree;
+
         let wTree = this.DTree.findChildByData("derivationName",derivationName);
         if (wTree.length == 0) {
             return wTree;        
         }
-        let fTree = wTree.filter(x => (x.data.derivationValue == derivationValue && x.data.validStatus == true));
+        if (derivationValue == "")
+        {
+            fTree = wTree.filter(x => (x.data.validStatus == true));
+        }
+        else
+        {
+            fTree = wTree.filter(x => (x.data.derivationValue == derivationValue && x.data.validStatus == true));
+        }
         if (Array.isArray(fTree)) {
             return fTree[0];
         }
         else {
             return fTree;
         }
+
+
     }
 
     addBPlusDerivation (entityStr, derivationStr) { 
@@ -151,7 +161,9 @@ class AE_userWallet extends AEW.AE_rootWallet{
             data.validStatus = true;
             child = child.addChild(data);
             child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
-        });       
+        });
+        
+        child.objectKind = "Login";
         
     }
 
@@ -493,9 +505,34 @@ class AE_userWallet extends AEW.AE_rootWallet{
     }
 
     readIdentityWallet () {
-        let wallet = AEWS.readIdentityWallet(this.walletStoreFile);
+        let wallet = super.readIdentityWallet();
+        // As "this" object cannot be assigned we do need to reconstruct it
+        this.DTree = wallet.DTree;
+        this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;        
+        this.identity_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(wallet.identity_HDWallet._hdkey.xpriv);
+        this.identity_pattern = wallet.identity_pattern;        
+        this.walletRecoveryFile = wallet.walletRecoveryFile;
+        this.walletStoreFile = wallet.walletStoreFile;
 
-        super.readIdentityWallet();
+    }
+
+    readRecoveryWallet () {
+        let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
+        // As "this" object cannot be assigned we do need to reconstruct it
+        this.setMnemonic(wallet.mnemonic);
+        this.setIdentityDerivation(wallet.mZR_der,wallet.SSSSSW_der,wallet.MTN_der);
+    }
+
+    generateNewIdentity( SSSSSW_der = "") {
+        let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
+        // As "this" object cannot be assigned we do need to reconstruct it
+        this.setMnemonic(wallet.mnemonic);
+        if ( SSSSSW_der == "")
+        {
+            SSSSSW_der = "/"+ AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation() + "/" +AEL.getRandomIntDerivation() + "/" +AEL.getRandomIntDerivation();
+
+        }        
+        this.setIdentityDerivation(wallet.mZR_der,SSSSSW_der,wallet.MTN_der);
 
     }
 

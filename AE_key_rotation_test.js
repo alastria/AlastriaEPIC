@@ -84,17 +84,17 @@ async function main() {
 
 
     console.log("4th test: CASE 2: user rotates his main identity key");
-    // this rotation invalidates all the credentials and presentations
-    // as the credentials are always packed into a presentation
-    // and the presentation requires user_identity_pubK to check the Chain_of_trust
-    // invalidation of user_identity_pubK invalidates the whole presentation
-    // Credentials can be revoked by the user by the state change in the registry
-    // Would Credentials be "invalidated" with a main identity key rotation?
-    // -> That would require multiple invalidations either at key registry level or credential level
-    // THIS IS STILL UNDER DISCUSSION
-    let allDescendants = newUserEpicWallet.DTree.findAllDescendants();
-    console("descendant count:", allDescendants.length)
 
+    let wNode = newUserEpicWallet.findNodeByDerivation("W");
+    let descendants = wNode.findAllDescendants();
+    descendants.forEach(element => {
+        element.data.validStatus = false;
+    });
+    wNode.validStatus = false;
+    newUserEpicWallet.generateNewIdentity("/1698616024/1400660049/59846251/1797304183/58448343/1152581465");
+    // TODO: Listar todo lo revocado: Credenciales, Presentaciones y Login
+
+    console.log("COMPLETADO");
 
 }
 

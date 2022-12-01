@@ -3,7 +3,6 @@ const AEU = require ("./AE_utils.js");
 const AEWS = require ("./AE_wallet_storage");
 
 
-
 class AE_rootWallet {
     constructor() {
         
@@ -22,6 +21,7 @@ class AE_rootWallet {
 
     setWalletStoreFile (fileStr) {
         this.walletStoreFile = fileStr;
+
     }
 
     setMnemonic (mnemonicStr) {
@@ -103,12 +103,13 @@ class AE_rootWallet {
 
     readIdentityWallet () {
         let wallet = AEWS.readIdentityWallet(this.walletStoreFile);
+        return wallet;
+      
+    }
 
-        this.identity_pattern = wallet.identity_pattern;
-        // 20221117 for security reasons identity derivation is no longer stored
-        // this.identity_derivation = wallet.identity_derivation;
-        this.identity_HDWallet = wallet.identity_HDWallet;
-        this.walletRecoveryFile = wallet.walletRecoveryFile;
+    readRecoveryWallet () {
+        let wallet = AEWS.readRecoveryWallet(this.walletRecoveryFile);
+        return wallet;
 
     }
 
