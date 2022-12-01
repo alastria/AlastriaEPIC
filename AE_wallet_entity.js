@@ -1,78 +1,146 @@
 const AEL = require ("./AE_libray");
-//AE_rootWallet
 const AEW = require ("./AE_wallet");
+const AEA = require("./AE_Alastree");
+const { id } = require("ethers/lib/utils");
 
 
 class AE_entityWallet extends AEW.AE_rootWallet{
     constructor() {
         super();        
 
-        // C_derivation fields:
-        // entity: the entity for which this derivation is intented
-        // C_derivation: the selected derivation
-        // own_HDWallet: pre-generated HDWallet for relationships with that entity
-        // own_extendedPublicKey: pre-generated public extended key of this entity with that entity
-        this.Cplus_derivation = [];
+        // 20221122 new DTree data structure
+        let data ={};
+        data.derivationName = "m";
+        data.path = "m";        
+        this.DTree = new AEA.AE_Alastree(data);
+        this.walletRecoveryFile = "./Entity_Recovery_wallet.txt"
     }
     
 
     setIdentityDerivation (mZR_der, SSSSSW_der, MTN_der) { 
 
         super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
+
+        let wDerivationIdx = SSSSSW_der.lastIndexOf("/");
+        let wDerivation = "";
+        if (wDerivationIdx >= 0) {
+            wDerivation = SSSSSW_der.substring(wDerivationIdx+1);            
+        }
+        let data = {};
+        data.derivationName = "W";
+        data.derivationValue = wDerivation;
+        data.path = "m/" + data.derivationValue;
+        data.validStatus = true;
+        
         // This corresponds to C derivations aka Purpose 
         // 0 -> login, may be usefull for C2C interactions or to sign login challenges
-        this.login_derivation = "m/0";        
-        this.login_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, this.login_derivation);
-        this.login_extPublicKey = AEL.getPublicExtendedKey(this.login_HDWallet);
+        data.login_derivation = "m/0";        
+        data.login_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, data.login_derivation);
+        data.login_extPublicKey = AEL.getPublicExtendedKey(data.login_HDWallet);
         
 
         // 1 -> credencial issuance
-        this.credencialIssuance_derivation = "m/1";
-        this.credencialIssuance_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, this.credencialIssuance_derivation);
-        this.credencialIssuance_extPublicKey = AEL.getPublicExtendedKey(this.credencialIssuance_HDWallet);
+        data.credencialIssuance_derivation = "m/1";
+        data.credencialIssuance_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, data.credencialIssuance_derivation);
+        data.credencialIssuance_extPublicKey = AEL.getPublicExtendedKey(data.credencialIssuance_HDWallet);
+        
         // 2 -> presentations
+        data.presentations_derivation = "m/2";
+        data.presentations_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, data.presentations_derivation);
+        data.presentations_extPublicKey = AEL.getPublicExtendedKey(data.presentations_HDWallet);
 
-        this.presentations_derivation = "m/2";
-        this.presentations_HDWallet = AEL.getHDWalletDerivation(this.identity_HDWallet, this.presentations_derivation);
-        this.presentations_extPublicKey = AEL.getPublicExtendedKey(this.presentations_HDWallet);
+        this.DTree.addChild(data);
     }
 
     addCPlusDerivation (entityStr) {
-        let localCPD = {};
-        localCPD.entity = entityStr;
 
-        // Issue 9        
-        // removing B derivations for entities, own_extentedPublicKey has been removed in this version
-        // also remove own_HDWallet, it is also useless
-        // let user_relationship_wallet = this.identity_HDWallet;
-        // localCPD.own_HDWallet = user_relationship_wallet;
-        // let my_user_relationship_public_key = AEL.getPublicExtendedKey(user_relationship_wallet);
-        // localCPD.own_extendedPublicKey = my_user_relationship_public_key;
+        let localCPD = this.getDerivation("W");        
 
-        localCPD.loginDerivation = "";
-        localCPD.credentials = [];
+        let data = {};
+        data.entity = entityStr;
+        data.derivationName = "C";
+        data.validStatus = true;     
+        
+        let currentCPD=localCPD.addChild(data);
+        // 20221123: as user do not get derivations for Entities the Path will have the name here
+        currentCPD.data.path = currentCPD.parent.data.path + "/" + entityStr;
+        return currentCPD;
 
-        this.Cplus_derivation.push(localCPD);
+        
     }
+    
     getCPlusDerivation (entityStr) {        
-        return this.Cplus_derivation.find(element => element.entity === entityStr);;
+
+        let wTree = this.DTree.findChildByData("derivationName","C");
+        let fTree = wTree.filter( nodo => (nodo.data.entity == entityStr) && (nodo.data.validStatus == true));
+        if (Array.isArray(fTree)) {
+            return fTree[0];
+        }
+        else{
+            return fTree;
+        }
+
+        
+    }
+
+    getDerivation (derivationName) {        
+        //return this.Bplus_derivation.find(element => element.entity === entityStr);
+        let wTree = this.DTree.findChildByData("derivationName",derivationName);
+        let fTree = wTree.filter( nodo => nodo.data.validStatus == true);
+        return fTree[0];
+
     }
 
     updateCPlusDerivationExtendedKeys (userStr, other_extendedKey) {
         let localCplus = this.getCPlusDerivation(userStr);
-        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+        //let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
 
-        localCplus.other_extendedPublicKey = other_extendedKey;
-        this.Cplus_derivation[localCplusIdx] = localCplus;
+        localCplus.data.other_extendedPublicKey = other_extendedKey;
+        //this.Cplus_derivation[localCplusIdx] = localCplus;
     }
 
     addRenewCplusLoginDerivation(userStr, loginDerivationStr) {
-        // works for adding or renewing, as we won't keep the old login derivation once updated
-        let localCplus = this.getCPlusDerivation(userStr);
-        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+        // works for adding or renewing        
+        let localCplus = this.getDerivation("C");
+        let child;
+        // Check is it is an array to see the userStr
+        if (Array.isArray(localCplus)) {
+            child = localCplus.filter(x => x.data.entity == userStr);
+        }
+        else {
+            if (localCplus.data.entity == userStr) {
+                child = localCplus;
+            }
+        }
+
+        // TODO: revoke older derivations for this userStr
+        // Find the other "D" derivations and set to validStatus = false
+        let invalidate = child.findChildByData("derivationName","D");
+        invalidate.forEach(element => {
+            element.data.validStatus = false;
+            
+        });
+
+        let data = {};
+        let derivations = loginDerivationStr.split("/");
+        derivations.forEach(element => {
+            data = {};
+            data.derivationName = "D";
+            data.derivationValue = element;
+            data.validStatus = true;
+            child = child.addChild(data);
+            child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
+        });  
+ 
+    }
+
+    getLoginDerivation(userStr) {
+        let user = this.getCPlusDerivation(userStr);
+        let derivationNodes = user.findChildByData("derivationName","D");
+        let derivations = derivationNodes.map(x => x.data.derivationValue);
+        let loginDer = derivations.reduce( (accumulator, currentValue) => accumulator + "/" + currentValue, "");
         
-        localCplus.loginDerivation = loginDerivationStr;
-        this.Cplus_derivation[localCplusIdx] = localCplus;
+        return loginDer;
 
     }
 
@@ -80,15 +148,15 @@ class AE_entityWallet extends AEW.AE_rootWallet{
     {
 
         let localCplus = this.getCPlusDerivation(userStr);
-        let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
-
+        // let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+        
         let credential_meta_info = {};
         credential_meta_info.credentialID = credentialID;
         credential_meta_info.userExtPubK = userExtPubK;
 
-        localCplus.credentials.push(credential_meta_info);
-        
-        this.Cplus_derivation[localCplusIdx] = localCplus;
+        localCplus.data.credentials = [];
+        localCplus.data.credentials.push(credential_meta_info);
+
     }
 
     async signLoginChallenge (entityStr, signLoginChallenge)
@@ -104,7 +172,20 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         //review derivations of Entities and Users, that are different
   
         let signerRl = this.getCPlusDerivation(signerStr);
-        return this.baseVerifyLoginChallenge(challengeStr,signatureStr,signerRl);
+        let login_derivation = this.getLoginDerivation("User");
+        return this.baseVerifyLoginChallenge(challengeStr,signatureStr,signerRl.data.other_extendedPublicKey, login_derivation);
+
+    }
+
+    getHDWalletByPurpose(purpose) {
+        let identityW = this.getDerivation("W");
+        let fIdentityW = identityW;
+        if (Array.isArray(identityW)) {
+            fIdentityW = identityW.filter(x => x.data.validStatus == true);
+        }        
+                
+        let peK = fIdentityW.data[purpose];
+        return peK;
 
     }
 
@@ -112,11 +193,13 @@ class AE_entityWallet extends AEW.AE_rootWallet{
         // When a company signs a credential it is independent of the subject that credential is created for
         // this makes easier to verify the credential signtature by the receiver of that credential
         // DISCUSS
+        
+        let peK = this.getHDWalletByPurpose("credencialIssuance_HDWallet");
 
         let signature =  AEL.signMessage(
                             AEL.getEthereumWalletFromPrivateKey(
                                 AEL.getPrivateKeyFromExtended(
-                                    AEL.getPrivateExtendedKey(this.credencialIssuance_HDWallet)
+                                    AEL.getPrivateExtendedKey(peK)
                                 )
                             ),
                             credentialStr);
@@ -126,7 +209,7 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
     verifyPresentationSignature(userStr,presentation_derivationStr, credential_setStr, credential_setSignatureStr) {
         let localCplus = this.getCPlusDerivation(userStr);
-        let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(localCplus.other_extendedPublicKey);
+        let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(localCplus.data.other_extendedPublicKey);
         let user_presentation_wallet = AEL.getHDWalletDerivation(user_Cplus_Wallet,presentation_derivationStr);
         return AEL.verifyMessageByPublicExtendedKey(credential_setStr,credential_setSignatureStr,AEL.getPublicExtendedKey(user_presentation_wallet));
 
@@ -165,6 +248,27 @@ class AE_entityWallet extends AEW.AE_rootWallet{
 
         return result;
 
+    }
+
+
+    getPurposePublicKey(purpose)
+    {
+        let fIdentityW;
+        if (purpose == "identity_ExtPublicKey") {
+            return this.identity_ExtPublicKey;
+
+        }
+        else
+        {
+
+            let identityW = this.getDerivation("W");
+            fIdentityW = identityW;
+            if (Array.isArray(identityW)) {
+                fIdentityW = identityW.filter(x => x.data.validStatus == true);
+            }
+        }   
+
+        return fIdentityW.data[purpose];
     }
 }
 

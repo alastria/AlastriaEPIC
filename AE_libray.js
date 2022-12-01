@@ -4,9 +4,10 @@ const Wallet = require('ethereumjs-wallet').default;
 const { base58_to_binary } = require('base58-js');
 const { ethers } = require("ethers");
 const { toChecksumAddress } = require('ethereum-checksum-address');
+const AEU = require("./AE_utils");
 
 
-module.exports = { hexadice, createHDWalletFromMnemonic, createHDWalletFromSeed, createRO_HDWalletFromPublicExtendedKey, 
+module.exports = { hexadice, createHDWalletFromMnemonic, createHDWalletFromSeed, createHDWalletFromPrivateExtendedKey, createRO_HDWalletFromPublicExtendedKey, 
     getWalletFromHDWallet, getPrivateExtendedKey, getPublicExtendedKey,getAddressFromPublicKey, getHDWalletDerivation, hexConversionFromBinary, 
     getPrivateKeyFromExtended, getPublicKeyFromExtended, getEthereumWalletFromPrivateKey, signMessage, getAdressFromSignedMessage, 
     verifyMessageSignature,  verifyMessageByPublicExtendedKey, getRandomInt, getRandomIntDerivation}
@@ -30,7 +31,13 @@ function createHDWalletFromSeed(seed){
     return hdkey.fromMasterSeed(seed);
 }
 
+function createHDWalletFromPrivateExtendedKey(privateExtendedKey) {
+    AEU.check_require("xprv",privateExtendedKey);
+    return hdkey.fromExtendedKey(privateExtendedKey);
+}
+
 function createRO_HDWalletFromPublicExtendedKey(publicExtendedKey) {
+    AEU.check_require("xpub",publicExtendedKey);
     return hdkey.fromExtendedKey(publicExtendedKey);
 }
 

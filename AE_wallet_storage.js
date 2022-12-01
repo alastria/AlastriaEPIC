@@ -16,7 +16,7 @@ function storeRecoveryWallet(mnemonic, mZR_der, SSSSSW_der, MTN_der, recoveryWal
 
     let walletData = JSON.stringify(wallet);
 
-    fs.writeFileSync( recoveryWalletFile, walletData, {mode:0o600});
+    fs.writeFileSync(recoveryWalletFile, walletData, {mode:0o600});
 
 }
 
@@ -30,10 +30,27 @@ function readRecoveryWallet(recoveryWalletFile) {
 
 }
 
+function unParent(walletTree) {
+    walletTree.parent = null;
+    walletTree.descendants.forEach(element => {
+        unParent(element);
+    });
+  }
+
 function storeIdentityWallet(wallet, identityWalletFile) {
 
+    unParent(wallet.DTree);
+    
     let identityWalletData  = JSON.stringify(wallet);
-    fs.writeFileSync( identityWalletFile, identityWalletData, {mode:0o600});
+    fs.writeFileSync(identityWalletFile, identityWalletData, {mode:0o600});
+
+}
+
+function reParent(walletTree, parent = null) {
+    walletTree.parent = parent;
+    walletTree.descendants.forEach(element => {
+        reParent(element,walletTree);
+    })
 
 }
 
@@ -42,6 +59,7 @@ function readIdentityWallet(identityWalletFile) {
     walletData = fs.readFileSync( identityWalletFile )
     let wallet = JSON.parse(walletData);
 
+    reParent(wallet.DTree);
     return wallet;
 
 }
