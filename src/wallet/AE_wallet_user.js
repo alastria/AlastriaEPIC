@@ -1,346 +1,573 @@
-const AEL = require ("../AE_library");
+const AEL = require("../AE_library");
 //AE_rootWallet
-const AEW = require ("./AE_wallet");
+const AEW = require("./AE_wallet");
+const AEA = require("./AE_Alastree");
+const AEU = require("../utils/AE_utils");
 
+class AE_userWallet extends AEW.AE_rootWallet {
+  constructor() {
+    super();
 
-class AE_userWallet extends AEW.AE_rootWallet{
-    constructor() {
-        super();
+    let data = {};
+    data.derivationName = "m";
+    this.DTree = new AEA.AE_Alastree(data);
+  }
 
-        // B_derivation fields:
-        //  entity: the entity for which this derivation is intented
-        //  B_derivation: the selected derivation
-        //  own_HDWallet: pre-generated HDWallet for relationships with that entity
-        //  own_extendedPublicKey: pre-generated public extended key of this user with that entity
-        //  credential_derivations: array of objects where we do have each FOR each credential of that entity:
-        //      id
-        //      usr_derivation_part
-        //      entity_derivation_part
-        //  
-        this.Bplus_derivation = [];
-
-        // Hold historic data of old, revoked derivation interactions
-        this.Old_Bplus_derivation = [];
-
-
+  setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der) {
+    let wDerivationIdx = SSSSSW_der.lastIndexOf("/");
+    let wDerivation = "";
+    if (wDerivationIdx >= 0) {
+      wDerivation = SSSSSW_der.substring(wDerivationIdx + 1);
     }
-    addBPlusDerivation (entityStr, derivationStr) { 
-        let localBPD = {};
+    let data = {};
+    data.derivationName = "W";
+    data.derivationValue = wDerivation;
+    data.path = "m/" + data.derivationValue;
+    data.validStatus = true;
 
-        localBPD.entity = entityStr;
-        localBPD.B_derivation = derivationStr; 
+    this.DTree.addChild(data);
+    super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
+  }
 
-        let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet , "m/" + localBPD.B_derivation);
-        localBPD.own_HDWallet = entity_relationship_wallet;
-        let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
-        localBPD.own_extendedPublicKey = my_entity_relationship_public_key;
+  findNodeByDerivation(derivationName, derivationValue = "") {
+    let fTree;
 
-        // This will hold the credentials information for this Entity, an structure itself
-        localBPD.credential_derivations = [];
-        // This will hold the presentations information for this Entity, an structure itself
-        localBPD.presentation_derivations = [];
-
-        this.Bplus_derivation.push(localBPD);
-
+    let wTree = this.DTree.findChildByData("derivationName", derivationName);
+    if (wTree.length == 0) {
+      return wTree;
     }
+    if (derivationValue == "") {
+      fTree = wTree.filter((x) => x.data.validStatus == true);
+    } else {
+      fTree = wTree.filter(
+        (x) =>
+          x.data.derivationValue == derivationValue &&
+          x.data.validStatus == true
+      );
+    }
+    if (Array.isArray(fTree)) {
+      return fTree[0];
+    } else {
+      return fTree;
+    }
+  }
 
-    addRenewBplusLoginDerivation(entityStr, loginDerivationStr) {
-
-        // works for adding or renewing, as we won't keep the old login derivation once updated
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);         
-
-        localBplus.loginDerivation = loginDerivationStr;
-        let entity_login_wallet = AEL.getHDWalletDerivation(localBplus.own_HDWallet, "m/0/"+ localBplus.loginDerivation);
-        localBplus.loginWallet = entity_login_wallet;
-        let entity_login_wallet_public_key = AEL.getPublicExtendedKey(localBplus.loginWallet);
-        localBplus.loginExtendedPublicKey = entity_login_wallet_public_key;
-
-        this.Bplus_derivation[localBplusIdx] = localBplus;
-
+  addBPlusDerivation(entityStr, derivationStr) {
+    if (!AEU.check_require("id_derivation", derivationStr)) {
+      throw "Invalid derivation";
     }
 
-    renewBPlusDerivation (entityStr, newDerivationStr) {
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
-        
-        let oldDerivation = localBplus.B_derivation;
-        
-        // Copy current BPlusDerivation data into old data array
-        this.Old_Bplus_derivation.push(localBplus);   
-        // Delete current BPlusDerivation           
-        this.Bplus_derivation.splice(localBplusIdx,1);
-        // Create a new BPlusDerivation
-        this.addBPlusDerivation(entityStr,newDerivationStr);
+    let entity_relationship_wallet = AEL.getHDWalletDerivation(
+      this.identity_HDWallet,
+      "m/" + derivationStr
+    );
+    let my_entity_relationship_public_key = AEL.getPublicExtendedKey(
+      entity_relationship_wallet
+    );
 
+    let data = {};
+    data.derivationName = "B";
+    data.derivationValue = derivationStr;
+    data.entity = entityStr;
+    data.validStatus = true;
+    data.own_HDWallet = entity_relationship_wallet;
+    data.own_extendedPublicKey = my_entity_relationship_public_key;
+    let wTree = this.DTree.findChildByData("derivationName", "W");
+    let child = wTree[0].addChild(data);
+    child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
+  }
 
-        //localBplus.B_derivation = newDerivationStr;
-        //let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet, "m/" + localBplus.B_derivation);
-        //localBplus.own_HDWallet = entity_relationship_wallet;
-        //let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
-        //localBplus.own_extendedPublicKey = my_entity_relationship_public_key;
+  getBPlusLoginDerivation(entityStr) {
+    let user = this.getBPlusDerivation(entityStr);
+    let derivationNodes = user.findChildByData("derivationName", "D");
+    let derivations = derivationNodes.map((x) => x.data.derivationValue);
+    let loginDer = derivations.reduce(
+      (accumulator, currentValue) => accumulator + "/" + currentValue,
+      ""
+    );
+    // remove first character if "/"
+    if (loginDer.charAt(0) == "/") {
+      return loginDer.substring(1);
+    }
+    return loginDer;
+  }
 
-        //localBplus.oldDerivations.push(oldDerivation);
+  addRenewBplusLoginDerivation(entityStr, loginDerivationStr) {
+    if (!AEU.check_require("id_derivation", loginDerivationStr)) {
+      throw "Invalid derivation";
+    }
+    // works for adding or renewing, as we won't keep the old login derivation once updated
+    let localBplus = this.getBPlusDerivation(entityStr);
 
-        //// Also move the credentials and presentations to old_credentials and old_presentations
-        //delete localBplus.credential_derivations;
-        //delete localBplus.presentation_derivations;
+    // This updates directly the user wallet
+    localBplus.data.loginDerivation = loginDerivationStr;
+    let entity_login_wallet = AEL.getHDWalletDerivation(
+      localBplus.data.own_HDWallet,
+      "m/0/" + localBplus.data.loginDerivation
+    );
+    localBplus.data.loginWallet = entity_login_wallet;
+    let entity_login_wallet_public_key = AEL.getPublicExtendedKey(
+      localBplus.data.loginWallet
+    );
+    localBplus.data.loginExtendedPublicKey = entity_login_wallet_public_key;
 
-        //this.Bplus_derivation[localBplusIdx] = localBplus;
+    let data = {};
 
-        return oldDerivation;
+    // Cogemos la C/0 que cuelgue de Entity (localBPlus) no cualquiera
+    let child;
+    // child = this.findNodeByDerivation("C","0");
 
+    let wTree = localBplus.findChildByData("derivationName", "C");
+    if (wTree.length == 0) {
+      child = wTree;
+    }
+    let fTree = wTree.filter(
+      (x) => x.data.derivationValue == "0" && x.data.validStatus == true
+    );
+    if (Array.isArray(fTree)) {
+      child = fTree[0];
+    } else {
+      child = fTree;
     }
 
-    getOldCredentials(entityStr) {
-        let localOldBplus = this.getOldBPlusDerivation(entityStr);
-        let localOldBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
-        
-        return localOldBplus.credential_derivations;
+    if (typeof child == "undefined" || child.length == 0) {
+      // Add one child for "0" derivation, that holds login
+
+      data.derivationName = "C";
+      data.derivationValue = "0";
+      data.validStatus = true;
+      child = localBplus.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    } else {
+      // Find the other "D" derivations and set to validStatus = false
+      let invalidate = child.findChildByData("derivationName", "D");
+      invalidate.forEach((element) => {
+        element.data.validStatus = false;
+      });
     }
 
-    getOldPresentations(entityStr) {
-        let localOldBplus = this.getOldBPlusDerivation(entityStr);
-        let localOldBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);   
-        
-        return localOldBplus.presentation_derivations;
+    // Add some levels for login derivation for that entity
+    let derivations = loginDerivationStr.split("/");
+    derivations.forEach((element) => {
+      data = {};
+      data.derivationName = "D";
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    });
+
+    child.objectKind = "Login";
+  }
+
+  renewBPlusDerivation(entityStr, newDerivationStr) {
+    if (!AEU.check_require("id_derivation", newDerivationStr)) {
+      throw "Invalid derivation";
     }
 
+    let localBplus = this.getBPlusDerivation(entityStr);
 
-    getBPlusDerivation (entityStr) {        
-        return this.Bplus_derivation.find(element => element.entity === entityStr);
+    let oldDerivation = localBplus.data.derivationValue;
+    // Invalidate this entity derivation
+    localBplus.data.validStatus = false;
+
+    // Find the other "D" adn "E" derivations and set to validStatus = false
+    let invalidate = localBplus.findChildByData("derivationName", "D");
+    invalidate.forEach((element) => {
+      element.data.validStatus = false;
+    });
+
+    invalidate = localBplus.findChildByData("derivationName", "E");
+    invalidate.forEach((element) => {
+      element.data.validStatus = false;
+    });
+
+    this.addBPlusDerivation(entityStr, newDerivationStr);
+
+    return oldDerivation;
+  }
+
+  getLeafData(entityStr) {
+    let localBPlus = this.getBPlusDerivation(entityStr);
+    let findAllChild = localBPlus.findAllLeafs();
+  }
+
+  getCredentials(entityStr) {
+    let leafs = this.getLeafData(entityStr);
+    let fLeafs = [];
+    if (Array.isArray(leafs)) {
+      fLeafs = leafs.filter((x) => x.data.objectKind == "Credential");
+    } else {
+      if (leafs.data.objectKind == "Credential") {
+        fLeafs.push(leafs);
+      }
     }
 
-    getOldBPlusDerivation(entityStr) {        
-        return this.Old_Bplus_derivation.find(element => element.entity === entityStr);
+    return fLeafs;
+  }
+
+  getPresentations(entityStr) {
+    let leafs = this.getLeafData(entityStr);
+    let fLeafs = [];
+    if (Array.isArray(leafs)) {
+      fLeafs = leafs.filter((x) => x.data.objectKind == "Presentation");
+    } else {
+      if (leafs.data.objectKind == "Presentation") {
+        fLeafs.push(leafs);
+      }
+    }
+    return fLeafs;
+  }
+
+  getOldCredentials(entityStr, oldDerivation) {
+    let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
+    let leafs = localOldBplus.findAllLeafs(entityStr);
+    let fLeafs = [];
+    if (Array.isArray(leafs)) {
+      fLeafs = leafs.filter((x) => x.data.objectKind == "Credential");
+    } else {
+      if (leafs.data.objectKind == "Credential") {
+        fLeafs.push(leafs);
+      }
     }
 
-    updateBPlusDerivationExtendedKeys (entityStr, other_ext_login_key, other_ext_cred_key, other_ext_pres_key) {
+    return fLeafs;
+  }
 
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr);         
-        localBplus.other_ext_login_key = other_ext_login_key;
-        localBplus.other_ext_cred_key = other_ext_cred_key;
-        localBplus.other_ext_pres_key = other_ext_pres_key;
-        this.Bplus_derivation[localBplusIdx] = localBplus;
+  getOldPresentations(entityStr, oldDerivation) {
+    let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
+    let leafs = localOldBplus.findAllLeafs(entityStr);
+    let fLeafs = [];
+    if (Array.isArray(leafs)) {
+      fLeafs = leafs.filter((x) => x.data.objectKind == "Presentation");
+    } else {
+      if (leafs.data.objectKind == "Presentation") {
+        fLeafs.push(leafs);
+      }
     }
 
+    return fLeafs;
+  }
 
-    async signLoginChallenge (entityStr, signLoginChallenge)
-    {        
-
-        let connect_to_entity = this.getBPlusDerivation(entityStr);
-        let entity_signer_eWallet = 
-            AEL.getEthereumWalletFromPrivateKey(
-                AEL.getPrivateKeyFromExtended(
-                    AEL.getPrivateExtendedKey(connect_to_entity.loginWallet)
-                )
-            );
-
-        let login_challenge_signature = await AEL.signMessage(entity_signer_eWallet, signLoginChallenge);
-        return login_challenge_signature;
+  getBPlusDerivation(entityStr, oldDerivation = "none") {
+    let vTree = [];
+    let wTree = this.DTree.findChildByData("derivationName", "B");
+    let fTree = wTree.filter((nodo) => nodo.data.entity == entityStr);
+    if (oldDerivation == "none") {
+      vTree = fTree.filter((x) => x.data.validStatus == true);
+    } else {
+      vTree = fTree.filter((x) => x.data.derivationValue == oldDerivation);
     }
 
-    verifyLoginChallenge (signerStr, challengeStr, signatureStr){
-        // YET not working, review derivations of Entities and Users, that are different
+    return vTree[0];
+  }
 
-        let signerRl = this.getBPlusDerivation(signerStr);
-        return this.baseVerifyLoginChallenge(challengeStr,signatureStr,signerRl)
+  getOldBPlusDerivation(entityStr) {
+    let wTree = this.DTree.findChildByData("derivationName", "B");
+    let fTree = wTree.filter(
+      (nodo) =>
+        nodo.data.entity == entityStr &&
+        nodo.data.derivationValue == oldDerivation
+    );
+    return fTree[0];
+  }
 
+  updateBPlusDerivationExtendedKeys(
+    entityStr,
+    other_ext_login_key,
+    other_ext_cred_key,
+    other_ext_pres_key
+  ) {
+    let localBplus = this.getBPlusDerivation(entityStr);
+    localBplus.data.other_ext_login_key = other_ext_login_key;
+    localBplus.data.other_ext_cred_key = other_ext_cred_key;
+    localBplus.data.other_ext_pres_key = other_ext_pres_key;
+  }
+
+  async signLoginChallenge(entityStr, signLoginChallenge) {
+    let connect_to_entity = this.getBPlusDerivation(entityStr);
+    let entity_signer_eWallet = AEL.getEthereumWalletFromPrivateKey(
+      AEL.getPrivateKeyFromExtended(
+        AEL.getPrivateExtendedKey(connect_to_entity.data.loginWallet)
+      )
+    );
+
+    let login_challenge_signature = await AEL.signMessage(
+      entity_signer_eWallet,
+      signLoginChallenge
+    );
+    return login_challenge_signature;
+  }
+
+  verifyLoginChallenge(signerStr, challengeStr, signatureStr) {
+    // YET not working, review derivations of Entities and Users, that are different
+
+    let signerRl = this.getBPlusDerivation(signerStr);
+    return this.baseVerifyLoginChallenge(challengeStr, signatureStr, signerRl);
+  }
+
+  setObjectDerivation(entityStr, objectID, entityObjectDerivation, objectKind) {
+    if (!AEU.check_require("id_derivation", entityObjectDerivation)) {
+      throw "Invalid derivation";
     }
 
+    //      TODO: Maybe add credential HASH?
+    // Pending if the wallet should store the presentation itself or if it should be an storage helper
+    let localBplus = this.getBPlusDerivation(entityStr);
 
-    setCredentialDerivation(entityStr,credentialID,entityCredDerivation)
-    {
-        //  credential_derivations: array of objects where we do have each FOR each credential from that entity:
-        //      id
-        //      usr_derivation_part
-        //      entity_derivation_part
-        //      extPublicKey
-        //      TODO: Maybe add credential HASH?
-        //
-        // Pending if the wallet should store the presentation itself or if it should be an storage helper
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
+    let data = {};
 
-        let credential_meta_info = {};
-        credential_meta_info.id = credentialID;
-        
-        // It is necessary to store the original BPlus derivation for the credential because we may rotate the entity derivation for
-        // security reasons but without having to re-issue all the credentials
-        // TODO: see other changes needed like get credential derivation for chain of trust
-        credential_meta_info.entity_BPlus_derivation = localBplus.B_derivation;
-        // this are two derivation levels, random (those may be passed as arguments so the device wallet decides instead of the library)
-        // refers to EE derivation pattern
-        credential_meta_info.usr_derivation_part = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
-        credential_meta_info.usr_derivation_part = "810906238/253622342";        
-        credential_meta_info.entity_derivation_part = entityCredDerivation;   
-        localBplus.credential_derivations.push(credential_meta_info);
-        
-        this.Bplus_derivation[localBplusIdx] = localBplus;
-        
+    switch (objectKind) {
+      case "Credential":
+        data.derivationValue = "1";
+        break;
+      case "Presentation":
+        data.derivationValue = "2";
+        break;
+      default:
+        data.derivationValue = "UNKNOWN";
     }
 
-    getCMeta(localBplus, credentialID){
+    let child = this.findNodeByDerivation("C", data.derivationValue);
+    if (typeof child == "undefined" || child.length == 0) {
+      // Add one child for "0" derivation, that holds login
+      data.derivationName = "C";
+      data.validStatus = true;
+      child = localBplus.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    }
+    data.validStatus = true;
 
-        return localBplus.credential_derivations.find(element => element.id === credentialID);
+    // Add some levels for the credential, the user part are tw;
+    //let objectUserDerivationStr = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
+    // harcoded for testing purposes
+    let objectUserDerivationStr = "198367/2986292";
+    let derivations = objectUserDerivationStr.split("/");
+    derivations.forEach((element) => {
+      data = {};
+      data.derivationName = "D";
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    });
+
+    // Add the entity requested derivations
+    derivations = entityObjectDerivation.split("/");
+    derivations.forEach((element) => {
+      data = {};
+      data.derivationName = "E";
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    });
+
+    // In the last level we can store the credential info
+    child.data.objectID = objectID;
+    child.data.objectKind = objectKind;
+    return child;
+  }
+
+  setCredentialDerivation(entityStr, credentialID, entityCredDerivation) {
+    if (!AEU.check_require("id_derivation", entityCredDerivation)) {
+      throw "Invalid derivation";
     }
 
-    getPMeta(localBplus, presentationID){
+    return this.setObjectDerivation(
+      entityStr,
+      credentialID,
+      entityCredDerivation,
+      "Credential"
+    );
+  }
 
-        return localBplus.presentation_derivations.find(element => element.id === presentationID);
+  getObjectDerivation(entityStr, objectID) {
+    // Locate the entity and the credential
+    let localBplus = this.getBPlusDerivation(entityStr);
+    let objectDerivation = localBplus.findChildByData("objectID", objectID);
+
+    // Calculate the credential path up to level B
+    let wholePath = objectDerivation[0].data.path;
+    let objectDerivationStr =
+      "m" +
+      wholePath.substring(
+        wholePath.lastIndexOf(localBplus.parent.data.path) +
+          localBplus.parent.data.path.length
+      );
+
+    return objectDerivationStr;
+  }
+
+  getObjectExtendedPublicKey(entityStr, objectID) {
+    let objectDerivationStr = this.getObjectDerivation(entityStr, objectID);
+
+    let credential_wallet = AEL.getHDWalletDerivation(
+      this.identity_HDWallet,
+      objectDerivationStr
+    );
+    let credential_pubExtKey = AEL.getPublicExtendedKey(credential_wallet);
+
+    return credential_pubExtKey;
+  }
+
+  getCredentialExtendedPublicKey(entityStr, credentialID) {
+    return this.getObjectExtendedPublicKey(entityStr, credentialID);
+  }
+
+  getCredentialDerivation(entityStr, credentialID) {
+    return this.getObjectDerivation(entityStr, credentialID);
+  }
+
+  setPresentationDerivation(entityStr, presentationID, entityPresDerivation) {
+    if (!AEU.check_require("id_derivation", entityPresDerivation)) {
+      throw "Invalid derivation";
     }
 
-    getCredentialExtendedPublicKey(entityStr, credentialID)
-    {
-        // The ExtendedPublicKey to be used in the DID for emitting this credential
+    return this.setObjectDerivation(
+      entityStr,
+      presentationID,
+      entityPresDerivation,
+      "Presentation"
+    );
+  }
 
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
+  getPresentationExtendedPublicKey(entityStr, entityPresentationID) {
+    return this.getObjectExtendedPublicKey(entityStr, entityPresentationID);
+  }
 
-        let localCMeta = this.getCMeta(localBplus,credentialID);
-        let localCMetaIdz = localBplus.credential_derivations.findIndex(element => element.id === credentialID); 
+  getPresentationDerivation(entityStr, presentationID) {
+    let wholePath = this.getObjectDerivation(entityStr, presentationID);
+    // Remove B derivation path form this path because the verifier has user extPubK at B level, therefore B level shouldn't be applied (it would be twice)
+    // B derivation is the first after the "m"
 
-        let full_credential_derivation = localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
-        let full_cred_entity_derivation = "m/" + localBplus.B_derivation + "/1/" + full_credential_derivation;
+    let primer = wholePath.indexOf("/");
+    let segundo = wholePath.indexOf("/", primer + 1);
 
-        let credential_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_cred_entity_derivation);
-        let credential_pubExtKey = AEL.getPublicExtendedKey(credential_wallet);
+    let derivacion =
+      wholePath.substring(0, primer) + wholePath.substring(segundo);
+    return derivacion;
+  }
 
-        localCMeta.extPublicKey = credential_pubExtKey;
-        localBplus.credential_derivations[localCMetaIdz] = localCMeta;
+  async signPresentation(entityStr, presentationID, presentationStr) {
+    // Maybe create a single method for login and presentation signatures?
 
-        this.Bplus_derivation[localBplusIdx] = localBplus;
+    let full_pres_entity_derivation = this.getObjectDerivation(
+      entityStr,
+      presentationID
+    );
+    let presentation_wallet = AEL.getHDWalletDerivation(
+      this.identity_HDWallet,
+      full_pres_entity_derivation
+    );
 
-        return credential_pubExtKey;
+    // User signs login challenge with entity_relationship_wallet_login
+    // prior to that has to create an Ethereum signer wallet
+    let entity_signer_eWallet = AEL.getEthereumWalletFromPrivateKey(
+      AEL.getPrivateKeyFromExtended(
+        AEL.getPrivateExtendedKey(presentation_wallet)
+      )
+    );
 
+    let presentation_signature = await AEL.signMessage(
+      entity_signer_eWallet,
+      presentationStr
+    );
+    return presentation_signature;
+  }
+
+  readIdentityWallet(wallet) {
+    // let wallet = super.readIdentityWallet();
+    // As "this" object cannot be assigned we do need to reconstruct it
+    this.DTree = wallet.DTree;
+    this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;
+    this.identity_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(
+      wallet.identity_HDWallet._hdkey.xpriv
+    );
+    this.identity_pattern = wallet.identity_pattern;
+    this.walletRecoveryFile = wallet.walletRecoveryFile;
+    this.walletStoreFile = wallet.walletStoreFile;
+  }
+
+  readRecoveryWallet(wallet) {
+    //let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
+    // As "this" object cannot be assigned we do need to reconstruct it
+    this.setMnemonic(wallet.mnemonic);
+    this.setIdentityDerivation(
+      wallet.mZR_der,
+      wallet.SSSSSW_der,
+      wallet.MTN_der
+    );
+  }
+
+  generateNewIdentity(old_wallet, SSSSSW_der = "") {
+    // As "this" object cannot be assigned we do need to reconstruct it
+    this.setMnemonic(old_wallet.mnemonic);
+    if (SSSSSW_der == "") {
+      SSSSSW_der =
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation();
     }
+    this.setIdentityDerivation(
+      old_wallet.mZR_der,
+      SSSSSW_der,
+      old_wallet.MTN_der
+    );
+  }
 
-    getCredentialDerivation(entityStr, credentialID)
-    {
+  getEntities() {
+    return this.DTree.findChildByData("derivationName", "B");
+  }
 
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localCMeta = this.getCMeta(localBplus,credentialID);
-        // Instead of using localBplus.B_derivation that is the CURRENT B derivation for that entity we will have 
-        // to use the original B derivation, that was stored in Entity_interacting_derivation
-        let full_presentation_derivation = "m/" + localCMeta.entity_BPlus_derivation + "/1/" + localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
-        return full_presentation_derivation;
+  revokeCurrentWallet() {
+    let wNode = this.findNodeByDerivation("W");
+    let descendants = wNode.findAllDescendants();
+    descendants.forEach((element) => {
+      element.data.validStatus = false;
+    });
+    wNode.validStatus = false;
+    // TODO: Listar todo lo revocado: Credenciales, Presentaciones y Login
+    let entities = this.getEntities();
+    // Credentials in revoked identity
+    let credentials = [];
+    // Presentations in revoked identity
+    let presentations = [];
+    let uCred = [];
+    let fCred = [];
+    let fPres = [];
 
-    }
+    entities.forEach((element) => {
+      uCred = element.findChildByData("derivationName", "E");
+      fCred = uCred.filter((x) => x.data.objectKind == "Credential");
+      fPres = uCred.filter((x) => x.data.objectKind == "Presentation");
+      credentials.push(...fCred);
+      presentations.push(...fPres);
+    });
 
-    setPresentationDerivation (entityStr,presentationID,entityPresDerivation) {
-        //  presentation_derivations: array of objects where we do have each FOR each credential of that entity:
-        //      id
-        //      usr_derivation_part
-        //      entity_derivation_part        
-        //      extPublicKey
-        //      TODO: Maybe add presentation HASH?
-        //
-        // Pending if the wallet should store the presentation itself or if it should be an storage helper
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
+    let revocations = {};
+    revocations.entities = entities;
+    revocations.credentials = credentials;
+    revocations.presentations = presentations;
 
-        let presentation_meta_info = {};
-        presentation_meta_info.id = presentationID;
-        // presentations should also store the original B derivation of the presentation for the deletion purposes
-        presentation_meta_info.entity_BPlus_derivation = localBplus.B_derivation;
-
-        // this are two derivation levels, random (those may be passed as arguments so the device wallet decides instead of the library)
-        presentation_meta_info.usr_derivation_part = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
-        presentation_meta_info.usr_derivation_part = "192572143/423682035";        
-        presentation_meta_info.entity_derivation_part = entityPresDerivation;   
-        localBplus.presentation_derivations.push(presentation_meta_info);
-        
-        this.Bplus_derivation[localBplusIdx] = localBplus;
-
-    }
-
-    getPresentationExtendedPublicKey(entityStr, presentationID)
-    {
-
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
-
-        let localPMeta = this.getPMeta(localBplus,presentationID);
-        let localPMetaIdz = localBplus.presentation_derivations.findIndex(element => element.id === presentationID); 
-
-        let full_presentation_derivation = localPMeta.usr_derivation_part + "/" + localPMeta.entity_derivation_part;
-
-        // Instead of using localBplus.B_derivation that is the CURRENT B derivation for that entity we will have 
-        // to use the original B derivation, that was stored in Entity_interacting_derivation
-        let full_cred_entity_derivation = "m/" + localPMeta.entity_BPlus_derivation + "/2/" + full_presentation_derivation;
-
-        let presentation_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_cred_entity_derivation);
-        let presentation_pubExtKey = AEL.getPublicExtendedKey(presentation_wallet);
-
-        localPMeta.extPublicKey = presentation_pubExtKey;
-        localBplus.presentation_derivations[localPMetaIdz] = localPMeta;
-
-        this.Bplus_derivation[localBplusIdx] = localBplus;
-
-        return presentation_pubExtKey;
-
-    }
-
-    getPMeta(localBplus, presentationID){
-
-        return localBplus.presentation_derivations.find(element => element.id === presentationID);
-    }
-
-    getPresentationDerivation(entityStr, presentationID)
-    {
-
-        let localBplus = this.getBPlusDerivation(entityStr);
-        let localPMeta = this.getPMeta(localBplus,presentationID);
-        // Omit localBplus.B_derivation because the SP will derive from the pubK he already knows I sent him that is the localBplus.B_derivation
-        let full_presentation_derivation = "m/" + "2/" + localPMeta.usr_derivation_part + "/" + localPMeta.entity_derivation_part;
-        return full_presentation_derivation;
-
-    }
-
-
-
-    async signPresentation (entityStr, presentationID, presentationStr) {
-        // Maybe create a single method for login and presentation signatures?
-
-        let localBplus = this.getBPlusDerivation(entityStr);
-        // let localBplusIdx = this.Bplus_derivation.findIndex(element => element.entity === entityStr); 
-
-        let localCMeta = this.getPMeta(localBplus,presentationID);
-        // let localCMetaIdz = localBplus.presentation_derivations.findIndex(element => element.id === presentationID); 
-
-        let full_presentation_derivation = localCMeta.usr_derivation_part + "/" + localCMeta.entity_derivation_part;
-        let full_pres_entity_derivation = "m/" + localBplus.B_derivation + "/2/" + full_presentation_derivation;
-
-        let presentation_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet,full_pres_entity_derivation);
-
-
-        // User signs login challenge with entity_relationship_wallet_login
-        // prior to that has to create an Ethereum signer wallet
-        let entity_signer_eWallet = 
-            AEL.getEthereumWalletFromPrivateKey(
-                AEL.getPrivateKeyFromExtended(
-                    AEL.getPrivateExtendedKey(presentation_wallet)
-                )
-            );
-
-        let presentation_signature = await AEL.signMessage(entity_signer_eWallet, presentationStr);
-        return presentation_signature;
-
-    }
-
-    readIdentityWallet (walletStoreData) {
-        let wallet = walletStoreData;
-
-        this.Bplus_derivation = wallet.Bplus_derivation;
-        this.Old_Bplus_derivation = wallet.Old_Bplus_derivation;
-        super.readIdentityWallet(walletStoreData);
-
-    }
-
+    return revocations;
+  }
 }
-
 
 module.exports = {
-    AE_userWallet: AE_userWallet
-}
+  AE_userWallet: AE_userWallet,
+};
