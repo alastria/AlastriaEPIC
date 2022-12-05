@@ -1,5 +1,6 @@
 // Stores wallet for recovery
 const fs = require("fs");
+const utils = require('../src/utils/AE_utils')
 
 module.exports = {
   storeRecoveryWallet,
@@ -34,31 +35,17 @@ function readRecoveryWallet(recoveryWalletFile) {
   return wallet;
 }
 
-function unParent(walletTree) {
-  walletTree.parent = null;
-  walletTree.descendants.forEach((element) => {
-    unParent(element);
-  });
-}
-
 function storeIdentityWallet(wallet, identityWalletFile) {
-  unParent(wallet.DTree);
+  utils.unParent(wallet.DTree);
 
   let identityWalletData = JSON.stringify(wallet);
   fs.writeFileSync(identityWalletFile, identityWalletData, { mode: 0o600 });
-}
-
-function reParent(walletTree, parent = null) {
-  walletTree.parent = parent;
-  walletTree.descendants.forEach((element) => {
-    reParent(element, walletTree);
-  });
 }
 
 function readIdentityWallet(identityWalletFile) {
   walletData = fs.readFileSync(identityWalletFile);
   let wallet = JSON.parse(walletData);
 
-  reParent(wallet.DTree);
+  utils.reParent(wallet.DTree);
   return wallet;
 }
