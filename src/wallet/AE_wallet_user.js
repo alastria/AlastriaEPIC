@@ -484,7 +484,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
   readIdentityWallet(wallet) {
     // let wallet = super.readIdentityWallet();
     // As "this" object cannot be assigned we do need to reconstruct it
-    this.DTree = wallet.DTree;
+    this.DTree = this.DTree.addChild(wallet.DTree.descendants[0].data);
     this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;
     this.identity_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(
       wallet.identity_HDWallet._hdkey.xpriv
