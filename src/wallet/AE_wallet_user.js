@@ -25,6 +25,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.path = "m/" + data.derivationValue;
     data.validStatus = true;
 
+    // TODO: 20221214 - Missing MTN derivations in the tree!!!
+
     this.DTree.addChild(data);
     super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
   }
@@ -481,54 +483,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return presentation_signature;
   }
 
-  readIdentityWallet(wallet) {
-    // let wallet = super.readIdentityWallet();
-    // As "this" object cannot be assigned we do need to reconstruct it
-    this.DTree = wallet.DTree;
-    this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;
-    this.identity_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(
-      wallet.identity_HDWallet._hdkey.xpriv
-    );
-    this.identity_pattern = wallet.identity_pattern;
-    this.walletRecoveryFile = wallet.walletRecoveryFile;
-    this.walletStoreFile = wallet.walletStoreFile;
-  }
 
-  readRecoveryWallet(wallet) {
-    //let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
-    // As "this" object cannot be assigned we do need to reconstruct it
-    this.setMnemonic(wallet.mnemonic);
-    this.setIdentityDerivation(
-      wallet.mZR_der,
-      wallet.SSSSSW_der,
-      wallet.MTN_der
-    );
-  }
 
-  generateNewIdentity(old_wallet, SSSSSW_der = "") {
-    // As "this" object cannot be assigned we do need to reconstruct it
-    this.setMnemonic(old_wallet.mnemonic);
-    if (SSSSSW_der == "") {
-      SSSSSW_der =
-        "/" +
-        AEL.getRandomIntDerivation() +
-        "/" +
-        AEL.getRandomIntDerivation() +
-        "/" +
-        AEL.getRandomIntDerivation() +
-        "/" +
-        AEL.getRandomIntDerivation() +
-        "/" +
-        AEL.getRandomIntDerivation() +
-        "/" +
-        AEL.getRandomIntDerivation();
-    }
-    this.setIdentityDerivation(
-      old_wallet.mZR_der,
-      SSSSSW_der,
-      old_wallet.MTN_der
-    );
-  }
 
   getEntities() {
     return this.DTree.findChildByData("derivationName", "B");

@@ -146,9 +146,35 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     return loginDer;
   }
 
-  setCredentialInfo(userStr, credentialID, userExtPubK) {
+  setCredentialInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation) {
     let localCplus = this.getCPlusDerivation(userStr);
-    // let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+
+/*     // This has to be re-coded into the Dtree structure
+    let data = {};
+    
+    // Add the user requested derivations
+    let derivations = userDerivation.split("/");
+    derivations.forEach((element) => {
+      data = {};
+      data.derivationName = "D";
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    });
+
+    // Add the entity requested derivations
+    derivations = entityDerivation.split("/");
+    derivations.forEach((element) => {
+      data = {};
+      data.derivationName = "E";
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    }); */
 
     let credential_meta_info = {};
     credential_meta_info.credentialID = credentialID;
@@ -278,6 +304,50 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     return fIdentityW.data[purpose];
   }
+
+
+  getSubjects() {
+    return this.DTree.findChildByData("derivationName", "C");
+  }
+
+
+  revokeCurrentWallet() {
+    let wNode = this.findNodeByDerivation("W");
+    let descendants = wNode.findAllDescendants();
+    descendants.forEach((element) => {
+      element.data.validStatus = false;
+    });
+    wNode.validStatus = false;
+
+    // TODO: Listar todo lo revocado: Credenciales, Presentaciones y Login
+    let subjects = this.getSubjects();
+    
+    // Credentials in revoked identity
+    let credentials = [];
+    // Presentations in revoked identity
+    let presentations = [];
+    let uCred = [];
+    let fCred = [];
+    let fPres = [];
+
+    subjects.forEach((element) => {      
+
+      uCred = element.findChildByData("derivationName", "E");
+      fCred = uCred.filter((x) => x.data.objectKind == "Credential");
+      fPres = uCred.filter((x) => x.data.objectKind == "Presentation");
+      credentials.push(...fCred);
+      presentations.push(...fPres);
+    });
+
+    let revocations = {};
+    revocations.entities = entities;
+    revocations.credentials = credentials;
+    revocations.presentations = presentations;
+
+    return revocations;
+  }
+
+
 }
 
 module.exports = {

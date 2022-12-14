@@ -143,17 +143,6 @@ async function main() {
     acme_login_challenge,
     acme_login_challenge_signature
   );
-
-  AEWS.storeIdentityWallet(newUserEpicWallet, "./User_store_wallet.json");
-
-  let copyUserEpicWallet = new AEUW.AE_userWallet();
-  let userIdentityWallet = AEWS.readIdentityWallet("./User_store_wallet.json");
-  copyUserEpicWallet.readIdentityWallet(userIdentityWallet);
-
-  let recoveredUserEpicWallet = new AEUW.AE_userWallet();
-  let otherWallet = AEWS.readRecoveryWallet("./User_recovery_wallet.json");
-  recoveredUserEpicWallet.readRecoveryWallet(otherWallet);
-  recoveredUserEpicWallet.readIdentityWallet(userIdentityWallet);
 }
 
 main();

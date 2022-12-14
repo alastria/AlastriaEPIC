@@ -71,22 +71,28 @@ async function main() {
   // To get the ExtendedPublicKey the subject should create a three level derivation: he chooses the first to levels and the entity tells the user the
   // third level, this can change to more levels for security against pre-image attacks
   // Also for identification issues each sigle credential should have a different ID
-  newUserEpicWallet.setCredentialDerivation(
+  let userCredentialChild = newUserEpicWallet.setCredentialDerivation(
     "AcmeAcademy",
     "4b860b60-dd5a-4c3c-ab59-f02252b42772",
     "1251679543"
   );
+
   subjectPublicKey = newUserEpicWallet.getCredentialExtendedPublicKey(
     "AcmeAcademy",
     "4b860b60-dd5a-4c3c-ab59-f02252b42772"
   );
 
+  // extractDerivation("")
+
   // The issuer saves the user related info for the credential, just in case is needed in the future (like revocations)
   newEntityEpicWallet.setCredentialInfo(
     "User",
     "4b860b60-dd5a-4c3c-ab59-f02252b42772",
-    subjectPublicKey
-  );
+    subjectPublicKey,
+    userCredentialChild.data.path
+      );
+
+      // %%% userCredentialChild.data.path
 
   credentialText = credentialText.replace("$SUBJECT", subjectPublicKey);
   credentialSignature = await newEntityEpicWallet.signCredential(

@@ -5,7 +5,7 @@ class AE_rootWallet {
   constructor() {
     (this.mnemonic = ""),
       (this.base_HDWallet = ""),
-      (this.identity_pattern = "mZRSSSSSWMTN"),
+      (this.identity_pattern = "mZRSSSSSWMTNBCDDE"),
       (this.identity_HDWallet = "");
   }
 
@@ -63,8 +63,8 @@ class AE_rootWallet {
     other_extendedPublicKey,
     loginDerivation
   ) {
-    // YET not working
-
+   
+    // Works for entities verifying user login signatures
     // AcmeAcademy verifies signature with the original challenge and the extendedPublicKey AcmeAcademy calculated from the User PubK + Derivation <------
     return AEL.verifyMessageByPublicExtendedKey(
       challengeStr,
@@ -77,6 +77,58 @@ class AE_rootWallet {
       )
     );
   }
+
+
+  generateNewIdentity(old_wallet, SSSSSW_der = "") {
+    // As "this" object cannot be assigned we do need to reconstruct it
+    this.setMnemonic(old_wallet.mnemonic);
+    if (SSSSSW_der == "") {
+      SSSSSW_der =
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation() +
+        "/" +
+        AEL.getRandomIntDerivation();
+    }
+    this.setIdentityDerivation(
+      old_wallet.mZR_der,
+      SSSSSW_der,
+      old_wallet.MTN_der
+    );
+  }
+
+  readIdentityWallet(wallet) {
+    // let wallet = super.readIdentityWallet();
+    // As "this" object cannot be assigned we do need to reconstruct it
+    this.DTree = wallet.DTree;
+    this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;
+    this.identity_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(
+      wallet.identity_HDWallet._hdkey.xpriv
+    );
+    this.identity_pattern = wallet.identity_pattern;
+    this.walletRecoveryFile = wallet.walletRecoveryFile;
+    this.walletStoreFile = wallet.walletStoreFile;
+  }
+
+  readRecoveryWallet(wallet) {
+    //let wallet = super.readRecoveryWallet(this.walletRecoveryFile);
+    // As "this" object cannot be assigned we do need to reconstruct it
+    this.setMnemonic(wallet.mnemonic);
+    this.setIdentityDerivation(
+      wallet.mZR_der,
+      wallet.SSSSSW_der,
+      wallet.MTN_der
+    );
+  }
+
+
 }
 
 module.exports = {
