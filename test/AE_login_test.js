@@ -3,6 +3,7 @@ const { toChecksumAddress } = require("ethereum-checksum-address");
 const AEUW = require("../src/wallet/AE_wallet_user");
 const AEEW = require("../src/wallet/AE_wallet_entity");
 const AEWS = require("./AE_wallet_storage");
+const AEA = require("../src/wallet/AE_Alastree");
 
 async function main() {
   console.log("INIT TESTING");
@@ -16,14 +17,14 @@ async function main() {
   //newUserEpicWallet.setWalletRecoveryFile("./User_recovery_wallet.txt");
   //newUserEpicWallet.setWalletStoreFile("./User_store_wallet.txt")
   newUserEpicWallet.setMnemonic(
-    "used rebel ahead harvest journey steak hub core opera wrong rate loan"
+    "access entry across few mixture island pluck lawn harvest fiction buddy decline"
   );
 
   // AcmeAcademy also has its own wallet
   //newEntityEpicWallet.setWalletRecoveryFile("./Entity_recovery_wallet,txt");
   //newEntityEpicWallet.setWalletStoreFile("./Entity_store_wallet.txt")
   newEntityEpicWallet.setMnemonic(
-    "manage wage hill kitten joke buyer topic focus observe valid december oyster"
+    "arctic stage defense wink stone crumble buddy vital element shift earn deal"
   );
 
   console.log("2nd test: from a HDWallet create initial identity derivation");
@@ -39,8 +40,8 @@ async function main() {
   // mZR_der, SSSSSW_der, MTN_der
   //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/407/10011001");
   newUserEpicWallet.setIdentityDerivation(
-    "m/1037171/94367",
-    "/36514417/1996133064/444811548/120132567/3152038/848215",
+    "m/1037171/104162416",
+    "/104162416/104162416/104162416/104162416/104162416/104162416",
     "/131071/407/10011001"
   );
   AEWS.storeRecoveryWallet(
@@ -54,8 +55,8 @@ async function main() {
   // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
   //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/407/10011001");
   newEntityEpicWallet.setIdentityDerivation(
-    "m/1037171/86307766",
-    "/1152697438/415781155/342717333/307131644/1042827527/324692716",
+    "m/1037171/1241103461",
+    "/1241103461/1241103461/1241103461/1241103461/1241103461/1241103461",
     "/131071/407/10011001"
   );
   AEWS.storeRecoveryWallet(
@@ -73,12 +74,12 @@ async function main() {
   // exteding Z0_A0_A with a random derivation for AcmeAcademy and remembering / storing it
   // AcmeAcademy will be 6385471, random number just for this user
   // the complete derivation of AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
-  newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "6385471");
+  newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "484199084");
 
   // Add the two levels for login
   newUserEpicWallet.addRenewBplusLoginDerivation(
     "AcmeAcademy",
-    "233612745/1482382413"
+    "104162416/484199084"
   );
 
   // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
@@ -105,13 +106,16 @@ async function main() {
   // acme_user_relationship_public_key = connecto_to_user.own_extendedPublicKey;
   // Instead Entity has to send (or User has to query a PKI/Smartcontrac) the three Entity Keys
 
+  let WNode = newEntityEpicWallet.DTree.findChildByData("derivationName","W")[0];
+
   // Update wallets with exchanged publicKeys
   newUserEpicWallet.updateBPlusDerivationExtendedKeys(
     "AcmeAcademy",
-    newEntityEpicWallet.login_extPublicKey,
-    newEntityEpicWallet.credencialIssuance_extPublicKey,
-    newEntityEpicWallet.presentations_extPublicKey
+    WNode.data.login_extPublicKey,
+    WNode.data.credencialIssuance_extPublicKey,
+    WNode.data.presentations_extPublicKey,  
   );
+
   newEntityEpicWallet.updateCPlusDerivationExtendedKeys(
     "User",
     user_acme_relationship_public_key
@@ -119,8 +123,13 @@ async function main() {
 
   console.log("\t3rd test, 2nd step: Login challenge");
   // acme sends me a login challenge, adding its Extended Public Key acting as DID
+  //var acme_login_challenge =
+  //  "{'message':'please sign with your Public Key to login','my_publicKey':'replace'}";
   var acme_login_challenge =
-    "{'message':'please sign with your Public Key to login','my_publicKey':'replace'}";
+  "Please sign with your Public Key to login";
+  
+  
+  
   let acme_W_wallet = newEntityEpicWallet.getDerivation("W");
 
   acme_login_challenge = acme_login_challenge.replace(

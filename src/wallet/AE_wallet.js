@@ -1,12 +1,17 @@
 const AEL = require("../AE_library");
 const AEU = require("../utils/AE_utils");
+const AEA = require("./AE_Alastree");
 
 class AE_rootWallet {
   constructor() {
     (this.mnemonic = ""),
-      (this.base_HDWallet = ""),
-      (this.identity_pattern = "mZRSSSSSWMTNBCDDE"),
-      (this.identity_HDWallet = "");
+      (this.base_HDWallet = ""),            
+      (this.identity_HDWallet = "")
+          // 20221122 new DTree data structure
+      let data = {};
+      data.derivationName = "m";
+      data.path = "m";
+      this.DTree = new AEA.AE_Alastree(data);
   }
 
   setWalletRecoveryFile(fileStr) {
@@ -31,12 +36,12 @@ class AE_rootWallet {
     //Check identityDerivsationStr
     AEU.check_require("id_derivation", identityDerivationStr);
     derivations = identityDerivationStr.split("/");
-    if (!(derivations.length === this.identity_pattern.length)) {
+    if (!(derivations.length === (this.identity_pattern.length-5))) {
       console.log(
         "Identity Derivation Str has ",
         derivations.length,
         "depth not the required ",
-        this.identity_pattern.length
+        this.identity_pattern.length-5 // Substract BCDDE length
       );
     }
 
@@ -55,6 +60,32 @@ class AE_rootWallet {
     // base_HDWallet and mnemonic won't be necesary either, it is more secure to delete it
     delete this.base_HDWallet;
     delete this.mnemonic;
+
+    // Store MTN derivations
+    // Get W derivation, it is the first and only child in the tree
+    let child = this.DTree.descendants[0];
+    let data = {};
+
+    let mtnDers = MTN_der.split("/");
+    let fMtnDers = mtnDers.filter(x => (x.length>0));
+
+
+    let derName = "M";
+    fMtnDers.forEach(element => {
+      data = {};
+      data.derivationName = derName;
+      if (derName == "T") {
+        derName = "N";
+      }
+      if (derName == "M") {
+        derName = "T";
+      }     
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;      
+    });
   }
 
   baseVerifyLoginChallenge(

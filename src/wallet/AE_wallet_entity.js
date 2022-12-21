@@ -5,17 +5,13 @@ const { id } = require("ethers/lib/utils");
 
 class AE_entityWallet extends AEW.AE_rootWallet {
   constructor() {
-    super();
-
-    // 20221122 new DTree data structure
-    let data = {};
-    data.derivationName = "m";
-    data.path = "m";
-    this.DTree = new AEA.AE_Alastree(data);
+    super();   
+    (this.identity_pattern = "mZRSSSSSWMTNCDDE"),
+    (this.identity_last_fixed_derivation_level = "N");
   }
 
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der) {
-    super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
+    
 
     let wDerivationIdx = SSSSSW_der.lastIndexOf("/");
     let wDerivation = "";
@@ -28,6 +24,9 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     data.path = "m/" + data.derivationValue;
     data.validStatus = true;
 
+    let firstChild = this.DTree.addChild(data);
+    super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
+    
     // This corresponds to C derivations aka Purpose
     // 0 -> login, may be usefull for C2C interactions or to sign login challenges
     data.login_derivation = "m/0";
@@ -57,11 +56,12 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       data.presentations_HDWallet
     );
 
-    this.DTree.addChild(data);
+    firstChild.data = data;
+    
   }
 
   addCPlusDerivation(entityStr) {
-    let localCPD = this.getDerivation("W");
+    let localCPD = this.getDerivation(this.identity_last_fixed_derivation_level);
 
     let data = {};
     data.entity = entityStr;
@@ -195,7 +195,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     //review derivations of Entities and Users, that are different
 
     let signerRl = this.getCPlusDerivation(signerStr);
-    let login_derivation = this.getLoginDerivation("User");
+    let login_derivation = this.getLoginDerivation(signerStr);
     return this.baseVerifyLoginChallenge(
       challengeStr,
       signatureStr,

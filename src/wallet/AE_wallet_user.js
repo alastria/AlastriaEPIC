@@ -7,13 +7,12 @@ const AEU = require("../utils/AE_utils");
 class AE_userWallet extends AEW.AE_rootWallet {
   constructor() {
     super();
-
-    let data = {};
-    data.derivationName = "m";
-    this.DTree = new AEA.AE_Alastree(data);
+    (this.identity_pattern = "mZRSSSSSWMTNBCDDE");
+    (this.identity_last_fixed_derivation_level = "N");
   }
 
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der) {
+
     let wDerivationIdx = SSSSSW_der.lastIndexOf("/");
     let wDerivation = "";
     if (wDerivationIdx >= 0) {
@@ -24,8 +23,6 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.derivationValue = wDerivation;
     data.path = "m/" + data.derivationValue;
     data.validStatus = true;
-
-    // TODO: 20221214 - Missing MTN derivations in the tree!!!
 
     this.DTree.addChild(data);
     super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
@@ -74,7 +71,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.validStatus = true;
     data.own_HDWallet = entity_relationship_wallet;
     data.own_extendedPublicKey = my_entity_relationship_public_key;
-    let wTree = this.DTree.findChildByData("derivationName", "W");
+    let wTree = this.DTree.findChildByData("derivationName", "N");
     let child = wTree[0].addChild(data);
     child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
   }
@@ -91,6 +88,11 @@ class AE_userWallet extends AEW.AE_rootWallet {
     if (loginDer.charAt(0) == "/") {
       return loginDer.substring(1);
     }
+
+    if (loginDer.length == 0) {
+      throw new Error("BPlusLoginDerivation has zero length");
+    }
+
     return loginDer;
   }
 
