@@ -317,8 +317,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
       throw "Invalid derivation";
     }
 
-    //      TODO: Maybe add credential HASH?
-    // Pending if the wallet should store the presentation itself or if it should be an storage helper
+    // TODO: Maybe add credential HASH?
+    // TODO: Pending if the wallet should store the presentation itself or if it should be an storage helper
     let localBplus = this.getBPlusDerivation(entityStr);
 
     let data = {};

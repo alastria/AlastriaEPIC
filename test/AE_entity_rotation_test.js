@@ -51,6 +51,8 @@ async function main() {
 
   console.log("2nd test: CASE 1: entity rotates its main identity key");
 
+
+  let revocations = newEntityEpicWallet.revokeCurrentWallet();
   
 
 

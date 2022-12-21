@@ -34,7 +34,7 @@
             "type": "node",
             "request": "launch",
             "name": "Entity Key Rotation",
-            "program": "${workspaceFolder}/test/AE_Entity_rotation_test.js"
+            "program": "${workspaceFolder}/test/AE_entity_rotation_test.js"
         },
         {
             "type": "node",

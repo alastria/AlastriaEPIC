@@ -2,6 +2,7 @@ const AEL = require("../src/AE_library");
 const { toChecksumAddress } = require("ethereum-checksum-address");
 const AEUW = require("../src/wallet/AE_wallet_user");
 const AEEW = require("../src/wallet/AE_wallet_entity");
+const AEU = require("../src/utils/AE_utils");
 
 async function main() {
   console.log("INIT TESTING");
@@ -82,17 +83,19 @@ async function main() {
     "4b860b60-dd5a-4c3c-ab59-f02252b42772"
   );
 
-  // extractDerivation("")
+
+  let credentialDerivation = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,userCredentialChild.data.path);
+  let credUserDer  = AEU.subDerivation(credentialDerivation,0,2);
+  let credEntityDer = AEU.subDerivation(credentialDerivation,2,1);
 
   // The issuer saves the user related info for the credential, just in case is needed in the future (like revocations)
   newEntityEpicWallet.setCredentialInfo(
     "User",
     "4b860b60-dd5a-4c3c-ab59-f02252b42772",
     subjectPublicKey,
-    userCredentialChild.data.path
-      );
+    credUserDer,
+    credEntityDer);
 
-      // %%% userCredentialChild.data.path
 
   credentialText = credentialText.replace("$SUBJECT", subjectPublicKey);
   credentialSignature = await newEntityEpicWallet.signCredential(

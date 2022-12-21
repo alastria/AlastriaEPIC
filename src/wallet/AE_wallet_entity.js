@@ -2,6 +2,7 @@ const AEL = require("../AE_library");
 const AEW = require("./AE_wallet");
 const AEA = require("./AE_Alastree");
 const { id } = require("ethers/lib/utils");
+const AEU = require("../src/utils/AE_utils");
 
 class AE_entityWallet extends AEW.AE_rootWallet {
   constructor() {
@@ -114,7 +115,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       }
     }
 
-    // TODO: revoke older derivations for this userStr
+    // revoke older derivations for this userStr
     // Find the other "D" derivations and set to validStatus = false
     let invalidate = child.findChildByData("derivationName", "D");
     invalidate.forEach((element) => {
@@ -148,12 +149,14 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
   setCredentialInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation) {
     let localCplus = this.getCPlusDerivation(userStr);
+    let cUD = AEU.cleanPath(userDerivation);
+    let cED = AEU.cleanPath(entityDerivation);
 
-/*     // This has to be re-coded into the Dtree structure
+/*     // This has to be re-coded into the Dtree structure */
     let data = {};
     
     // Add the user requested derivations
-    let derivations = userDerivation.split("/");
+    let derivations = cUD.split("/");
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "D";
@@ -165,7 +168,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
 
     // Add the entity requested derivations
-    derivations = entityDerivation.split("/");
+    derivations = cED.split("/");
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "E";
@@ -174,14 +177,25 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       child = child.addChild(data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
-    }); */
+    }); 
 
-    let credential_meta_info = {};
-    credential_meta_info.credentialID = credentialID;
-    credential_meta_info.userExtPubK = userExtPubK;
 
-    localCplus.data.credentials = [];
-    localCplus.data.credentials.push(credential_meta_info);
+        // In the last level we can store the credential info
+    child.data.objectID = credentialID;
+    child.data.objectKind = "Credential";
+    child.data.userExtPubK = userExtPubK;
+
+    // TODO: remove after the getter is corrected and working
+    //
+    //let credential_meta_info = {};
+    //credential_meta_info.credentialID = credentialID;
+    //credential_meta_info.userExtPubK = userExtPubK;
+    //
+    //localCplus.data.credentials = [];
+    //localCplus.data.credentials.push(credential_meta_info);
+    //
+
+    
   }
 
   async signLoginChallenge(entityStr, signLoginChallenge) {
@@ -319,7 +333,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
     wNode.validStatus = false;
 
-    // TODO: Listar todo lo revocado: Credenciales, Presentaciones y Login
+    // Listar lo revocado: Credenciales, Presentaciones y Login
     let subjects = this.getSubjects();
     
     // Credentials in revoked identity

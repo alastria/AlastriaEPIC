@@ -36,12 +36,22 @@ class AE_rootWallet {
     //Check identityDerivsationStr
     AEU.check_require("id_derivation", identityDerivationStr);
     derivations = identityDerivationStr.split("/");
-    if (!(derivations.length === (this.identity_pattern.length-5))) {
+
+    // Adjust derivation length depending of kind of wallet
+    let substract;
+    if (this.constructor.name == "AE_entityWallet"){
+      substract = 4;
+    }
+    else if (this.constructor.name == "AE_userWallet") {
+      substract = 5;
+    }
+    // Substract BCDDE length IF User, -4 IF entity
+    if (!(derivations.length === (this.identity_pattern.length-substract))) {
       console.log(
         "Identity Derivation Str has ",
         derivations.length,
-        "depth not the required ",
-        this.identity_pattern.length-5 // Substract BCDDE length
+        "depth not the required ",        
+        this.identity_pattern.length-substract // Substract 5 length IF User, -4 IF entity
       );
     }
 

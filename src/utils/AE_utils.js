@@ -1,6 +1,6 @@
 const max_derivation = 2147483647; // 2^31 -1
 
-module.exports = { check_require, unParent, reParent, cleanPath, cleanDerivaton, addDerivations, substractDerivations };
+module.exports = { check_require, unParent, reParent, cleanPath, cleanDerivaton, addDerivations, substractDerivations, subDerivation };
 
 function isNumeric(str) {
   if (typeof str != "string") return false; // we only process strings!
@@ -94,10 +94,31 @@ function addDerivations(der1, der2) {
 
 function substractDerivations(der1, der2) {
   // result = der2 - der1
-
   
-  derivacion = der2.replaceAll(der1,"");
+  derivacion = der2.replace(der1,"");
   derivacion = this.cleanDerivaton(derivacion);
   return derivacion;
 }
+
+function subDerivation(derivation, start, length) {
+  let path = derivation.replace("m","");
+  let chunks = path.split("/");
+  let cChunks = chunks.filter( x => (x.length >0) && (!(x === undefined)));
+  let subD = "";
+  let idx = 0;
+  let len = 0;
+  cChunks.forEach(
+    element => {
+      if (idx >= start && len < length) 
+      {
+        subD = subD + "/" + element;
+        len++;
+      }
+      idx++;
+    });
+      
+  return subD;
+  }
+
+
 

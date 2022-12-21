@@ -17,6 +17,11 @@ async function  main()
     let sub = AEU.substractDerivations("/4","1/2/3/4/5/6/4/5/6");
 
 
+    let part = AEU.subDerivation("1/2/3/4/5/6/4/5/6",3,2);
+    console.log("subD",part);
+
+
+
     let newUserEpicWallet = new AEUW.AE_userWallet();
     newUserEpicWallet.setMnemonic("used rebel ahead harvest journey steak hub core opera wrong rate loan" );
 
