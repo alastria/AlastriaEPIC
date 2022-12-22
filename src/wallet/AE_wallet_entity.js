@@ -2,7 +2,8 @@ const AEL = require("../AE_library");
 const AEW = require("./AE_wallet");
 const AEA = require("./AE_Alastree");
 const { id } = require("ethers/lib/utils");
-const AEU = require("../src/utils/AE_utils");
+const AEU = require("../utils/AE_utils");
+const AEC = require("../utils/AE_constants");
 
 class AE_entityWallet extends AEW.AE_rootWallet {
   constructor() {
@@ -123,7 +124,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
 
     let data = {};
-    let derivations = loginDerivationStr.split("/");
+    let derivations = loginDerivationStr.split("/").filter( x => (x.length >0));
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "D";
@@ -133,6 +134,9 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     });
+
+    child.data.objectKind = AEC.login;
+    return child;
   }
 
   getLoginDerivation(userStr) {
@@ -147,16 +151,25 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     return loginDer;
   }
 
-  setCredentialInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation) {
-    let localCplus = this.getCPlusDerivation(userStr);
+  setObjectDerivation(userStr, objectID, userDerivation, entityDerivation, objectKind) {
+    
     let cUD = AEU.cleanPath(userDerivation);
     let cED = AEU.cleanPath(entityDerivation);
 
-/*     // This has to be re-coded into the Dtree structure */
     let data = {};
+    let localCplus = this.getDerivation("C");
+    let child;
+    // Check is it is an array to see the userStr
+    if (Array.isArray(localCplus)) {
+      child = localCplus.filter((x) => x.data.entity == userStr);
+    } else {
+      if (localCplus.data.entity == userStr) {
+        child = localCplus;
+      }
+    }
     
     // Add the user requested derivations
-    let derivations = cUD.split("/");
+    let derivations = cUD.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "D";
@@ -168,7 +181,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
 
     // Add the entity requested derivations
-    derivations = cED.split("/");
+    derivations = cED.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "E";
@@ -180,22 +193,31 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     }); 
 
 
-        // In the last level we can store the credential info
-    child.data.objectID = credentialID;
-    child.data.objectKind = "Credential";
+    // In the last level we can store the credential info
+    child.data.objectID = objectID;
+    child.data.objectKind = objectKind;
+
+    return child;
+
+
+  }
+
+  setCredentialInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation) {
+
+    let child = this.setObjectDerivation(userStr, credentialID, userDerivation, entityDerivation, AEC.credential);
     child.data.userExtPubK = userExtPubK;
 
-    // TODO: remove after the getter is corrected and working
-    //
-    //let credential_meta_info = {};
-    //credential_meta_info.credentialID = credentialID;
-    //credential_meta_info.userExtPubK = userExtPubK;
-    //
-    //localCplus.data.credentials = [];
-    //localCplus.data.credentials.push(credential_meta_info);
-    //
-
+    return child;
     
+  }
+
+  setPresentationInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation) {
+
+    let child = this.setObjectDerivation(userStr, credentialID, userDerivation, entityDerivation, AEC.presentation);
+    child.data.userExtPubK = userExtPubK;
+
+    return child;
+
   }
 
   async signLoginChallenge(entityStr, signLoginChallenge) {
@@ -327,40 +349,62 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
   revokeCurrentWallet() {
     let wNode = this.findNodeByDerivation("W");
-    let descendants = wNode.findAllDescendants();
-    descendants.forEach((element) => {
-      element.data.validStatus = false;
-    });
-    wNode.validStatus = false;
 
     // Listar lo revocado: Credenciales, Presentaciones y Login
-    let subjects = this.getSubjects();
-    
+    let subjects = this.getSubjects();    
     // Credentials in revoked identity
     let credentials = [];
     // Presentations in revoked identity
     let presentations = [];
+    // Logins in revoked identity
+    let logins = [];
     let uCred = [];
     let fCred = [];
     let fPres = [];
+    let fLog = [];
 
+    // TODO: Los login no tienen derivación "E", en vez de buscar por "derivationName" habría que buscar los diferentes objectKind que se deberían revocar
     subjects.forEach((element) => {      
 
-      uCred = element.findChildByData("derivationName", "E");
-      fCred = uCred.filter((x) => x.data.objectKind == "Credential");
-      fPres = uCred.filter((x) => x.data.objectKind == "Presentation");
+      fCred = element.findChildByData("objectKind",AEC.credential).filter( x => ( x.data.validStatus == true));
+      fPres = element.findChildByData("objectKind",AEC.presentation).filter( x => ( x.data.validStatus == true));
+      fLog = element.findChildByData("objectKind",AEC.login).filter( x => ( x.data.validStatus == true));
+
       credentials.push(...fCred);
       presentations.push(...fPres);
+      logins.push(...fLog);
     });
 
-    let revocations = {};
-    revocations.entities = entities;
+    // Finally revoke everything
+    if (!(typeof wNode === "undefined"))
+    {
+    let descendants = wNode.findAllDescendants();
+    descendants.forEach((element) => {
+    element.data.validStatus = false;
+    });
+    wNode.validStatus = false;
+  }
+
+
+
+    let revocations = {};    
     revocations.credentials = credentials;
     revocations.presentations = presentations;
+    revocations.logins = logins;
 
     return revocations;
   }
 
+
+
+  generateNewIdentity(old_wallet, SSSSSW_der = "") {
+      // Revoke previous identity
+      let revocations = this.revokeCurrentWallet();
+
+      super.generateNewIdentity(old_wallet,SSSSSW_der);
+
+      return revocations;
+  }
 
 }
 

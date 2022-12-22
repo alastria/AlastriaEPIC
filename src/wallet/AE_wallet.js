@@ -72,8 +72,10 @@ class AE_rootWallet {
     delete this.mnemonic;
 
     // Store MTN derivations
-    // Get W derivation, it is the first and only child in the tree
-    let child = this.DTree.descendants[0];
+    // Get W derivation, it is the first and only "validStatus==true" child in the tree (there can be several in case of generating a new identity)
+    
+    let childs = this.DTree.descendants.filter( x => ( x.data.validStatus == true));
+    let child = childs[0];
     let data = {};
 
     let mtnDers = MTN_der.split("/");
@@ -121,6 +123,7 @@ class AE_rootWallet {
 
 
   generateNewIdentity(old_wallet, SSSSSW_der = "") {
+
     // As "this" object cannot be assigned we do need to reconstruct it
     this.setMnemonic(old_wallet.mnemonic);
     if (SSSSSW_der == "") {
@@ -167,6 +170,29 @@ class AE_rootWallet {
       wallet.SSSSSW_der,
       wallet.MTN_der
     );
+  }
+
+  findNodeByDerivation(derivationName, derivationValue = "") {
+    let fTree;
+
+    let wTree = this.DTree.findChildByData("derivationName", derivationName);
+    if (wTree.length == 0) {
+      return wTree;
+    }
+    if (derivationValue == "") {
+      fTree = wTree.filter((x) => x.data.validStatus == true);
+    } else {
+      fTree = wTree.filter(
+        (x) =>
+          x.data.derivationValue == derivationValue &&
+          x.data.validStatus == true
+      );
+    }
+    if (Array.isArray(fTree)) {
+      return fTree[0];
+    } else {
+      return fTree;
+    }
   }
 
 

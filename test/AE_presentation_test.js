@@ -2,6 +2,7 @@ const AEL = require("../src/AE_library");
 const { toChecksumAddress } = require("ethereum-checksum-address");
 const AEUW = require("../src/wallet/AE_wallet_user");
 const AEEW = require("../src/wallet/AE_wallet_entity");
+const AEU = require("../src/utils/AE_utils");
 
 //const bip39 = require("bip39");
 
@@ -78,21 +79,35 @@ async function main() {
   // To get the ExtendedPublicKey the subject should create a three level derivation: he chooses the first to levels and the entity tells the user the
   // third level, this can change to more levels for security against pre-image attacks
   // Also for identification issues each sigle credential should have a different ID
-  newUserEpicWallet.setCredentialDerivation(
+  cred1Child = newUserEpicWallet.setCredentialDerivation(
     "AcmeAcademy",
     "87341868-10b0-4a35-971c-b26974b89cb3",
     "1845211977"
   );
-  newUserEpicWallet.setCredentialDerivation(
+
+  let cred1Der = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,cred1Child.data.path);
+  let cred1UserDer  = AEU.subDerivation(cred1Der,0,2);
+  let cred1EntityDer = AEU.subDerivation(cred1Der,2,1);
+
+  cred2Child = newUserEpicWallet.setCredentialDerivation(
     "AcmeAcademy",
     "1e0ca9b7-4a20-493a-9f4f-b253febc8379",
     "518358247"
   );
-  newUserEpicWallet.setCredentialDerivation(
+
+  let cred2Der = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,cred1Child.data.path);
+  let cred2UserDer  = AEU.subDerivation(cred2Der,0,2);
+  let cred2EntityDer = AEU.subDerivation(cred2Der,2,1);
+
+  cred3Child = newUserEpicWallet.setCredentialDerivation(
     "AcmeAcademy",
     "aed59aca-d62d-4e0a-a576-c2b34a8e6d8a",
     "2135079704"
   );
+
+  let cred3Der = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,cred1Child.data.path);
+  let cred3UserDer  = AEU.subDerivation(cred3Der,0,2);
+  let cred3EntityDer = AEU.subDerivation(cred3Der,2,1);
 
   // The user public keys for each credential has to be sent to the Issuer
   subjectPublicKey1 = newUserEpicWallet.getCredentialExtendedPublicKey(
@@ -112,17 +127,23 @@ async function main() {
   newEntityEpicWallet.setCredentialInfo(
     "User",
     "87341868-10b0-4a35-971c-b26974b89cb3",
-    subjectPublicKey1
+    subjectPublicKey1,
+    cred1UserDer,
+    cred1EntityDer
   );
   newEntityEpicWallet.setCredentialInfo(
     "User",
     "1e0ca9b7-4a20-493a-9f4f-b253febc8379",
-    subjectPublicKey2
+    subjectPublicKey2,
+    cred2UserDer,
+    cred2EntityDer
   );
   newEntityEpicWallet.setCredentialInfo(
     "User",
     "aed59aca-d62d-4e0a-a576-c2b34a8e6d8a",
-    subjectPublicKey3
+    subjectPublicKey3,
+    cred3UserDer,
+    cred3EntityDer    
   );
 
   // The issuer composes the final credential
@@ -238,6 +259,12 @@ async function main() {
     "ServiceProvider",
     "7c3d4c06-891d-4bdf-aa72-f702aa2e66bc"
   );
+
+
+  let presentationDerivation = AEU.substractDerivations( "m/2",presentation_derivation);
+  let presUserDer  = AEU.subDerivation(presentationDerivation,0,2);
+  let presEntityDer = AEU.subDerivation(presentationDerivation,2,1);
+
   newSPWallet.verifyPresentationSignature(
     "User",
     presentation_derivation,

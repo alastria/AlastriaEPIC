@@ -27,29 +27,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     this.DTree.addChild(data);
     super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
   }
-
-  findNodeByDerivation(derivationName, derivationValue = "") {
-    let fTree;
-
-    let wTree = this.DTree.findChildByData("derivationName", derivationName);
-    if (wTree.length == 0) {
-      return wTree;
-    }
-    if (derivationValue == "") {
-      fTree = wTree.filter((x) => x.data.validStatus == true);
-    } else {
-      fTree = wTree.filter(
-        (x) =>
-          x.data.derivationValue == derivationValue &&
-          x.data.validStatus == true
-      );
-    }
-    if (Array.isArray(fTree)) {
-      return fTree[0];
-    } else {
-      return fTree;
-    }
-  }
+  
 
   addBPlusDerivation(entityStr, derivationStr) {
     if (!AEU.check_require("id_derivation", derivationStr)) {
@@ -349,7 +327,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     //let objectUserDerivationStr = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
     // harcoded for testing purposes
     let objectUserDerivationStr = "198367/2986292";
-    let derivations = objectUserDerivationStr.split("/");
+    let derivations = objectUserDerivationStr.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "D";
@@ -361,7 +339,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     });
 
     // Add the entity requested derivations
-    derivations = entityObjectDerivation.split("/");
+    derivations = entityObjectDerivation.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "E";
@@ -494,12 +472,17 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
   revokeCurrentWallet() {
     let wNode = this.findNodeByDerivation("W");
-    let descendants = wNode.findAllDescendants();
-    descendants.forEach((element) => {
+    if (!(typeof wNode === "undefined"))
+      {
+      let descendants = wNode.findAllDescendants();
+      descendants.forEach((element) => {
       element.data.validStatus = false;
-    });
-    wNode.validStatus = false;
-    // TODO: Listar todo lo revocado: Credenciales, Presentaciones y Login
+      });
+      wNode.validStatus = false;
+    }
+  
+
+    // Listar todo lo revocado: Credenciales, Presentaciones y Login
     let entities = this.getEntities();
     // Credentials in revoked identity
     let credentials = [];
@@ -524,6 +507,14 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
     return revocations;
   }
+
+  generateNewIdentity(old_wallet, SSSSSW_der = "") {
+    // Revoke previous identity
+    let revocations = this.revokeCurrentWallet();
+    super.generateNewIdentity(old_wallet,SSSSSW_der);
+
+    return revocations;
+}
 }
 
 module.exports = {
