@@ -85,13 +85,17 @@ class AE_rootWallet {
     let derName = "M";
     fMtnDers.forEach(element => {
       data = {};
-      data.derivationName = derName;
+      data.derivationName = derName;      
       if (derName == "T") {
         derName = "N";
       }
       if (derName == "M") {
         derName = "T";
       }     
+      if (derName == "N") {
+        // The first identity holds the default MNT (aka net), the rest would be secondary unless marked
+        data.defaultMTN = true;  
+      }
       data.derivationValue = element;
       data.validStatus = true;
       child = child.addChild(data);
@@ -99,6 +103,15 @@ class AE_rootWallet {
         child.parent.data.path + "/" + child.data.derivationValue;      
     });
   }
+
+  createNewNetwork(MNT_der, makeDefault = false) {
+    // TODO
+    // Find W derivation
+    // Add MNT_der
+    // if makeDefault mark all previour networks default, then make this default
+    
+  }
+
 
   baseVerifyLoginChallenge(
     challengeStr,

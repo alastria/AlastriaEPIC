@@ -52,12 +52,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.own_extendedPublicKey = my_entity_relationship_public_key;
     let wTree = this.DTree.findChildByData("derivationName", "N");
 
-    // Find out if this derivation has been already used at B level
-    wTree.descendants.forEach(element => {
-      if ((element.data.derivationValue == derivationStr) && element.data.derivationName == "B") {
-        throw "Derivation already in use";
-      }
-    });
+    
     let child = wTree[0].addChild(data);
     child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
 
