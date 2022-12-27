@@ -1,6 +1,6 @@
 const AEL = require("../AE_library");
 const AEU = require("../utils/AE_utils");
-const AEA = require("./AE_Alastree");
+const AEA = require("./AE_alastree");
 
 class AE_rootWallet {
   constructor() {

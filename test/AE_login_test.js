@@ -3,7 +3,7 @@ const { toChecksumAddress } = require("ethereum-checksum-address");
 const AEUW = require("../src/wallet/AE_wallet_user");
 const AEEW = require("../src/wallet/AE_wallet_entity");
 const AEWS = require("./AE_wallet_storage");
-const AEA = require("../src/wallet/AE_Alastree");
+const AEA = require("../src/wallet/AE_alastree");
 
 async function main() {
   console.log("INIT TESTING");
@@ -75,6 +75,8 @@ async function main() {
   // AcmeAcademy will be 6385471, random number just for this user
   // the complete derivation of AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
   newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "484199084");
+  // This should raise an error
+  newUserEpicWallet.addBPlusDerivation("Other", "484199084");
 
   // Add the two levels for login
   newUserEpicWallet.addRenewBplusLoginDerivation(

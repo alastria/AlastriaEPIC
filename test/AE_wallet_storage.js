@@ -40,6 +40,9 @@ function storeIdentityWallet(wallet, identityWalletFile) {
 
   let identityWalletData = JSON.stringify(wallet);
   fs.writeFileSync(identityWalletFile, identityWalletData, { mode: 0o600 });
+
+  // required to restore proper status
+  utils.reParent(wallet.DTree);
 }
 
 function readIdentityWallet(identityWalletFile) {

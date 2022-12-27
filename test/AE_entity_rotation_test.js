@@ -45,6 +45,7 @@ async function main() {
   );
 
 
+  
   AEWS.storeIdentityWallet(newEntityEpicWallet, "./Entity_store_wallet.json");
 
   let copyEntityEpicWallet = new AEEW.AE_entityWallet;

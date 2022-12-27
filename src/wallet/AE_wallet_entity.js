@@ -1,9 +1,11 @@
 const AEL = require("../AE_library");
 const AEW = require("./AE_wallet");
-const AEA = require("./AE_Alastree");
+const AEA = require("./AE_alastree");
 const { id } = require("ethers/lib/utils");
 const AEU = require("../utils/AE_utils");
 const AEC = require("../utils/AE_constants");
+
+// TODO: addChild must check if there's a previous derivation with the same number
 
 class AE_entityWallet extends AEW.AE_rootWallet {
   constructor() {
@@ -26,6 +28,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     data.path = "m/" + data.derivationValue;
     data.validStatus = true;
 
+    // Here we do not need to check if there was an exiting child with the same derivation as it is the first identity child
     let firstChild = this.DTree.addChild(data);
     super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
     
