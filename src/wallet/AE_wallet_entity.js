@@ -366,7 +366,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     let fPres = [];
     let fLog = [];
 
-    // TODO: Los login no tienen derivación "E", en vez de buscar por "derivationName" habría que buscar los diferentes objectKind que se deberían revocar
+    // Los login no tienen derivación "E", en vez de buscar por "derivationName" habría que buscar los diferentes objectKind que se deberían revocar
     subjects.forEach((element) => {      
 
       fCred = element.findChildByData("objectKind",AEC.credential).filter( x => ( x.data.validStatus == true));

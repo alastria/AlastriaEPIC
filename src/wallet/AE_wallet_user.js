@@ -52,7 +52,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.own_extendedPublicKey = my_entity_relationship_public_key;
     let wTree = this.DTree.findChildByData("derivationName", "N");
 
-    
+    // TODO: It requires checking teh MNT derivation to add this to    
     let child = wTree[0].addChild(data);
     child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
 
