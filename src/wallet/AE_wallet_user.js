@@ -28,9 +28,11 @@ class AE_userWallet extends AEW.AE_rootWallet {
     this.DTree.addChild(data);
     super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
   }
-  
 
-  addBPlusDerivation(entityStr, derivationStr) {
+    
+
+  addBPlusDerivation(entityStr, derivationStr, MTN_alias) {
+    // MTN updated
     if (!AEU.check_require("id_derivation", derivationStr)) {
       throw "Invalid derivation";
     }
@@ -50,16 +52,21 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.validStatus = true;
     data.own_HDWallet = entity_relationship_wallet;
     data.own_extendedPublicKey = my_entity_relationship_public_key;
-    let wTree = this.DTree.findChildByData("derivationName", "N");
 
-    // TODO: It requires checking teh MNT derivation to add this to    
-    let child = wTree[0].addChild(data);
+    let networkNode = this.getNetworkNode(MTN_alias); 
+
+    // TODO: It requires checking the MNT derivation to add this to    
+    let child = networkNode.addChild(data);
     child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
 
   }
 
-  getBPlusLoginDerivation(entityStr) {
-    let user = this.getBPlusDerivation(entityStr);
+  getBPlusLoginDerivation(entityStr, MTN_alias) {
+
+    // Done update with MTN via getBPlusDerivation
+    
+
+    let user = this.getBPlusDerivation(entityStr,MTN_alias);
     let derivationNodes = user.findChildByData("derivationName", "D");
     let derivations = derivationNodes.map((x) => x.data.derivationValue);
     let loginDer = derivations.reduce(
@@ -78,12 +85,20 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return loginDer;
   }
 
-  addRenewBplusLoginDerivation(entityStr, loginDerivationStr) {
+  addRenewBplusLoginDerivation(entityStr, loginDerivationStr, MTN_alias) {
+    // Done MTN updated
+
     if (!AEU.check_require("id_derivation", loginDerivationStr)) {
       throw "Invalid derivation";
     }
+
+    // Multiple MTN
+    let networkNode = this.getNetworkNode(MTN_alias); 
+
     // works for adding or renewing, as we won't keep the old login derivation once updated
-    let localBplus = this.getBPlusDerivation(entityStr);
+    // MTN changes, let localBplus = this.getBPlusDerivation(entityStr);
+    let allBderivations = networkNode.findChildByData("derivationName", "B");
+    let localBplus = allBderivations.filter((nodo) => (nodo.data.entity == entityStr) && (nodo.data.validStatus == true))[0];
 
     // This updates directly the user wallet
     localBplus.data.loginDerivation = loginDerivationStr;
@@ -148,12 +163,15 @@ class AE_userWallet extends AEW.AE_rootWallet {
     child.objectKind = "Login";
   }
 
-  renewBPlusDerivation(entityStr, newDerivationStr) {
+  renewBPlusDerivation(entityStr, newDerivationStr, MTN_alias) {
+
+    // MTN updated via getBPlusDerivation
+
     if (!AEU.check_require("id_derivation", newDerivationStr)) {
       throw "Invalid derivation";
     }
 
-    let localBplus = this.getBPlusDerivation(entityStr);
+    let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
 
     let oldDerivation = localBplus.data.derivationValue;
     // Invalidate this entity derivation
@@ -175,13 +193,17 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return oldDerivation;
   }
 
-  getLeafData(entityStr) {
-    let localBPlus = this.getBPlusDerivation(entityStr);
+  getLeafData(entityStr, MTN_alias) {
+    // MNT updated via getBPlusDerivation
+
+    let localBPlus = this.getBPlusDerivation(entityStr, MTN_alias);
     let findAllChild = localBPlus.findAllLeafs();
   }
 
-  getCredentials(entityStr) {
-    let leafs = this.getLeafData(entityStr);
+  getCredentials(entityStr, MTN_alias) {
+    // MNT updated via getLeafData
+
+    let leafs = this.getLeafData(entityStr, MTN_alias);
     let fLeafs = [];
     if (Array.isArray(leafs)) {
       fLeafs = leafs.filter((x) => x.data.objectKind == "Credential");
@@ -194,8 +216,10 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return fLeafs;
   }
 
-  getPresentations(entityStr) {
-    let leafs = this.getLeafData(entityStr);
+  getPresentations(entityStr, MTN_alias) {
+    // MNT updated via getLeafData
+
+    let leafs = this.getLeafData(entityStr, MTN_alias);
     let fLeafs = [];
     if (Array.isArray(leafs)) {
       fLeafs = leafs.filter((x) => x.data.objectKind == "Presentation");
@@ -207,8 +231,11 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return fLeafs;
   }
 
-  getOldCredentials(entityStr, oldDerivation) {
-    let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
+  getOldCredentials(entityStr, oldDerivation, MTN_alias) {
+
+    // Done MTN update via getOldBPlusDerivation
+    // TODO ERROR HERE!
+    let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation, MTN_alias);
     let leafs = localOldBplus.findAllLeafs(entityStr);
     let fLeafs = [];
     if (Array.isArray(leafs)) {
@@ -222,8 +249,11 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return fLeafs;
   }
 
-  getOldPresentations(entityStr, oldDerivation) {
-    let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation);
+  getOldPresentations(entityStr, oldDerivation, MTN_alias) {
+
+    // Done MTN update via getOldBPlusDerivation
+
+    let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation, MTN_alias);
     let leafs = localOldBplus.findAllLeafs(entityStr);
     let fLeafs = [];
     if (Array.isArray(leafs)) {
@@ -237,9 +267,16 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return fLeafs;
   }
 
-  getBPlusDerivation(entityStr, oldDerivation = "none") {
+  getBPlusDerivation(entityStr, oldDerivation = "none", MTN_alias) {
+
+    // DONE MNT update
+
+    let networkNode = this.getNetworkNode(MTN_alias);
+
     let vTree = [];
-    let wTree = this.DTree.findChildByData("derivationName", "B");
+    // MTN update
+    // let wTree = this.DTree.findChildByData("derivationName", "B");
+    let wTree = networkNode.findChildByData("derivationName", "B");
     let fTree = wTree.filter((nodo) => nodo.data.entity == entityStr);
     if (oldDerivation == "none") {
       vTree = fTree.filter((x) => x.data.validStatus == true);
@@ -250,8 +287,14 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return vTree[0];
   }
 
-  getOldBPlusDerivation(entityStr) {
-    let wTree = this.DTree.findChildByData("derivationName", "B");
+  getOldBPlusDerivation(entityStr, oldDerivation, MTN_alias) {
+
+    // called with three paramenters! getOldBPlusDerivation(entityStr, oldDerivation, MTN_alias);
+
+    // Done MNT update
+    let networkNode = this.getNetworkNode(MTN_alias);
+
+    let wTree = networkNode.findChildByData("derivationName", "B");
     let fTree = wTree.filter(
       (nodo) =>
         nodo.data.entity == entityStr &&
@@ -264,16 +307,23 @@ class AE_userWallet extends AEW.AE_rootWallet {
     entityStr,
     other_ext_login_key,
     other_ext_cred_key,
-    other_ext_pres_key
+    other_ext_pres_key, 
+    MTN_alias
   ) {
-    let localBplus = this.getBPlusDerivation(entityStr);
+
+    // Done MTN update via getBPlusDerivation
+
+    let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
     localBplus.data.other_ext_login_key = other_ext_login_key;
     localBplus.data.other_ext_cred_key = other_ext_cred_key;
     localBplus.data.other_ext_pres_key = other_ext_pres_key;
   }
 
-  async signLoginChallenge(entityStr, signLoginChallenge) {
-    let connect_to_entity = this.getBPlusDerivation(entityStr);
+  async signLoginChallenge(entityStr, signLoginChallenge, MTN_alias) {
+
+    // Done MTN update via getBPlusDerivation
+
+    let connect_to_entity = this.getBPlusDerivation(entityStr, MTN_alias);
     let entity_signer_eWallet = AEL.getEthereumWalletFromPrivateKey(
       AEL.getPrivateKeyFromExtended(
         AEL.getPrivateExtendedKey(connect_to_entity.data.loginWallet)
@@ -287,21 +337,26 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return login_challenge_signature;
   }
 
-  verifyLoginChallenge(signerStr, challengeStr, signatureStr) {
+  verifyLoginChallenge(signerStr, challengeStr, signatureStr, MTN_alias) {
     // YET not working, review derivations of Entities and Users, that are different
 
-    let signerRl = this.getBPlusDerivation(signerStr);
+    // Done MTN update via getBPlusDerivation
+
+    let signerRl = this.getBPlusDerivation(signerStr, MTN_alias);
     return this.baseVerifyLoginChallenge(challengeStr, signatureStr, signerRl);
   }
 
-  setObjectDerivation(entityStr, objectID, entityObjectDerivation, objectKind) {
+  setObjectDerivation(entityStr, objectID, entityObjectDerivation, objectKind, MTN_alias) {
+
+  // Done MTN update via getBPlusDerivation
+
     if (!AEU.check_require("id_derivation", entityObjectDerivation)) {
       throw "Invalid derivation";
     }
 
     // TODO: Maybe add credential HASH?
     // TODO: Pending if the wallet should store the presentation itself or if it should be an storage helper
-    let localBplus = this.getBPlusDerivation(entityStr);
+    let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
 
     let data = {};
 
@@ -316,7 +371,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
         data.derivationValue = "UNKNOWN";
     }
 
-    let child = this.findNodeByDerivation("C", data.derivationValue);
+    // TODO apply MTN here
+    let child = this.findNodeByDerivation("C", data.derivationValue, MTN_alias);
     if (typeof child == "undefined" || child.length == 0) {
       // Add one child for "0" derivation, that holds login
       data.derivationName = "C";
@@ -360,7 +416,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return child;
   }
 
-  setCredentialDerivation(entityStr, credentialID, entityCredDerivation) {
+  setCredentialDerivation(entityStr, credentialID, entityCredDerivation, MTN_alias) {
+
     if (!AEU.check_require("id_derivation", entityCredDerivation)) {
       throw "Invalid derivation";
     }
@@ -369,13 +426,17 @@ class AE_userWallet extends AEW.AE_rootWallet {
       entityStr,
       credentialID,
       entityCredDerivation,
-      "Credential"
+      "Credential",
+      MTN_alias
     );
   }
 
-  getObjectDerivation(entityStr, objectID) {
+  getObjectDerivation(entityStr, objectID, MTN_alias) {
+
+    // Done MTN via getBPlusDerivation
+
     // Locate the entity and the credential
-    let localBplus = this.getBPlusDerivation(entityStr);
+    let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
     let objectDerivation = localBplus.findChildByData("objectID", objectID);
 
     // Calculate the credential path up to level B
@@ -390,8 +451,11 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return objectDerivationStr;
   }
 
-  getObjectExtendedPublicKey(entityStr, objectID) {
-    let objectDerivationStr = this.getObjectDerivation(entityStr, objectID);
+  getObjectExtendedPublicKey(entityStr, objectID, MTN_alias) {
+
+    //DONE MTN via getObjectDerivation
+
+    let objectDerivationStr = this.getObjectDerivation(entityStr, objectID, MTN_alias);
 
     let credential_wallet = AEL.getHDWalletDerivation(
       this.identity_HDWallet,
@@ -402,15 +466,19 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return credential_pubExtKey;
   }
 
-  getCredentialExtendedPublicKey(entityStr, credentialID) {
-    return this.getObjectExtendedPublicKey(entityStr, credentialID);
+  getCredentialExtendedPublicKey(entityStr, credentialID, MTN_alias) {
+    // DONE via getObjectExtendedPublicKey
+
+    return this.getObjectExtendedPublicKey(entityStr, credentialID,MTN_alias);
   }
 
-  getCredentialDerivation(entityStr, credentialID) {
-    return this.getObjectDerivation(entityStr, credentialID);
+  getCredentialDerivation(entityStr, credentialID, MTN_alias) {
+    // DONE via getObjectDerivation
+
+    return this.getObjectDerivation(entityStr, credentialID, MTN_alias);
   }
 
-  setPresentationDerivation(entityStr, presentationID, entityPresDerivation) {
+  setPresentationDerivation(entityStr, presentationID, entityPresDerivation, MTN_alias) {
     if (!AEU.check_require("id_derivation", entityPresDerivation)) {
       throw "Invalid derivation";
     }
@@ -419,16 +487,22 @@ class AE_userWallet extends AEW.AE_rootWallet {
       entityStr,
       presentationID,
       entityPresDerivation,
-      "Presentation"
+      "Presentation",
+      MTN_alias
     );
   }
 
-  getPresentationExtendedPublicKey(entityStr, entityPresentationID) {
-    return this.getObjectExtendedPublicKey(entityStr, entityPresentationID);
+  getPresentationExtendedPublicKey(entityStr, entityPresentationID, MTN_alias) {
+    // DONE MTN via getObjectExtendedPublicKey
+
+    return this.getObjectExtendedPublicKey(entityStr, entityPresentationID, MTN_alias);
   }
 
-  getPresentationDerivation(entityStr, presentationID) {
-    let wholePath = this.getObjectDerivation(entityStr, presentationID);
+  getPresentationDerivation(entityStr, presentationID, MTN_alias) {
+
+    // DONE MTN via getObjectDerivation
+
+    let wholePath = this.getObjectDerivation(entityStr, presentationID, MTN_alias);
     // Remove B derivation path form this path because the verifier has user extPubK at B level, therefore B level shouldn't be applied (it would be twice)
     // B derivation is the first after the "m"
 
@@ -440,12 +514,13 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return derivacion;
   }
 
-  async signPresentation(entityStr, presentationID, presentationStr) {
+  async signPresentation(entityStr, presentationID, presentationStr, MTN_alias) {
     // Maybe create a single method for login and presentation signatures?
 
     let full_pres_entity_derivation = this.getObjectDerivation(
       entityStr,
-      presentationID
+      presentationID,
+      MTN_alias
     );
     let presentation_wallet = AEL.getHDWalletDerivation(
       this.identity_HDWallet,
@@ -470,11 +545,20 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
 
 
-  getEntities() {
-    return this.DTree.findChildByData("derivationName", "B");
+  getEntities(MTN_alias) {
+
+    // Done MNT update
+    // Multiple MTN
+    let networkNode = this.getNetworkNode(MTN_alias); 
+
+
+    return networkNode.findChildByData("derivationName", "B");
   }
 
   revokeCurrentWallet() {
+
+    // DONE MTN update, does not require MNT selection, W is parent of MTN
+
     let wNode = this.findNodeByDerivation("W");
     if (!(typeof wNode === "undefined"))
       {
@@ -513,6 +597,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
   }
 
   generateNewIdentity(old_wallet, SSSSSW_der = "") {
+    // DONE MTN update does not require MTN selecion as works at higher parent level
+
     // Revoke previous identity
     let revocations = this.revokeCurrentWallet();
     super.generateNewIdentity(old_wallet,SSSSSW_der);

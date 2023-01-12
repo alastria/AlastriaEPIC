@@ -14,13 +14,6 @@ class AE_rootWallet {
       this.DTree = new AEA.AE_Alastree(data);
   }
 
-  setWalletRecoveryFile(fileStr) {
-    this.walletRecoveryFile = fileStr;
-  }
-
-  setWalletStoreFile(fileStr) {
-    this.walletStoreFile = fileStr;
-  }
 
   setMnemonic(mnemonicStr) {
     // 20221024 Do not store identityDerivationStr, it is not necessary to use the wallet after the inizialization, this is more secure
@@ -30,7 +23,7 @@ class AE_rootWallet {
     this.base_HDWallet = AEL.createHDWalletFromMnemonic(this.mnemonic);
   }
 
-  setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der) {
+  setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
     let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
 
     //Check identityDerivsationStr
@@ -70,12 +63,34 @@ class AE_rootWallet {
     // base_HDWallet and mnemonic won't be necesary either, it is more secure to delete it
     delete this.base_HDWallet;
     delete this.mnemonic;
+    this.createNewNetwork(MTN_der,true,MTN_alias);
 
-    // Store MTN derivations
-    // Get W derivation, it is the first and only "validStatus==true" child in the tree (there can be several in case of generating a new identity)
+  }
+
+  createNewNetwork(MTN_der, makeDefault = false, MTN_alias) {
     
-    let childs = this.DTree.descendants.filter( x => ( x.data.validStatus == true));
-    let child = childs[0];
+    // Find W derivation
+    // Add MNT_der
+    // if makeDefault mark all previour networks default, then make this default
+    let child;
+    let walletNode = this.DTree.findChildByData("derivationName","W");
+    let fWalletNode = walletNode.filter(x => (x.validStatus = true));
+    if (Array.isArray(fWalletNode)) {
+      child = fWalletNode[0];
+    }
+    else
+    {
+      child = fWalletNode;
+    }
+
+    // If makeDefault mark all the other "N" nodes as not default
+    if (makeDefault) {
+      let nNodes = child.findChildByData("derivationName","N");
+      nNodes.forEach(element => {
+        element.data.defaultMTN = false;  
+      });
+    }
+
     let data = {};
 
     let mtnDers = MTN_der.split("/");
@@ -85,31 +100,53 @@ class AE_rootWallet {
     let derName = "M";
     fMtnDers.forEach(element => {
       data = {};
-      data.derivationName = derName;      
+      data.derivationName = derName;  
+      if (derName == "N") {
+        // The first identity holds the default MNT (aka net), the rest would be secondary unless marked
+        data.defaultMTN = true;  
+        data.MTN_alias = MTN_alias;
+      }    
       if (derName == "T") {
         derName = "N";
       }
       if (derName == "M") {
         derName = "T";
       }     
-      if (derName == "N") {
-        // The first identity holds the default MNT (aka net), the rest would be secondary unless marked
-        data.defaultMTN = true;  
-      }
+
       data.derivationValue = element;
       data.validStatus = true;
       child = child.addChild(data);
       child.data.path =
-        child.parent.data.path + "/" + child.data.derivationValue;      
+      child.parent.data.path + "/" + child.data.derivationValue;      
     });
+
+    return child;
+    
   }
 
-  createNewNetwork(MNT_der, makeDefault = false) {
-    // TODO
-    // Find W derivation
-    // Add MNT_der
-    // if makeDefault mark all previour networks default, then make this default
-    
+  getNetworkNode(MTN_alias) {
+
+    let wTree;
+    let child;
+
+    // TODO find "N" derivation by Alias, replicate in all node searches
+    if (MTN_alias === undefined) {
+      wTree = this.DTree.findChildByData("defaultMTN", true);
+    }
+    else {            
+      wTree = this.DTree.findChildByData("MTN_alias", MTN_alias);
+    }
+
+    if (Array.isArray(wTree)) {
+      child = wTree[0];
+    }
+    else
+    {
+      child = wTree;
+    }
+
+    return child;
+
   }
 
 
@@ -170,8 +207,7 @@ class AE_rootWallet {
       wallet.identity_HDWallet._hdkey.xpriv
     );
     this.identity_pattern = wallet.identity_pattern;
-    this.walletRecoveryFile = wallet.walletRecoveryFile;
-    this.walletStoreFile = wallet.walletStoreFile;
+
   }
 
   readRecoveryWallet(wallet) {
@@ -185,10 +221,25 @@ class AE_rootWallet {
     );
   }
 
-  findNodeByDerivation(derivationName, derivationValue = "") {
-    let fTree;
+  findNodeByDerivation(derivationName, derivationValue = "", MTN_alias) {
 
-    let wTree = this.DTree.findChildByData("derivationName", derivationName);
+    // DONE MTN update
+    // TODO ERROR in the case of W derivation
+    let networkNode;
+
+    if (derivationName == "W") {
+
+      networkNode = this.DTree;
+
+    }
+    else
+    {
+      networkNode = this.getNetworkNode(MTN_alias);
+    }
+
+    let fTree;    
+
+    let wTree = networkNode.findChildByData("derivationName", derivationName);
     if (wTree.length == 0) {
       return wTree;
     }
