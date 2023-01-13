@@ -25,7 +25,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.path = "m/" + data.derivationValue;
     data.validStatus = true;
 
-    this.DTree.addChild(data);
+    this.safeAddChild(this.DTree, data)
+    //this.DTree.addChild(data);
     super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
   }
 
@@ -55,8 +56,9 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
     let networkNode = this.getNetworkNode(MTN_alias); 
 
-    // TODO: It requires checking the MNT derivation to add this to    
-    let child = networkNode.addChild(data);
+    // TODO: It requires checking the MNT derivation to add this to      
+    // let child = networkNode.addChild(data);
+    let child = this.safeAddChild(networkNode, data);
     child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
 
   }
@@ -137,7 +139,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
       data.derivationName = "C";
       data.derivationValue = "0";
       data.validStatus = true;
-      child = localBplus.addChild(data);
+      //child = localBplus.addChild(data);
+      child = this.safeAddChild(localBplus,data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     } else {
@@ -154,8 +157,9 @@ class AE_userWallet extends AEW.AE_rootWallet {
       data = {};
       data.derivationName = "D";
       data.derivationValue = element;
-      data.validStatus = true;
-      child = child.addChild(data);
+      data.validStatus = true;      
+      // child = child.addChild(data);
+      child = this.safeAddChild(child, data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     });
@@ -377,7 +381,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
       // Add one child for "0" derivation, that holds login
       data.derivationName = "C";
       data.validStatus = true;
-      child = localBplus.addChild(data);
+      //child = localBplus.addChild(data);
+      child = this.safeAddChild(localBplus, data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     }
@@ -393,7 +398,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
       data.derivationName = "D";
       data.derivationValue = element;
       data.validStatus = true;
-      child = child.addChild(data);
+      // child = child.addChild(data);
+      child = this.safeAddChild(child, data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     });
@@ -404,8 +410,9 @@ class AE_userWallet extends AEW.AE_rootWallet {
       data = {};
       data.derivationName = "E";
       data.derivationValue = element;
-      data.validStatus = true;
-      child = child.addChild(data);
+      data.validStatus = true;      
+      // child = child.addChild(data);
+      child = this.safeAddChild(child, data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     });

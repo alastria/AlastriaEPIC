@@ -115,7 +115,10 @@ class AE_rootWallet {
 
       data.derivationValue = element;
       data.validStatus = true;
-      child = child.addChild(data);
+      // safeAddChild
+      // child = child.addChild(data);
+      child = this.safeAddChild(child,data);
+
       child.data.path =
       child.parent.data.path + "/" + child.data.derivationValue;      
     });
@@ -259,6 +262,27 @@ class AE_rootWallet {
     }
   }
 
+
+  safeAddChild(node, data) {
+
+    // Check if any child has the same derivationName and derivationValue
+    let existingDescendant = node.descendants.filter( x => (x.data.derivationName == data.derivationName && x.data.derivationValue == data.derivationValue));
+    let firstDescendant = existingDescendant[0];
+    
+    if ( existingDescendant.length > 0){
+
+      // TODO This overrides old data, maybe an error?
+      for (const property in data) {
+        firstDescendant.data[property] = data[property];
+        
+      }
+      return firstDescendant;
+    }
+    else{
+
+      return node.addChild(data);
+    }    
+  }
 
 }
 
