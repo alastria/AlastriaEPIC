@@ -1,21 +1,20 @@
 const AEL = require("../AE_library");
 const AEW = require("./AE_wallet");
-const AEA = require("./AE_Alastree");
+const AEA = require("./AE_alastree");
 const { id } = require("ethers/lib/utils");
+const AEU = require("../utils/AE_utils");
+const AEC = require("../utils/AE_constants");
+
+// TODO: addChild must check if there's a previous derivation with the same number
 
 class AE_entityWallet extends AEW.AE_rootWallet {
   constructor() {
-    super();
-
-    // 20221122 new DTree data structure
-    let data = {};
-    data.derivationName = "m";
-    data.path = "m";
-    this.DTree = new AEA.AE_Alastree(data);
+    super();   
+    (this.identity_pattern = "mZRSSSSSWMTNCDDE");    
   }
 
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der) {
-    super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
+    
 
     let wDerivationIdx = SSSSSW_der.lastIndexOf("/");
     let wDerivation = "";
@@ -28,6 +27,10 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     data.path = "m/" + data.derivationValue;
     data.validStatus = true;
 
+    // Here we do not need to check if there was an exiting child with the same derivation as it is the first identity child
+    let firstChild = this.DTree.addChild(data);
+    super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
+    
     // This corresponds to C derivations aka Purpose
     // 0 -> login, may be usefull for C2C interactions or to sign login challenges
     data.login_derivation = "m/0";
@@ -57,12 +60,15 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       data.presentations_HDWallet
     );
 
-    this.DTree.addChild(data);
+    firstChild.data = data;
+    
   }
 
-  addCPlusDerivation(entityStr) {
-    let localCPD = this.getDerivation("W");
+  addCPlusDerivation(entityStr, MTN_alias) {
 
+    // Done  MTN changes, using getNetworkNode
+    let localCPD = this.getNetworkNode(MTN_alias); 
+  
     let data = {};
     data.entity = entityStr;
     data.derivationName = "C";
@@ -74,8 +80,12 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     return currentCPD;
   }
 
-  getCPlusDerivation(entityStr) {
-    let wTree = this.DTree.findChildByData("derivationName", "C");
+  getCPlusDerivation(entityStr, MTN_alias) {
+
+    // DOne MTN changes, TODO test
+    let localCPD = this.getNetworkNode(MTN_alias);
+
+    let wTree = localCPD.findChildByData("derivationName", "C");
     let fTree = wTree.filter(
       (nodo) => nodo.data.entity == entityStr && nodo.data.validStatus == true
     );
@@ -86,24 +96,44 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     }
   }
 
-  getDerivation(derivationName) {
+  getDerivation(derivationName, MTN_alias) {
+
+    // Done MTN changes
+    // TODO when asking for W derivations MTN phase should be avoided because it is deeper in the tree and has not W
+    let localDer;
+
+    if (derivationName == "W")
+    {
+      localDer = this.DTree;
+    }
+    else
+    {
+      localDer = this.getNetworkNode(MTN_alias);
+    }
+    
+
     //return this.Bplus_derivation.find(element => element.entity === entityStr);
-    let wTree = this.DTree.findChildByData("derivationName", derivationName);
+    let wTree = localDer.findChildByData("derivationName", derivationName);
     let fTree = wTree.filter((nodo) => nodo.data.validStatus == true);
     return fTree[0];
   }
 
-  updateCPlusDerivationExtendedKeys(userStr, other_extendedKey) {
-    let localCplus = this.getCPlusDerivation(userStr);
+  updateCPlusDerivationExtendedKeys(userStr, other_extendedKey, MTN_alias) {
+
+    // Done MTN changes via getCPlusDerivation
+
+    let localCplus = this.getCPlusDerivation(userStr, MTN_alias);
     //let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
 
     localCplus.data.other_extendedPublicKey = other_extendedKey;
     //this.Cplus_derivation[localCplusIdx] = localCplus;
   }
 
-  addRenewCplusLoginDerivation(userStr, loginDerivationStr) {
+  addRenewCplusLoginDerivation(userStr, loginDerivationStr, MTN_alias ) {
+    // Done MNT update via getDerivation update
+
     // works for adding or renewing
-    let localCplus = this.getDerivation("C");
+    let localCplus = this.getDerivation("C", MTN_alias);
     let child;
     // Check is it is an array to see the userStr
     if (Array.isArray(localCplus)) {
@@ -114,7 +144,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       }
     }
 
-    // TODO: revoke older derivations for this userStr
+    // revoke older derivations for this userStr
     // Find the other "D" derivations and set to validStatus = false
     let invalidate = child.findChildByData("derivationName", "D");
     invalidate.forEach((element) => {
@@ -122,7 +152,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
 
     let data = {};
-    let derivations = loginDerivationStr.split("/");
+    let derivations = loginDerivationStr.split("/").filter( x => (x.length >0));
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "D";
@@ -132,10 +162,15 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     });
+
+    child.data.objectKind = AEC.login;
+    return child;
   }
 
-  getLoginDerivation(userStr) {
-    let user = this.getCPlusDerivation(userStr);
+  getLoginDerivation(userStr, MTN_alias) {
+    // MTN done via getCPlusDerivation
+
+    let user = this.getCPlusDerivation(userStr, MTN_alias);
     let derivationNodes = user.findChildByData("derivationName", "D");
     let derivations = derivationNodes.map((x) => x.data.derivationValue);
     let loginDer = derivations.reduce(
@@ -146,16 +181,79 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     return loginDer;
   }
 
-  setCredentialInfo(userStr, credentialID, userExtPubK) {
-    let localCplus = this.getCPlusDerivation(userStr);
-    // let localCplusIdx = this.Cplus_derivation.findIndex(element => element.entity === userStr);
+  setObjectDerivation(userStr, objectID, userDerivation, entityDerivation, objectKind, MTN_alias) {
 
-    let credential_meta_info = {};
-    credential_meta_info.credentialID = credentialID;
-    credential_meta_info.userExtPubK = userExtPubK;
+    // DOne MTN update via getDerivation
+    
+    let cUD = AEU.cleanPath(userDerivation);
+    let cED = AEU.cleanPath(entityDerivation);
 
-    localCplus.data.credentials = [];
-    localCplus.data.credentials.push(credential_meta_info);
+    let data = {};
+    let localCplus = this.getDerivation("C", MTN_alias);
+    let child;
+    // Check is it is an array to see the userStr
+    if (Array.isArray(localCplus)) {
+      child = localCplus.filter((x) => x.data.entity == userStr);
+    } else {
+      if (localCplus.data.entity == userStr) {
+        child = localCplus;
+      }
+    }
+    
+    // Add the user requested derivations
+    let derivations = cUD.split("/").filter(x => (x.length > 0 ));
+    derivations.forEach((element) => {
+      data = {};
+      data.derivationName = "D";
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    });
+
+    // Add the entity requested derivations
+    derivations = cED.split("/").filter(x => (x.length > 0 ));
+    derivations.forEach((element) => {
+      data = {};
+      data.derivationName = "E";
+      data.derivationValue = element;
+      data.validStatus = true;
+      child = child.addChild(data);
+      child.data.path =
+        child.parent.data.path + "/" + child.data.derivationValue;
+    }); 
+
+
+    // In the last level we can store the credential info
+    child.data.objectID = objectID;
+    child.data.objectKind = objectKind;
+
+    return child;
+
+
+  }
+
+  setCredentialInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation, MTN_alias) {
+
+    // DONE MTN update via setObjectDerivation
+
+    let child = this.setObjectDerivation(userStr, credentialID, userDerivation, entityDerivation, AEC.credential, MTN_alias);
+    child.data.userExtPubK = userExtPubK;
+
+    return child;
+    
+  }
+
+  setPresentationInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation, MTN_alias) {
+
+    // DONE MTN update via setObjectDerivation
+
+    let child = this.setObjectDerivation(userStr, credentialID, userDerivation, entityDerivation, AEC.presentation, MTN_alias);
+    child.data.userExtPubK = userExtPubK;
+
+    return child;
+
   }
 
   async signLoginChallenge(entityStr, signLoginChallenge) {
@@ -165,11 +263,11 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     return;
   }
 
-  verifyLoginChallenge(signerStr, challengeStr, signatureStr) {
-    //review derivations of Entities and Users, that are different
+  verifyLoginChallenge(signerStr, challengeStr, signatureStr, MTN_alias) {
+    // DONE MTN update via getCPlusDerivation
 
-    let signerRl = this.getCPlusDerivation(signerStr);
-    let login_derivation = this.getLoginDerivation("User");
+    let signerRl = this.getCPlusDerivation(signerStr, MTN_alias);
+    let login_derivation = this.getLoginDerivation(signerStr, MTN_alias);
     return this.baseVerifyLoginChallenge(
       challengeStr,
       signatureStr,
@@ -178,8 +276,11 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     );
   }
 
-  getHDWalletByPurpose(purpose) {
-    let identityW = this.getDerivation("W");
+  getHDWalletByPurpose(purpose, MTN_alias) {
+
+    // DOne MTN update vida getDerivation
+
+    let identityW = this.getDerivation("W", MTN_alias);
     let fIdentityW = identityW;
     if (Array.isArray(identityW)) {
       fIdentityW = identityW.filter((x) => x.data.validStatus == true);
@@ -189,12 +290,14 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     return peK;
   }
 
-  async signCredential(credentialStr) {
+  async signCredential(credentialStr, MTN_alias) {
     // When a company signs a credential it is independent of the subject that credential is created for
     // this makes easier to verify the credential signtature by the receiver of that credential
     // DISCUSS
 
-    let peK = this.getHDWalletByPurpose("credencialIssuance_HDWallet");
+    // DONE MTN update via gtHDWalletByPurpose
+
+    let peK = this.getHDWalletByPurpose("credencialIssuance_HDWallet", MTN_alias);
 
     let signature = AEL.signMessage(
       AEL.getEthereumWalletFromPrivateKey(
@@ -209,9 +312,14 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     userStr,
     presentation_derivationStr,
     credential_setStr,
-    credential_setSignatureStr
+    credential_setSignatureStr, 
+    MTN_alias
   ) {
-    let localCplus = this.getCPlusDerivation(userStr);
+
+
+    // Done MTN update via getCPlusDerivation
+
+    let localCplus = this.getCPlusDerivation(userStr, MTN_alias);
     let user_Cplus_Wallet = AEL.createRO_HDWalletFromPublicExtendedKey(
       localCplus.data.other_extendedPublicKey
     );
@@ -265,6 +373,9 @@ class AE_entityWallet extends AEW.AE_rootWallet {
   }
 
   getPurposePublicKey(purpose) {
+
+    // DONE MTN, does not require MTN as W is parent of MTN
+
     let fIdentityW;
     if (purpose == "identity_ExtPublicKey") {
       return this.identity_ExtPublicKey;
@@ -278,6 +389,82 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     return fIdentityW.data[purpose];
   }
+
+
+  getSubjects(MTN_alias) {
+
+    // DONE MTN update
+    let networkNode = this.getNetworkNode(MTN_alias);
+
+    return networkNode.findChildByData("derivationName", "C");
+  }
+
+
+  revokeCurrentWallet() {
+
+    // DONE MTN update, W level is parent of MTN, does not require MTN selection
+
+    let wNode = this.findNodeByDerivation("W");
+
+    // Listar lo revocado: Credenciales, Presentaciones y Login
+    let subjects = this.getSubjects();    
+    // Credentials in revoked identity
+    let credentials = [];
+    // Presentations in revoked identity
+    let presentations = [];
+    // Logins in revoked identity
+    let logins = [];
+    let uCred = [];
+    let fCred = [];
+    let fPres = [];
+    let fLog = [];
+
+    // Los login no tienen derivación "E", en vez de buscar por "derivationName" habría que buscar los diferentes objectKind que se deberían revocar
+    subjects.forEach((element) => {      
+
+      fCred = element.findChildByData("objectKind",AEC.credential).filter( x => ( x.data.validStatus == true));
+      fPres = element.findChildByData("objectKind",AEC.presentation).filter( x => ( x.data.validStatus == true));
+      fLog = element.findChildByData("objectKind",AEC.login).filter( x => ( x.data.validStatus == true));
+
+      credentials.push(...fCred);
+      presentations.push(...fPres);
+      logins.push(...fLog);
+    });
+
+    // Finally revoke everything
+    if (!(typeof wNode === "undefined"))
+    {
+    let descendants = wNode.findAllDescendants();
+    descendants.forEach((element) => {
+    element.data.validStatus = false;
+    });
+    wNode.validStatus = false;
+  }
+
+
+
+    let revocations = {};    
+    revocations.credentials = credentials;
+    revocations.presentations = presentations;
+    revocations.logins = logins;
+
+    return revocations;
+  }
+
+
+
+  generateNewIdentity(old_wallet, SSSSSW_der = "") {
+
+    // DONE MTN update, does not require MTN selection as works at higher levels
+
+      // Revoke previous identity
+      let revocations = this.revokeCurrentWallet();
+
+      super.generateNewIdentity(old_wallet,SSSSSW_der);
+
+      return revocations;
+  }
+
 }
 
 module.exports = {

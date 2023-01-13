@@ -8,3 +8,15 @@ https://github.com/decentral-ee/web3-hdwallet-provider/blob/master/index.js
 https://learnmeabitcoin.com/technical/extended-keys
 
 https://www.npmjs.com/package/ethereum-checksum-address
+
+
+-----------------
+20221229 Pending
+
+- When creating MNT may add an "alias". DONE.
+- Several MNT could be created, only one default. DONE.
+- When adding BPlus, Cplus, will go to "default" MNT unless another MNT/Alias specified
+- When adding a child to DTree check there's not alreadt a Child with the same derivation
+
+* Create Tests by US in EPIC redux .ppt and check results
+
