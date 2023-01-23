@@ -1,11 +1,19 @@
 class AE_data   {
     constructor() {
-      const data = new Map();
+      this.data = new Map();
       }
 
 
     addData(id,data) {
-      this.data.set(id,data);
+      if (this.data.has(id))
+      {
+        let errorStr = "id: " + id + " alreadyt exists in this storage object";
+        throw new Error(errorStr);
+      }
+      else
+      {
+        this.data.set(id,data);
+      }      
     }
 
     getData(id){
@@ -17,7 +25,7 @@ class AE_data   {
     }
 
     export() {
-      return JSON.stringify(data);
+      return JSON.stringify(this.data);
     }
 
     import(AEDataStr){
@@ -27,5 +35,5 @@ class AE_data   {
 }
 
 module.exports = {
-  AE_id_data: AE_idData,
+  AE_data: AE_data,
 };

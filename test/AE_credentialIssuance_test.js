@@ -3,6 +3,7 @@ const { toChecksumAddress } = require("ethereum-checksum-address");
 const AEUW = require("../src/wallet/AE_wallet_user");
 const AEEW = require("../src/wallet/AE_wallet_entity");
 const AEU = require("../src/utils/AE_utils");
+const AED = require("../src/wallet/AE_data");
 
 async function main() {
   console.log("INIT TESTING");
@@ -77,6 +78,9 @@ async function main() {
     "4b860b60-dd5a-4c3c-ab59-f02252b42772",
     "1251679543"
   );
+
+  let userStorage = new AED.AE_data();
+  userStorage.addData("4b860b60-dd5a-4c3c-ab59-f02252b42772",credentialText);
 
   subjectPublicKey = newUserEpicWallet.getCredentialExtendedPublicKey(
     "AcmeAcademy",
