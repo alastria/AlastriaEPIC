@@ -115,7 +115,10 @@ class AE_rootWallet {
 
       data.derivationValue = element;
       data.validStatus = true;
-      child = child.addChild(data);
+      // safeAddChild
+      // child = child.addChild(data);
+      child = this.safeAddChild(child,data);
+
       child.data.path =
       child.parent.data.path + "/" + child.data.derivationValue;      
     });
@@ -259,6 +262,29 @@ class AE_rootWallet {
     }
   }
 
+
+  safeAddChild(node, data) {
+
+    // Check if any child has the same derivationName and derivationValue
+    let existingDescendant = node.descendants.filter( x => (x.data.derivationName == data.derivationName && x.data.derivationValue == data.derivationValue));
+    let firstDescendant = existingDescendant[0];
+    
+    if ( existingDescendant.length > 0){
+
+      // Should not overrride data, instead raise an error
+      //  for (const property in data) {
+      //  firstDescendant.data[property] = data[property];
+      //  
+      //}
+      //return firstDescendant;
+      let errorStr = "Cannot add child, derivationName: " + data.derivationName + " with derivationValue: " + data.derivationValue + " already exists in the node: " + node.data.derivationName + ":" + node.data.derivationValue;
+      throw new Error(errorStr);
+    }
+    else{
+
+      return node.addChild(data);
+    }    
+  }
 
 }
 

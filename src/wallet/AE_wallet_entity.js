@@ -28,7 +28,8 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     data.validStatus = true;
 
     // Here we do not need to check if there was an exiting child with the same derivation as it is the first identity child
-    let firstChild = this.DTree.addChild(data);
+    let firstChild = this.safeAddChild(this.DTree, data);
+    // let firstChild = this.DTree.addChild(data);
     super.setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der);
     
     // This corresponds to C derivations aka Purpose
@@ -74,7 +75,8 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     data.derivationName = "C";
     data.validStatus = true;
 
-    let currentCPD = localCPD.addChild(data);
+    // let currentCPD = localCPD.addChild(data);
+    let currentCPD = this.safeAddChild(localCPD, data);
     // 20221123: as user do not get derivations for Entities the Path will have the name here
     currentCPD.data.path = currentCPD.parent.data.path + "/" + entityStr;
     return currentCPD;
@@ -158,7 +160,8 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       data.derivationName = "D";
       data.derivationValue = element;
       data.validStatus = true;
-      child = child.addChild(data);
+      // child = child.addChild(data);
+      child = this.safeAddChild(child, data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     });
@@ -207,7 +210,8 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       data.derivationName = "D";
       data.derivationValue = element;
       data.validStatus = true;
-      child = child.addChild(data);
+      // child = child.addChild(data);
+      child = this.safeAddChild(child, data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     });
@@ -219,7 +223,8 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       data.derivationName = "E";
       data.derivationValue = element;
       data.validStatus = true;
-      child = child.addChild(data);
+      // child = child.addChild(data);
+      child = this.safeAddChild(child, data);
       child.data.path =
         child.parent.data.path + "/" + child.data.derivationValue;
     }); 
