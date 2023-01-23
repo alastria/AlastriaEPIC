@@ -76,7 +76,14 @@ async function main() {
   // the complete derivation of AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
   newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "484199084");
   // This should raise an error. TODO properly!
-  newUserEpicWallet.addBPlusDerivation("Other", "484199084");
+  try {
+    newUserEpicWallet.addBPlusDerivation("Other", "484199084");
+  } catch (e) {
+    console.error(e);
+    // Expected output: Error: Parameter is not a number!
+  }
+  
+
 
   // Add the two levels for login
   newUserEpicWallet.addRenewBplusLoginDerivation(

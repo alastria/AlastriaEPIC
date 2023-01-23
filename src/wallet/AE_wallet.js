@@ -271,12 +271,14 @@ class AE_rootWallet {
     
     if ( existingDescendant.length > 0){
 
-      // TODO This overrides old data, maybe an error?
-      for (const property in data) {
-        firstDescendant.data[property] = data[property];
-        
-      }
-      return firstDescendant;
+      // Should not overrride data, instead raise an error
+      //  for (const property in data) {
+      //  firstDescendant.data[property] = data[property];
+      //  
+      //}
+      //return firstDescendant;
+      let errorStr = "Cannot add child, derivationName: " + data.derivationName + " with derivationValue: " + data.derivationValue + " already exists in the node: " + node.data.derivationName + ":" + node.data.derivationValue;
+      throw new Error(errorStr);
     }
     else{
 
