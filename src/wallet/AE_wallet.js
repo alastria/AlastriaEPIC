@@ -23,17 +23,6 @@ class AE_rootWallet {
     this.base_HDWallet = AEL.createHDWalletFromMnemonic(this.mnemonic);
   }
 
-  setRecoveryDerivation(mZR_der) {
-
-  }
-
-  setSecurityWalletDerivation(SSSSSW_der) {
-
-  }
-
-  setMNT(MTN_der, MTN_aliad = "default-MTN"){
-
-  }
 
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
 
@@ -42,27 +31,27 @@ class AE_rootWallet {
     // let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
     let identityDerivationStr = mZR_der + SSSSSW_der
 
-    // //Check identityDerivsationStr
-    // AEU.check_require("id_derivation", identityDerivationStr);
-    // derivations = identityDerivationStr.split("/");
+    // Check identityDerivsationStr
+    AEU.check_require("id_derivation", identityDerivationStr);
+    derivations = identityDerivationStr.split("/");
 
-    // // Adjust derivation length depending of kind of wallet
-    // let substract;
-    // if (this.constructor.name == "AE_entityWallet"){
-    //   substract = 4;
-    // }
-    // else if (this.constructor.name == "AE_userWallet") {
-    //   substract = 5;
-    // }
-    // // Substract BCDDE length IF User, -4 IF entity
-    // if (!(derivations.length === (this.identity_pattern.length-substract))) {
-    //   console.log(
-    //     "Identity Derivation Str has ",
-    //     derivations.length,
-    //     "depth not the required ",        
-    //     this.identity_pattern.length-substract // Substract 5 length IF User, -4 IF entity
-    //   );
-    // }
+    // Adjust derivation length depending of kind of wallet
+    let substract;
+    if (this.constructor.name == "AE_entityWallet"){
+      substract = 7;
+    }
+    else if (this.constructor.name == "AE_userWallet") {
+      substract = 8;
+    }
+    // Substract MTNBCDDE length IF User, -7 IF entity
+    if (!(derivations.length === (this.identity_pattern.length-substract))) {
+      console.log(
+        "Identity Derivation Str has ",
+        derivations.length,
+        "depth not the required ",        
+        this.identity_pattern.length-substract // Substract 8 length IF User, 7 IF entity
+      );
+    }
 
     // 20221024 Do not store identityDerivationStr, it is not necessary to use the wallet after the inizialization, this is more secure
     // identity_HDWallet is the only necessary working point
@@ -91,7 +80,7 @@ class AE_rootWallet {
     // if makeDefault mark all previour networks default, then make this default
     let child;
     let walletNode = this.DTree.findChildByData("derivationName","W");
-    let fWalletNode = walletNode.filter(x => (x.validStatus = true));
+    let fWalletNode = walletNode.filter(x => (x.data.validStatus == true));
     if (Array.isArray(fWalletNode)) {
       child = fWalletNode[0];
     }
