@@ -110,7 +110,7 @@ async function main() {
       "518358247"
     );
   
-    let cred2Der = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,cred1Child.data.path);
+    let cred2Der = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,cred2Child.data.path);
     let cred2UserDer  = AEU.subDerivation(cred2Der,0,2);
     let cred2EntityDer = AEU.subDerivation(cred2Der,2,1);
   
@@ -120,7 +120,7 @@ async function main() {
       "2135079704"
     );
   
-    let cred3Der = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,cred1Child.data.path);
+    let cred3Der = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,cred3Child.data.path);
     let cred3UserDer  = AEU.subDerivation(cred3Der,0,2);
     let cred3EntityDer = AEU.subDerivation(cred3Der,2,1);
   
