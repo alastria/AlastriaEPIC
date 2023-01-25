@@ -5,13 +5,14 @@ const { id } = require("ethers/lib/utils");
 const AEU = require("../utils/AE_utils");
 const AEC = require("../utils/AE_constants");
 
-// TODO: addChild must check if there's a previous derivation with the same number
+// DONE: addChild must check if there's a previous derivation with the same number
 
 class AE_entityWallet extends AEW.AE_rootWallet {
   constructor() {
     super();   
     (this.identity_pattern = "mZRSSSSSWMTNCDDE");    
   }
+ 
 
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der) {
     
@@ -84,7 +85,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
   getCPlusDerivation(entityStr, MTN_alias) {
 
-    // DOne MTN changes, TODO test
+    // DOne MTN changes, DONE test
     let localCPD = this.getNetworkNode(MTN_alias);
 
     let wTree = localCPD.findChildByData("derivationName", "C");
@@ -101,7 +102,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
   getDerivation(derivationName, MTN_alias) {
 
     // Done MTN changes
-    // TODO when asking for W derivations MTN phase should be avoided because it is deeper in the tree and has not W
+    // DONE when asking for W derivations MTN phase should be avoided because it is deeper in the tree and has not W
     let localDer;
 
     if (derivationName == "W")

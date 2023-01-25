@@ -7,6 +7,8 @@ module.exports = {
   readRecoveryWallet,
   storeIdentityWallet,
   readIdentityWallet,
+  storeObjects,
+  recoverObjects
 };
 
 function storeRecoveryWallet(
@@ -51,4 +53,36 @@ function readIdentityWallet(identityWalletFile) {
 
   utils.reParent(wallet.DTree);
   return wallet;
+}
+
+function storeObjects(objects, objectsFile) {
+  let objectsStr = JSON.stringify(objects, replacer);
+  return fs.writeFileSync(objectsFile, objectsStr, { mode: 0o600 });
+}
+
+function recoverObjects(objectsFile) {
+  let objectsStr = fs.readFileSync(objectsFile);
+  let objects = JSON.parse(objectsStr, reviver);
+  return objects;
+  
+}
+
+function replacer(key, value) {
+  if(value instanceof Map) {
+    return {
+      dataType: 'Map',
+      value: Array.from(value.entries()), // or with spread: value: [...value]
+    };
+  } else {
+    return value;
+  }
+}
+
+function reviver(key, value) {
+  if(typeof value === 'object' && value !== null) {
+    if (value.dataType === 'Map') {
+      return new Map(value.value);
+    }
+  }
+  return value;
 }
