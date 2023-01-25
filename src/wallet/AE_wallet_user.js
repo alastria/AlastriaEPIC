@@ -391,7 +391,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     // Add some levels for the credential, the user part are tw;
     let objectUserDerivationStr = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
     // harcoded for testing purposes
-    //let objectUserDerivationStr = "198367/2986292";
+    // let objectUserDerivationStr = "198367/2986292";
     let derivations = objectUserDerivationStr.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
       data = {};

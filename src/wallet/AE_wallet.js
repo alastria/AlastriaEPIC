@@ -26,10 +26,9 @@ class AE_rootWallet {
 
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
 
-    // TODO maybe split in several functions?
-    // 20230124 Test to remove MTN from Base identity, as base identity should happen at W level not N level
+    // TODO identity derivation must point to W derivation not N derivation
     // let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
-    let identityDerivationStr = mZR_der + SSSSSW_der
+    let identityDerivationStr = mZR_der + SSSSSW_der;
 
     // Check identityDerivsationStr
     AEU.check_require("id_derivation", identityDerivationStr);
