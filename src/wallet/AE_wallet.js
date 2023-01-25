@@ -24,7 +24,11 @@ class AE_rootWallet {
   }
 
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
-    let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
+    
+    // TODO identity derivation must point to W derivation not N derivation
+    // let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
+    let identityDerivationStr = mZR_der + SSSSSW_der;
+
 
     //Check identityDerivsationStr
     AEU.check_require("id_derivation", identityDerivationStr);
@@ -33,18 +37,18 @@ class AE_rootWallet {
     // Adjust derivation length depending of kind of wallet
     let substract;
     if (this.constructor.name == "AE_entityWallet"){
-      substract = 4;
+      substract = 7;
     }
     else if (this.constructor.name == "AE_userWallet") {
-      substract = 5;
+      substract = 8;
     }
-    // Substract BCDDE length IF User, -4 IF entity
+    // Substract MTNBCDDE length IF User, -7 IF entity
     if (!(derivations.length === (this.identity_pattern.length-substract))) {
       console.log(
         "Identity Derivation Str has ",
         derivations.length,
         "depth not the required ",        
-        this.identity_pattern.length-substract // Substract 5 length IF User, -4 IF entity
+        this.identity_pattern.length-substract // Substract 8 length IF User, 7 IF entity
       );
     }
 
@@ -74,7 +78,7 @@ class AE_rootWallet {
     // if makeDefault mark all previour networks default, then make this default
     let child;
     let walletNode = this.DTree.findChildByData("derivationName","W");
-    let fWalletNode = walletNode.filter(x => (x.validStatus = true));
+    let fWalletNode = walletNode.filter(x => (x.data.validStatus == true));
     if (Array.isArray(fWalletNode)) {
       child = fWalletNode[0];
     }
