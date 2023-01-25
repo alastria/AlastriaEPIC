@@ -4,7 +4,7 @@ const AEW = require("./AE_wallet");
 const AEA = require("./AE_alastree");
 const AEU = require("../utils/AE_utils");
 
-// TODO: addChild must check if there's a previous derivation with the same number
+// DONE: addChild must check if there's a previous derivation with the same number
 class AE_userWallet extends AEW.AE_rootWallet {
   constructor() {
     super();
@@ -56,7 +56,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
     let networkNode = this.getNetworkNode(MTN_alias); 
 
-    // TODO: It requires checking the MNT derivation to add this to      
+    // DONE: It requires checking the MNT derivation to add this to      
     // let child = networkNode.addChild(data);
     let child = this.safeAddChild(networkNode, data);
     child.data.path = child.parent.data.path + "/" + child.data.derivationValue;
@@ -375,7 +375,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
         data.derivationValue = "UNKNOWN";
     }
 
-    // TODO apply MTN here
+    // DONE apply MTN here
     let child = this.findNodeByDerivation("C", data.derivationValue, MTN_alias);
     if (typeof child == "undefined" || child.length == 0) {
       // Add one child for "0" derivation, that holds login
@@ -389,9 +389,9 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.validStatus = true;
 
     // Add some levels for the credential, the user part are tw;
-    //let objectUserDerivationStr = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
+    let objectUserDerivationStr = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
     // harcoded for testing purposes
-    let objectUserDerivationStr = "198367/2986292";
+    //let objectUserDerivationStr = "198367/2986292";
     let derivations = objectUserDerivationStr.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
       data = {};

@@ -23,30 +23,46 @@ class AE_rootWallet {
     this.base_HDWallet = AEL.createHDWalletFromMnemonic(this.mnemonic);
   }
 
+  setRecoveryDerivation(mZR_der) {
+
+  }
+
+  setSecurityWalletDerivation(SSSSSW_der) {
+
+  }
+
+  setMNT(MTN_der, MTN_aliad = "default-MTN"){
+
+  }
+
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
-    let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
 
-    //Check identityDerivsationStr
-    AEU.check_require("id_derivation", identityDerivationStr);
-    derivations = identityDerivationStr.split("/");
+    // TODO maybe split in several functions?
+    // 20230124 Test to remove MTN from Base identity, as base identity should happen at W level not N level
+    // let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
+    let identityDerivationStr = mZR_der + SSSSSW_der
 
-    // Adjust derivation length depending of kind of wallet
-    let substract;
-    if (this.constructor.name == "AE_entityWallet"){
-      substract = 4;
-    }
-    else if (this.constructor.name == "AE_userWallet") {
-      substract = 5;
-    }
-    // Substract BCDDE length IF User, -4 IF entity
-    if (!(derivations.length === (this.identity_pattern.length-substract))) {
-      console.log(
-        "Identity Derivation Str has ",
-        derivations.length,
-        "depth not the required ",        
-        this.identity_pattern.length-substract // Substract 5 length IF User, -4 IF entity
-      );
-    }
+    // //Check identityDerivsationStr
+    // AEU.check_require("id_derivation", identityDerivationStr);
+    // derivations = identityDerivationStr.split("/");
+
+    // // Adjust derivation length depending of kind of wallet
+    // let substract;
+    // if (this.constructor.name == "AE_entityWallet"){
+    //   substract = 4;
+    // }
+    // else if (this.constructor.name == "AE_userWallet") {
+    //   substract = 5;
+    // }
+    // // Substract BCDDE length IF User, -4 IF entity
+    // if (!(derivations.length === (this.identity_pattern.length-substract))) {
+    //   console.log(
+    //     "Identity Derivation Str has ",
+    //     derivations.length,
+    //     "depth not the required ",        
+    //     this.identity_pattern.length-substract // Substract 5 length IF User, -4 IF entity
+    //   );
+    // }
 
     // 20221024 Do not store identityDerivationStr, it is not necessary to use the wallet after the inizialization, this is more secure
     // identity_HDWallet is the only necessary working point
@@ -63,6 +79,7 @@ class AE_rootWallet {
     // base_HDWallet and mnemonic won't be necesary either, it is more secure to delete it
     delete this.base_HDWallet;
     delete this.mnemonic;
+
     this.createNewNetwork(MTN_der,true,MTN_alias);
 
   }
@@ -132,7 +149,7 @@ class AE_rootWallet {
     let wTree;
     let child;
 
-    // TODO find "N" derivation by Alias, replicate in all node searches
+    // DONE find "N" derivation by Alias, replicate in all node searches
     if (MTN_alias === undefined) {
       wTree = this.DTree.findChildByData("defaultMTN", true);
     }
@@ -227,7 +244,7 @@ class AE_rootWallet {
   findNodeByDerivation(derivationName, derivationValue = "", MTN_alias) {
 
     // DONE MTN update
-    // TODO ERROR in the case of W derivation
+    // DONE ERROR in the case of W derivation
     let networkNode;
 
     if (derivationName == "W") {
@@ -264,6 +281,8 @@ class AE_rootWallet {
 
 
   safeAddChild(node, data) {
+
+    
 
     // Check if any child has the same derivationName and derivationValue
     let existingDescendant = node.descendants.filter( x => (x.data.derivationName == data.derivationName && x.data.derivationValue == data.derivationValue));

@@ -6,6 +6,7 @@
     "configurations": [
 
 
+
         {
             "type": "node",
             "request": "launch",
@@ -41,6 +42,18 @@
             "request": "launch",
             "name": "Random tests",
             "program": "${workspaceFolder}/test/AE_random_test.js"
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE01_identity_creation",
+            "program": "${workspaceFolder}/test/standarized/AE01_identity_creation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE02_wallet_creation",
+            "program": "${workspaceFolder}/test/standarized/AE02_wallet_creation.js"
+        },
     ]
 }

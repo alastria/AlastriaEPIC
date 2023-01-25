@@ -75,7 +75,7 @@ async function main() {
   // AcmeAcademy will be 6385471, random number just for this user
   // the complete derivation of AcmeAcademy for the user would be: "m/1037171/131071/0407/10011001/94367/3651441/6385471"
   newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "484199084");
-  // This should raise an error. TODO properly!
+  // This should raise an error. DONE
   try {
     newUserEpicWallet.addBPlusDerivation("Other", "484199084");
   } catch (e) {
