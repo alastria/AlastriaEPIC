@@ -22,15 +22,15 @@ class AE_rootWallet {
     this.mnemonic = mnemonicStr;
     this.base_HDWallet = AEL.createHDWalletFromMnemonic(this.mnemonic);
   }
-
-
+  
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
 
     // TODO identity derivation must point to W derivation not N derivation
     // let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
     let identityDerivationStr = mZR_der + SSSSSW_der;
 
-    // Check identityDerivsationStr
+
+    //Check identityDerivsationStr
     AEU.check_require("id_derivation", identityDerivationStr);
     derivations = identityDerivationStr.split("/");
 
@@ -69,7 +69,6 @@ class AE_rootWallet {
     delete this.mnemonic;
 
     this.createNewNetwork(MTN_der,true,MTN_alias);
-
   }
 
   createNewNetwork(MTN_der, makeDefault = false, MTN_alias) {
@@ -137,7 +136,7 @@ class AE_rootWallet {
     let wTree;
     let child;
 
-    // DONE find "N" derivation by Alias, replicate in all node searches
+    // TDDO find "N" derivation by Alias, replicate in all node searches
     if (MTN_alias === undefined) {
       wTree = this.DTree.findChildByData("defaultMTN", true);
     }
@@ -232,7 +231,7 @@ class AE_rootWallet {
   findNodeByDerivation(derivationName, derivationValue = "", MTN_alias) {
 
     // DONE MTN update
-    // DONE ERROR in the case of W derivation
+    // TODO ERROR in the case of W derivation
     let networkNode;
 
     if (derivationName == "W") {
@@ -269,8 +268,6 @@ class AE_rootWallet {
 
 
   safeAddChild(node, data) {
-
-    
 
     // Check if any child has the same derivationName and derivationValue
     let existingDescendant = node.descendants.filter( x => (x.data.derivationName == data.derivationName && x.data.derivationValue == data.derivationValue));
