@@ -55,5 +55,11 @@
             "name": "AE02_wallet_creation",
             "program": "${workspaceFolder}/test/standarized/AE02_wallet_creation.js"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE03_user_entity_relationship",
+            "program": "${workspaceFolder}/test/standarized/AE03_user_entity_relationship"
+        },        
     ]
 }

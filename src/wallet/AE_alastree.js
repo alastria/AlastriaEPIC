@@ -5,6 +5,26 @@ class AE_Alastree {
     this.data = data;
   }
 
+  parseJSON(serializedAlastree) {
+
+    // TODO
+    // First copy properties
+    for (const property in serializedAlastree) {
+      if (! (property == "descendants" || serializedAlastree[property] === undefined))
+      {
+        this[property] = serializedAlastree[property];
+      }      
+    }
+    serializedAlastree.descendants.forEach(element => {
+      let lastChild = this.addChild(element.data);
+      lastChild.parseJSON (element);
+      
+    });
+
+    // The copy the descendants
+
+  }
+
   addChild(data) {
     let child = new AE_Alastree(data);
     child.parent = this;
@@ -48,6 +68,8 @@ class AE_Alastree {
 
     return nodes;
   }
+  
+
 }
 
 module.exports = {

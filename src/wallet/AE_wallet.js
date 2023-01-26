@@ -101,10 +101,26 @@ class AE_rootWallet {
     let fMtnDers = mtnDers.filter(x => (x.length>0));
 
 
+    
     let derName = "M";
     fMtnDers.forEach(element => {
       data = {};
       data.derivationName = derName;  
+
+      // TODO in the case of MTNs it is possible to re-use MT with a new N
+      let mNodes = child.findChildByData("derivationName",derName);
+      let fmNode = mNodes.filter(x => ((x.data.validStatus == true) && (x.data.derivationValue == element)));      
+      if (fmNode.length == 0) {
+        child = this.safeAddChild(child,data);
+      }
+      else if (Array.isArray(fmNode))
+      {          
+        child = fmNode[0];        
+      }
+      else  {
+        child = fmNode;
+      }
+
       if (derName == "N") {
         // The first identity holds the default MNT (aka net), the rest would be secondary unless marked
         data.defaultMTN = true;  
@@ -113,18 +129,14 @@ class AE_rootWallet {
       if (derName == "T") {
         derName = "N";
       }
-      if (derName == "M") {
+      if (derName == "M") {      
+
         derName = "T";
       }     
 
       data.derivationValue = element;
       data.validStatus = true;
-      // safeAddChild
-      // child = child.addChild(data);
-      child = this.safeAddChild(child,data);
-
-      child.data.path =
-      child.parent.data.path + "/" + child.data.derivationValue;      
+      child.data.path = child.parent.data.path + "/" + child.data.derivationValue;      
     });
 
     return child;
@@ -208,7 +220,10 @@ class AE_rootWallet {
   readIdentityWallet(wallet) {
     // let wallet = super.readIdentityWallet();
     // As "this" object cannot be assigned we do need to reconstruct it
-    this.DTree = wallet.DTree;
+    
+    // TODO: Recovering DTree requires scpecial method: creating an Alastree and processing the string
+    this.DTree = new AEA.AE_Alastree;
+    this.DTree.parseJSON(wallet.DTree);
     this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;
     this.identity_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(
       wallet.identity_HDWallet._hdkey.xpriv

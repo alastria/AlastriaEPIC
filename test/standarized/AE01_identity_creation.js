@@ -1,9 +1,9 @@
 const AEUW = require("../../src/wallet/AE_wallet_user");
 const AEEW = require("../../src/wallet/AE_wallet_entity");
-const AEWS = require("../AE_wallet_storage");
+const AEWS = require("../../src/utils/AE_wallet_storage");
 
 async function main() {
-    console.log("AE01_identity_creation test");
+    console.log("AE01_identity_creation STARTED");
 
     // Change to your storage path
     let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
@@ -73,6 +73,8 @@ async function main() {
 
     console.log("AE01 - P - Create Provider identity - \tStore Recovery Wallet");
     AEWS.storeRecoveryWallet(providerMnemonic, provider_mZR, provider_SSSSSW, commonMTN, storagePath + "/test_data/AE01_Provider_Recovery_Wallet.json");
+
+    console.log("AE01_identity_creation FINISHED");
     
 }
 
