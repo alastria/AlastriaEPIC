@@ -100,11 +100,7 @@ async function main() {
   // AcmeAcademy as an entity does not have different derivations for users
   newEntityEpicWallet.addCPlusDerivation("User");
 
-  // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"
-  newEntityEpicWallet.addRenewCplusLoginDerivation(
-    "User",
-    newUserEpicWallet.getBPlusLoginDerivation("AcmeAcademy")
-  );
+  
 
   user = newEntityEpicWallet.getCPlusDerivation("User");
 
@@ -130,12 +126,18 @@ async function main() {
     user_acme_relationship_public_key
   );
 
+  // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"
+  newEntityEpicWallet.addRenewCplusLoginDerivation(
+    "User",
+    newUserEpicWallet.getBPlusLoginDerivation("AcmeAcademy")
+  );
+
   console.log("\t3rd test, 2nd step: Login challenge");
   // acme sends me a login challenge, adding its Extended Public Key acting as DID
   //var acme_login_challenge =
   //  "{'message':'please sign with your Public Key to login','my_publicKey':'replace'}";
   var acme_login_challenge =
-  "Please sign with your Public Key to login";
+  "Please sign with your Private Key to login";
   
   
   

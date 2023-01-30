@@ -104,6 +104,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
     // This updates directly the user wallet
     localBplus.data.loginDerivation = loginDerivationStr;
+    
     let entity_login_wallet = AEL.getHDWalletDerivation(
       localBplus.data.own_HDWallet,
       "m/0/" + localBplus.data.loginDerivation

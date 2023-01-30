@@ -168,6 +168,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
 
     child.data.objectKind = AEC.login;
+
     return child;
   }
 

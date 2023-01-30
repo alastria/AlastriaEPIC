@@ -26,6 +26,11 @@ class AE_comms_dummy   {
 
     }
 
+    ReceiveAll (sender, destinatary) {
+
+        return this[sender][destinatary];
+    }
+
 }
 
 module.exports = {

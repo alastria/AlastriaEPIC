@@ -7,6 +7,7 @@
 
 
 
+
         {
             "type": "node",
             "request": "launch",
@@ -60,6 +61,12 @@
             "request": "launch",
             "name": "AE03_user_entity_relationship",
             "program": "${workspaceFolder}/test/standarized/AE03_user_entity_relationship"
-        },        
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE04_login",
+            "program": "${workspaceFolder}/test/standarized/AE04_login"
+        },
     ]
 }

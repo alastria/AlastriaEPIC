@@ -198,17 +198,17 @@ class AE_rootWallet {
     if (SSSSSW_der == "") {
       SSSSSW_der =
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation();
+        AEL.getRandomIntDerivation().toString();
     }
     this.setIdentityDerivation(
       old_wallet.mZR_der,
@@ -229,6 +229,17 @@ class AE_rootWallet {
       wallet.identity_HDWallet._hdkey.xpriv
     );
     this.identity_pattern = wallet.identity_pattern;
+    // TODO: ownWallet in B derivations needs special recovery as identity_HDWallet needed
+    let Bnodes = this.findNodeByDerivation("B");
+    if (Array.isArray(Bnodes)) {
+      Bnodes.forEach(element => {
+        this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+      });
+    }
+    else{
+      Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
+    }
+    
 
   }
 
