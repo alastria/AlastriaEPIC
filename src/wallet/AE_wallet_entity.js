@@ -175,13 +175,20 @@ class AE_entityWallet extends AEW.AE_rootWallet {
   getLoginDerivation(userStr, MTN_alias) {
     // MTN done via getCPlusDerivation
 
+    // TODO, this generates an error when the user has old login derivations, must re-code, avoid reduce
     let user = this.getCPlusDerivation(userStr, MTN_alias);
-    let derivationNodes = user.findChildByData("derivationName", "D");
-    let derivations = derivationNodes.map((x) => x.data.derivationValue);
-    let loginDer = derivations.reduce(
-      (accumulator, currentValue) => accumulator + "/" + currentValue,
-      ""
-    );
+
+    let loginNodes = user.findAllLeafs();
+    let fLoginNodes = loginNodes.filter( x => (x.data.objectKind == AEC.login && x.data.validStatus == true))
+    let loginDer = AEU.substractDerivations(user.data.path, fLoginNodes[0].data.path).substring(1);
+    
+
+    // let derivationNodes = user.findChildByData("derivationName", "D");
+    // let derivations = derivationNodes.map((x) => x.data.derivationValue);
+    // let loginDer = derivations.reduce(
+    //   (accumulator, currentValue) => accumulator + "/" + currentValue,
+    //   ""
+    // );
 
     return loginDer;
   }

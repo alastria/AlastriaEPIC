@@ -101,7 +101,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     // MTN changes, let localBplus = this.getBPlusDerivation(entityStr);
     let allBderivations = networkNode.findChildByData("derivationName", "B");
     let localBplus = allBderivations.filter((nodo) => (nodo.data.entity == entityStr) && (nodo.data.validStatus == true))[0];
-
+    
     // This updates directly the user wallet
     localBplus.data.loginDerivation = loginDerivationStr;
     
