@@ -28,6 +28,7 @@ module.exports = {
   getRandomInt,
   getRandomIntDerivation,
   getRandomMnemonic,
+  getHash,
 };
 
 function hexadice(value) {
@@ -165,4 +166,12 @@ function getRandomIntDerivation() {
 
 function getRandomMnemonic(strength, rng, wordlist) {
   return bip39.generateMnemonic(strength,rng,wordlist);
+}
+
+function getHash(objectStr) {
+
+  let utf8Encode = new TextEncoder();
+  let b = utf8Encode.encode(objectStr);
+
+  return ethers.utils.keccak256(b);
 }

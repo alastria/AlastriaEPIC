@@ -40,30 +40,30 @@ async function main() {
   // mZR_der, SSSSSW_der, MTN_der
   //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/407/10011001");
   newUserEpicWallet.setIdentityDerivation(
-    "m/1037171/104162416",
-    "/104162416/104162416/104162416/104162416/104162416/104162416",
+    "m/1037171/94367",
+    "/36514417/1996133064/444811548/120132567/3152038/848215",
     "/131071/407/10011001"
   );
   AEWS.storeRecoveryWallet(
-    "used rebel ahead harvest journey steak hub core opera wrong rate loan",
+    "access entry across few mixture island pluck lawn harvest fiction buddy decline",
     "m/1037171/94367",
     "/36514417/1996133064/444811548/120132567/3152038/848215",
-    "/131071/0407/10011001",
+    "/131071/407/10011001",
     "./User_recovery_wallet.json"
   );
 
   // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
   //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/407/10011001");
   newEntityEpicWallet.setIdentityDerivation(
-    "m/1037171/1241103461",
-    "/1241103461/1241103461/1241103461/1241103461/1241103461/1241103461",
+    "m/1037171/86307766",
+    "/1152697438/415781155/342717333/307131644/1042827527/324692716",
     "/131071/407/10011001"
   );
   AEWS.storeRecoveryWallet(
-    "manage wage hill kitten joke buyer topic focus observe valid december oyster",
-    "m/1037171/94367",
+    "arctic stage defense wink stone crumble buddy vital element shift earn deal",
+    "m/1037171/86307766",
     "/1152697438/415781155/342717333/307131644/1042827527/324692716",
-    "/131071/0407/10011001",
+    "/131071/407/10011001",
     "./Entity_recovery_wallet.json"
   );
 

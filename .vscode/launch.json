@@ -68,5 +68,11 @@
             "name": "AE04_login",
             "program": "${workspaceFolder}/test/standarized/AE04_login"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE05_login_rotation",
+            "program": "${workspaceFolder}/test/standarized/AE05_login_rotation"
+        },
     ]
 }

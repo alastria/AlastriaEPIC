@@ -19,27 +19,27 @@ async function main() {
   console.log("1st test: create HDWallets");
   let newUserEpicWallet = new AEUW.AE_userWallet();
   newUserEpicWallet.setMnemonic(
-    "used rebel ahead harvest journey steak hub core opera wrong rate loan"
+    "access entry across few mixture island pluck lawn harvest fiction buddy decline"
   );
   // mZR_der, SSSSSW_der, MTN_der
   //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
   newUserEpicWallet.setIdentityDerivation(
     "m/1037171/94367",
     "/36514417/1996133064/444811548/120132567/3152038/848215",
-    "/131071/0407/10011001"
+    "/131071/407/10011001"
   );
   newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "6385471");
 
   let newEntityEpicWallet = new AEEW.AE_entityWallet();
   newEntityEpicWallet.setMnemonic(
-    "manage wage hill kitten joke buyer topic focus observe valid december oyster"
+    "arctic stage defense wink stone crumble buddy vital element shift earn deal"
   );
   // mZR_der, SSSSSW_der, MTN_der
   //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
   newEntityEpicWallet.setIdentityDerivation(
     "m/1037171/86307766",
     "/1152697438/415781155/342717333/307131644/1042827527/324692716",
-    "/131071/0407/10011001"
+    "/131071/407/10011001"
   );
   newEntityEpicWallet.addCPlusDerivation("User");
 
@@ -265,12 +265,17 @@ async function main() {
   let presUserDer  = AEU.subDerivation(presentationDerivation,0,2);
   let presEntityDer = AEU.subDerivation(presentationDerivation,2,1);
 
-  newSPWallet.verifyPresentationSignature(
+  if (newSPWallet.verifyPresentationSignature(
     "User",
     presentation_derivation,
     credential_set,
     credential_setSignature
-  );
+  )) {
+    console.log("CORRECT presentation signature");
+  }
+  else {
+    console.log("INVALID presentation signature");
+  }
 
   // - send the SP my IdentityPubK and the derivation to the PubK registered for the user *stored in THIS VARIABLE* user_identity_pubK
   // - send the SP the derivations from the IdentityPubK to each one the DIDs/PubK in the credentials

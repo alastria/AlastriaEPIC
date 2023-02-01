@@ -168,6 +168,12 @@ class AE_rootWallet {
 
   }
 
+  getMTNDerivation(MTN_alias) {
+
+    let networkNode = this.getNetworkNode(MTN_alias); 
+    return AEU.subDerivation(AEU.cleanPath(networkNode.data.path),1);
+  }
+
 
   baseVerifyLoginChallenge(
     challengeStr,

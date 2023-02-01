@@ -38,13 +38,15 @@ class AE_userWallet extends AEW.AE_rootWallet {
       throw "Invalid derivation";
     }
 
-    let entity_relationship_wallet = AEL.getHDWalletDerivation(
-      this.identity_HDWallet,
-      "m/" + derivationStr
-    );
-    let my_entity_relationship_public_key = AEL.getPublicExtendedKey(
-      entity_relationship_wallet
-    );
+
+
+    let networkNode = this.getNetworkNode(MTN_alias); 
+    let currentMTN_der = this.getMTNDerivation();
+    let relDerivation = AEU.cleanDerivation(currentMTN_der + "/" + derivationStr);
+
+    // DONE correct bug, derivationStr lacks MTN and it is needed
+    let entity_relationship_wallet = AEL.getHDWalletDerivation(this.identity_HDWallet, relDerivation);
+    let my_entity_relationship_public_key = AEL.getPublicExtendedKey(entity_relationship_wallet);
 
     let data = {};
     data.derivationName = "B";
@@ -54,7 +56,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.own_HDWallet = entity_relationship_wallet;
     data.own_extendedPublicKey = my_entity_relationship_public_key;
 
-    let networkNode = this.getNetworkNode(MTN_alias); 
+    
 
     // DONE: It requires checking the MNT derivation to add this to      
     // let child = networkNode.addChild(data);
@@ -421,6 +423,9 @@ class AE_userWallet extends AEW.AE_rootWallet {
     // In the last level we can store the credential info
     child.data.objectID = objectID;
     child.data.objectKind = objectKind;
+    child.data.objectDerivation = AEU.cleanDerivation(objectUserDerivationStr + "/" + entityObjectDerivation);
+    child.data.objectUserDerivation = objectUserDerivationStr;
+    child.data.objectEntityDerivation = entityObjectDerivation;
     return child;
   }
 
@@ -446,7 +451,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     // Locate the entity and the credential
     let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
     let objectDerivation = localBplus.findChildByData("objectID", objectID);
-
+    
     // Calculate the credential path up to level B
     let wholePath = objectDerivation[0].data.path;
     let objectDerivationStr =
@@ -464,11 +469,14 @@ class AE_userWallet extends AEW.AE_rootWallet {
     //DONE MTN via getObjectDerivation
 
     let objectDerivationStr = this.getObjectDerivation(entityStr, objectID, MTN_alias);
+    let objectDerivationStrWitoutContainer = AEU.cleanDerivation(AEU.subDerivation(objectDerivationStr, 1));
 
-    let credential_wallet = AEL.getHDWalletDerivation(
-      this.identity_HDWallet,
-      objectDerivationStr
-    );
+    // TODO, BUG, Extended Public Key of an object is calculated from the entity it belongs to, not the identity_wallet
+    let containerEntity = this.getBPlusDerivation(entityStr);
+
+    let containerWallet = AEL.createRO_HDWalletFromPublicExtendedKey(containerEntity.data.own_extendedPublicKey);
+
+    let credential_wallet = AEL.getHDWalletDerivation(containerWallet,objectDerivationStrWitoutContainer);      
     let credential_pubExtKey = AEL.getPublicExtendedKey(credential_wallet);
 
     return credential_pubExtKey;
