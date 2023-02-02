@@ -363,16 +363,16 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     i = 0;
     cred_derived_pubK_array.every((element) => {
-      if (!(element === credential_pubK_set[i])) {
-        console.log("ERROR validating Chain Of Trust for credentials");
+      if (!(element === credential_pubK_set[i])) {        
+        // console.log("ERROR validating Chain Of Trust for credentials");
         result = false;
       }
       i++;
     });
 
-    if (result) {
-      console.log("Validation Chain Of Trust for credentials CORRECT");
-    }
+    //if (result) {
+    // console.log("Validation Chain Of Trust for credentials CORRECT");
+    //}
 
     // This requires later validation of user_base_identity_pubK in the blockchain network in case it has been revoked by the user
 

@@ -393,7 +393,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
     // Add some levels for the credential, the user part are tw;
     let objectUserDerivationStr = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
-    // harcoded for testing purposes
+    // harcoded for testing purposes    
     // let objectUserDerivationStr = "198367/2986292";
     let derivations = objectUserDerivationStr.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
@@ -472,6 +472,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     let objectDerivationStrWitoutContainer = AEU.cleanDerivation(AEU.subDerivation(objectDerivationStr, 1));
 
     // TODO, BUG, Extended Public Key of an object is calculated from the entity it belongs to, not the identity_wallet
+    // DONE?
     let containerEntity = this.getBPlusDerivation(entityStr);
 
     let containerWallet = AEL.createRO_HDWalletFromPublicExtendedKey(containerEntity.data.own_extendedPublicKey);
@@ -490,8 +491,12 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
   getCredentialDerivation(entityStr, credentialID, MTN_alias) {
     // DONE via getObjectDerivation
+    // TODO, BUG, missing MTN part in derivation as the objectDerivation is returned to B level, not the required W level
 
-    return this.getObjectDerivation(entityStr, credentialID, MTN_alias);
+    let fromEntityObjectDerivation = this.getObjectDerivation(entityStr, credentialID, MTN_alias);
+    let credentialDer = AEU.cleanDerivation(this.getMTNDerivation() + "/" + fromEntityObjectDerivation);
+
+    return credentialDer;
   }
 
   setPresentationDerivation(entityStr, presentationID, entityPresDerivation, MTN_alias) {
@@ -533,11 +538,15 @@ class AE_userWallet extends AEW.AE_rootWallet {
   async signPresentation(entityStr, presentationID, presentationStr, MTN_alias) {
     // Maybe create a single method for login and presentation signatures?
 
-    let full_pres_entity_derivation = this.getObjectDerivation(
+    let pres_entity_derivation = this.getObjectDerivation(
       entityStr,
       presentationID,
       MTN_alias
     );
+
+    // TODO, BUG, missing MTN!    DONE!!!
+    let full_pres_entity_derivation = AEU.cleanDerivation(this.getMTNDerivation() +  "/" + pres_entity_derivation);
+
     let presentation_wallet = AEL.getHDWalletDerivation(
       this.identity_HDWallet,
       full_pres_entity_derivation

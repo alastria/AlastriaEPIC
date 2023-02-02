@@ -288,11 +288,18 @@ async function main() {
     aux_getPubkeyFromDummyCred(credential_2_Text),
     aux_getPubkeyFromDummyCred(credential_3_Text),
   ];
+  if (
   newSPWallet.verifyChainOfTrust(
     user_identity_pubK,
     cred_derivation_set,
     credential_pubk_set
-  );
+  )) {
+    console.log("Validation Chain Of Trust for credentials CORRECT");
+  }
+  else
+  {
+    console.log("ERROR validating Chain Of Trust for credentials");
+  }
 
   // - verify each credential Issuer signature
   // this has been already made at AE_crentialIssuance_test.js example
