@@ -44,12 +44,12 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     // 1 -> credencial issuance
     data.credencialIssuance_derivation = "m/1";
-    data.credencialIssuance_HDWallet = AEL.getHDWalletDerivation(
+    data.credentialIssuance_HDWallet = AEL.getHDWalletDerivation(
       this.identity_HDWallet,
       data.credencialIssuance_derivation
     );
     data.credencialIssuance_extPublicKey = AEL.getPublicExtendedKey(
-      data.credencialIssuance_HDWallet
+      data.credentialIssuance_HDWallet
     );
 
     // 2 -> presentations
@@ -304,7 +304,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     // DONE MTN update via gtHDWalletByPurpose
 
-    let peK = this.getHDWalletByPurpose("credencialIssuance_HDWallet", MTN_alias);
+    let peK = this.getHDWalletByPurpose("credentialIssuance_HDWallet", MTN_alias);
 
     let signature = AEL.signMessage(
       AEL.getEthereumWalletFromPrivateKey(

@@ -227,7 +227,7 @@ class AE_rootWallet {
     // let wallet = super.readIdentityWallet();
     // As "this" object cannot be assigned we do need to reconstruct it
     
-    // TODO: Recovering DTree requires scpecial method: creating an Alastree and processing the string
+    // DONE: Recovering DTree requires scpecial method: creating an Alastree and processing the string
     this.DTree = new AEA.AE_Alastree;
     this.DTree.parseJSON(wallet.DTree);
     this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;
@@ -235,7 +235,7 @@ class AE_rootWallet {
       wallet.identity_HDWallet._hdkey.xpriv
     );
     this.identity_pattern = wallet.identity_pattern;
-    // TODO: ownWallet in B derivations needs special recovery as identity_HDWallet needed
+    // DONE: ownWallet in B derivations needs special recovery as identity_HDWallet needed
     let Bnodes = this.findNodeByDerivation("B");
     if (Array.isArray(Bnodes)) {
       Bnodes.forEach(element => {
@@ -245,7 +245,25 @@ class AE_rootWallet {
     else{
       Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
     }
+
+    // TODO: entities credentialIssuance_HDWallet, login_HDWallet and presentations_HDWallet required also special treatment
+
+    if (this.constructor.name == "AE_entityWallet")
+    {
+      let identityW = this.findNodeByDerivation("W");
+      let fIdentityW = identityW;
+      if (Array.isArray(identityW)) {
+        fIdentityW = identityW.filter((x) => x.data.validStatus == true);
+      }
+
+      fIdentityW.data.credentialIssuance_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(fIdentityW.data.credentialIssuance_HDWallet._hdkey.xpriv);
+      fIdentityW.data.login_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(fIdentityW.data.login_HDWallet._hdkey.xpriv);
+      fIdentityW.data.presentations_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(fIdentityW.data.presentations_HDWallet._hdkey.xpriv);
+    }
+
     
+    
+
 
   }
 

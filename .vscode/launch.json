@@ -74,5 +74,11 @@
             "name": "AE05_login_rotation",
             "program": "${workspaceFolder}/test/standarized/AE05_login_rotation"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE06_credential_issuance",
+            "program": "${workspaceFolder}/test/standarized/AE06_credential_issuance"
+        },
     ]
 }

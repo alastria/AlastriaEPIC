@@ -135,7 +135,7 @@ async function main() {
   // and the user (or anyone) can verify the signature
   // it requires knowing the Public Key, that would be stored in a public shared system, like an smartContact
   let peK = AEL.getPrivateExtendedKey(
-    newEntityEpicWallet.getHDWalletByPurpose("credencialIssuance_HDWallet")
+    newEntityEpicWallet.getHDWalletByPurpose("credentialIssuance_HDWallet")
   );
    if (AEL.verifyMessageByPublicExtendedKey(
     credentialText,

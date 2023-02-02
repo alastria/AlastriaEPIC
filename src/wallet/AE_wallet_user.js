@@ -353,7 +353,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     return this.baseVerifyLoginChallenge(challengeStr, signatureStr, signerRl);
   }
 
-  setObjectDerivation(entityStr, objectID, entityObjectDerivation, objectKind, MTN_alias) {
+  setObjectDerivation(entityStr, objectID, entityObjectDerivation, objectKind, MTN_alias, userCredentialDerivation) {
 
   // Done MTN update via getBPlusDerivation
 
@@ -392,10 +392,15 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.validStatus = true;
 
     // Add some levels for the credential, the user part are tw;
-    let objectUserDerivationStr = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
+    if (userCredentialDerivation === undefined) {
+      userCredentialDerivation = AEL.getRandomIntDerivation() + "/" + AEL.getRandomIntDerivation();
+    }
+    else {
+
+    }
     // harcoded for testing purposes    
-    // let objectUserDerivationStr = "198367/2986292";
-    let derivations = objectUserDerivationStr.split("/").filter(x => (x.length > 0 ));
+    // let userCredentialDerivation = "198367/2986292";
+    let derivations = userCredentialDerivation.split("/").filter(x => (x.length > 0 ));
     derivations.forEach((element) => {
       data = {};
       data.derivationName = "D";
@@ -423,13 +428,13 @@ class AE_userWallet extends AEW.AE_rootWallet {
     // In the last level we can store the credential info
     child.data.objectID = objectID;
     child.data.objectKind = objectKind;
-    child.data.objectDerivation = AEU.cleanDerivation(objectUserDerivationStr + "/" + entityObjectDerivation);
-    child.data.objectUserDerivation = objectUserDerivationStr;
+    child.data.objectDerivation = AEU.cleanDerivation(userCredentialDerivation + "/" + entityObjectDerivation);
+    child.data.objectUserDerivation = userCredentialDerivation;
     child.data.objectEntityDerivation = entityObjectDerivation;
     return child;
   }
 
-  setCredentialDerivation(entityStr, credentialID, entityCredDerivation, MTN_alias) {
+  setCredentialDerivation(entityStr, credentialID, entityCredDerivation, MTN_alias, userCredentialDerivation) {
 
     if (!AEU.check_require("id_derivation", entityCredDerivation)) {
       throw "Invalid derivation";
@@ -440,7 +445,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
       credentialID,
       entityCredDerivation,
       "Credential",
-      MTN_alias
+      MTN_alias,
+      userCredentialDerivation
     );
   }
 

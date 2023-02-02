@@ -4,7 +4,7 @@ const AEWS = require("../../src/utils/AE_wallet_storage");
 const AEC = require("../../src/utils/AE_comms_dummy");
 const AEL = require("../../src/AE_library");
 const AEU = require("../../src/utils/AE_utils");
-
+const fs = require("fs");
 
 async function main() {
 
@@ -39,23 +39,23 @@ async function main() {
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON);
 
 
-    // Prepare Credential, sample contents
+    /////////////////////////////////////////////////////
+    // PREPARE THE CREDENTIAL
     // Read sample credential
-
     console.log("AE06 - P - Credential issuance -  Provider -\tPrepare Credential");
-    let sampleCredential = fs.readFileSync(storagePath + "/sample_credential.json");
+    let sampleCredential = fs.readFileSync(storagePath + "/sample_credential.json").toString();
     
     // Replace in the credential the ISSUER with Issuer's ExtendedPublicKey
     let purpose = "credencialIssuance_extPublicKey";
     let puK = entityEpicWallet.getPurposePublicKey(purpose);
-    credentialText = credentialText.replace("$ISSUER", puK);
+    sampleCredential = sampleCredential.replace("$ISSUER", puK);
 
     // Replace in the credential the SCHOOL with the School's ExtentendedPublicKey
     // in this case Issuer = School but Issuer's ExtendedPublicKey is the credencialIssuance
     // and the school is the base, this is atipical
     purpose = "identity_ExtPublicKey";
     puK = entityEpicWallet.getPurposePublicKey(purpose);
-    credentialText = credentialText.replace("$SCHOOL", puK);
+    sampleCredential = sampleCredential.replace("$SCHOOL", puK);
 
 
     // User send his two derivations to the Entity, this is the same as sending the DID/ExtPubKey for the crendetial as: 
@@ -77,30 +77,49 @@ async function main() {
     let userCredExtPubK = AEL.getPublicExtendedKey(userCredWallet);
 
     // Entity finishes the credential preparation
-    credentialText = credentialText.replace("$SUBJECT", userCredExtPubK);
-
-    let credentialHash = AEL.getHash(credentialText);
+    sampleCredential = sampleCredential.replace("$SUBJECT", userCredExtPubK);
+    let credentialHash = AEL.getHash(sampleCredential);
     
     // Entity stores credential metaData
     entityEpicWallet.setCredentialInfo(
         "JohnDoe",
         credentialHash,
-        subjectPublicKey,
-        credUserDer,
-        credEntityDer);
+        userCredExtPubK,
+        userDerivation,
+        entityDerivation);
 
 
     // Entity signs credential
-    credentialSignature = await entityEpicWallet.signCredential(credentialText);
+    credentialSignature = await entityEpicWallet.signCredential(sampleCredential);
+
+    commsD.SendTo("JohnDoe","AcmeDriving","credentialEntityDerivation",entityDerivation);
+    commsD.SendTo("JohnDoe","AcmeDriving","credentialHash",credentialHash);
+    commsD.SendTo("JohnDoe","AcmeDriving","credential",sampleCredential);
+    commsD.SendTo("JohnDoe","AcmeDriving","credentialSignature",credentialSignature);
 
     // Entity sends data to User
     // credentialEntityDerivation
     // credentialHash
     // credential
-    // credential signature
+    // credentialSignature
 
+    let entityDerivationSent = commsD.SendTo("JohnDoe","AcmeDriving","credentialEntityDerivation");
+    let credentialHashSent = commsD.SendTo("JohnDoe","AcmeDriving","credentialHash");
+    let sampleCredentialSent = commsD.SendTo("JohnDoe","AcmeDriving","credential");
+    let credentialSignatureSent = commsD.SendTo("JohnDoe","AcmeDriving","credentialSignature");
 
+    // User registers data
 
+    // Stores credential
+    let userStorage = new AED.AE_data();
+    userStorage.addData(credentialHashSent,sampleCredentialSent);
+
+    // Registers credential data
+    let userCredentialChild = userEpicWallet.setCredentialDerivation(
+        "AcmeAcademy",
+        "4b860b60-dd5a-4c3c-ab59-f02252b42772",
+        "1251679543",undefined,credentialUserDerivation);
+    
     console.log("AE06_credential_issuance FINISHED");
 }
 
