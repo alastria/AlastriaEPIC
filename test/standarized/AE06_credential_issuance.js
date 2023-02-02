@@ -4,6 +4,7 @@ const AEWS = require("../../src/utils/AE_wallet_storage");
 const AEC = require("../../src/utils/AE_comms_dummy");
 const AEL = require("../../src/AE_library");
 const AEU = require("../../src/utils/AE_utils");
+const AED = require("../../src/wallet/AE_data");
 const fs = require("fs");
 
 async function main() {
@@ -42,7 +43,7 @@ async function main() {
     /////////////////////////////////////////////////////
     // PREPARE THE CREDENTIAL
     // Read sample credential
-    console.log("AE06 - P - Credential issuance -  Provider -\tPrepare Credential");
+    console.log("AE06 - E - Credential issuance -  Entity -\tPrepare Credential");
     let sampleCredential = fs.readFileSync(storagePath + "/sample_credential.json").toString();
     
     // Replace in the credential the ISSUER with Issuer's ExtendedPublicKey
@@ -60,27 +61,32 @@ async function main() {
 
     // User send his two derivations to the Entity, this is the same as sending the DID/ExtPubKey for the crendetial as: 
     // credExtPubK = derive(userExtPubK,credentialDerivation) where credentialDerivation = userDerivation + "/" + entityDerivation
-    console.log("AE06 - P - Credential issuance -  User -\tSend credential derivation to Entity");
+    console.log("AE06 - U - Credential issuance -  User -\tSend credential derivation to Entity");
     let credentialUserDerivation = AEL.getRandomIntDerivation().toString() + "/" + AEL.getRandomIntDerivation().toString();
     commsD.SendTo("JohnDoe","AcmeDriving","credentialUserDerivation",credentialUserDerivation);
 
     // Entity receives userCredentialDerivation
+    console.log("AE06 - E - Credential issuance -  Entity -\tReceive credential derivation from User");
     let userDerivation = commsD.Receive("JohnDoe","AcmeDriving","credentialUserDerivation");
 
     // Entity selects entityDerivation
+    console.log("AE06 - E - Credential issuance -  Entity -\tSelect Entity credential derivation");
     let entityDerivation = AEL.getRandomIntDerivation().toString();
 
     // Entity calculates credExtPubKey == DID for this credential
+    console.log("AE06 - E - Credential issuance -  Entity -\tCalculate user DID for this credential");
     let user = entityEpicWallet.getCPlusDerivation("JohnDoe");
     let tmpUserWallet = AEL.createRO_HDWalletFromPublicExtendedKey(user.data.other_extendedPublicKey);
     let userCredWallet = AEL.getHDWalletDerivation(tmpUserWallet,AEU.cleanDerivation(userDerivation+"/"+entityDerivation));
     let userCredExtPubK = AEL.getPublicExtendedKey(userCredWallet);
 
     // Entity finishes the credential preparation
+    console.log("AE06 - E - Credential issuance -  Entity -\tFinishes Credential preparation");
     sampleCredential = sampleCredential.replace("$SUBJECT", userCredExtPubK);
     let credentialHash = AEL.getHash(sampleCredential);
     
     // Entity stores credential metaData
+    console.log("AE06 - E - Credential issuance -  Entity -\tStore Credential information");
     entityEpicWallet.setCredentialInfo(
         "JohnDoe",
         credentialHash,
@@ -90,36 +96,54 @@ async function main() {
 
 
     // Entity signs credential
+    console.log("AE06 - E - Credential issuance -  Entity -\tSigns credential");
     credentialSignature = await entityEpicWallet.signCredential(sampleCredential);
 
+    // Entity sends data to user
+    console.log("AE06 - E - Credential issuance -  Entity -\tSends credential and data to user");
     commsD.SendTo("JohnDoe","AcmeDriving","credentialEntityDerivation",entityDerivation);
     commsD.SendTo("JohnDoe","AcmeDriving","credentialHash",credentialHash);
     commsD.SendTo("JohnDoe","AcmeDriving","credential",sampleCredential);
     commsD.SendTo("JohnDoe","AcmeDriving","credentialSignature",credentialSignature);
 
-    // Entity sends data to User
-    // credentialEntityDerivation
-    // credentialHash
-    // credential
-    // credentialSignature
-
-    let entityDerivationSent = commsD.SendTo("JohnDoe","AcmeDriving","credentialEntityDerivation");
-    let credentialHashSent = commsD.SendTo("JohnDoe","AcmeDriving","credentialHash");
-    let sampleCredentialSent = commsD.SendTo("JohnDoe","AcmeDriving","credential");
-    let credentialSignatureSent = commsD.SendTo("JohnDoe","AcmeDriving","credentialSignature");
+    // User receives credential and data
+    console.log("AE06 - U - Credential issuance -  User -\tUser received credential and data");
+    let entityDerivationSent = commsD.Receive("JohnDoe","AcmeDriving","credentialEntityDerivation");
+    let credentialHashSent = commsD.Receive("JohnDoe","AcmeDriving","credentialHash");
+    let sampleCredentialSent = commsD.Receive("JohnDoe","AcmeDriving","credential");
+    let credentialSignatureSent = commsD.Receive("JohnDoe","AcmeDriving","credentialSignature");
 
     // User registers data
-
     // Stores credential
+    console.log("AE06 - U - Credential issuance -  User -\tStores credential and data");
     let userStorage = new AED.AE_data();
     userStorage.addData(credentialHashSent,sampleCredentialSent);
 
     // Registers credential data
     let userCredentialChild = userEpicWallet.setCredentialDerivation(
-        "AcmeAcademy",
-        "4b860b60-dd5a-4c3c-ab59-f02252b42772",
-        "1251679543",undefined,credentialUserDerivation);
+        "AcmeDriving",
+        credentialHashSent,
+        entityDerivationSent,undefined,credentialUserDerivation);
     
+
+    // ANYONE CAN VERIFY THE SIGNATURE
+    // it requires knowing the Public Key, that would be stored in a public shared system, like an smartContact
+    console.log("AE06 - A - Credential issuance -  Any -\t\tVerify credential signature");
+    let peK = AEL.getPrivateExtendedKey(
+        entityEpicWallet.getHDWalletByPurpose("credentialIssuance_HDWallet")
+        );
+    if (AEL.verifyMessageByPublicExtendedKey(
+        sampleCredentialSent,
+        credentialSignatureSent,
+        peK
+    )) {
+        console.log("AE06 - A - Credential issuance -  Any -\t\tVALID SIGNATURE");
+        
+    }
+    else {
+        console.log("AE06 - A - Credential issuance -  Any -\t\tINCORRECT SIGNATURE");        
+    }
+
     console.log("AE06_credential_issuance FINISHED");
 }
 

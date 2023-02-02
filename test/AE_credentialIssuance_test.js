@@ -114,7 +114,6 @@ async function main() {
   let userCredExtPubK = AEL.getPublicExtendedKey(userCredWallet);
 
 
- 
 
 
 
