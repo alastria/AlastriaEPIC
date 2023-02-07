@@ -63,7 +63,7 @@ function storeObjects(objects, objectsFile) {
 
 function recoverObjects(objectsFile) {
   let objectsStr = fs.readFileSync(objectsFile);
-  let objects = JSON.parse(objectsStr, reviver);
+  let objects = JSON.parse(objectsStr, reviver);  
   return objects;
   
 }

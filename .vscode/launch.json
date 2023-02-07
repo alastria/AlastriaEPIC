@@ -80,5 +80,23 @@
             "name": "AE06_credential_issuance",
             "program": "${workspaceFolder}/test/standarized/AE06_credential_issuance"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE06_B",
+            "program": "${workspaceFolder}/test/standarized/AE06_B"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE06_C",
+            "program": "${workspaceFolder}/test/standarized/AE06_C"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE09_user_credential_presentation",
+            "program": "${workspaceFolder}/test/standarized/AE06_C"
+        },
     ]
 }

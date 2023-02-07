@@ -28,8 +28,9 @@ class AE_data   {
       return JSON.stringify(this.data);
     }
 
-    import(AEDataStr){
-      this.data = JSON.parse(AEDataStr);
+    import(AEDataStr){      
+
+      this.data = AEDataStr.data;
     }
 
 }
