@@ -1,1 +1,283 @@
-{"mnemonic":"","base_HDWallet":"","identity_HDWallet":{"_hdkey":{"xpriv":"xprvA6NQnVcqkmehjyLMUzmfKGejcMcSPFn5KeXtzwTej5E8QLauXp4bVyHixXDbhx41z9fTiFtsc6hiAEeyR7uUdPkyQg5PvgbBcRgyFLKobBe","xpub":"xpub6KMmC19jb9CzxTQpb2JfgQbUAPSvniVvgsTVoKsGHQm7H8v45MNr3mcCop75Pvywr7Gy345tT3XARkj95m2ugHhqDXucaQEGsYecLhWdvSu"}},"DTree":{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[],"data":{"derivationName":"N","defaultMTN":false,"MTN_alias":"default-MTN","derivationValue":"10011001","validStatus":true,"path":"m/2064230635/131071/407/10011001"}},{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[],"data":{"derivationName":"D","derivationValue":"971566831","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/0/465758917/971566831"},"objectKind":"Login"}],"data":{"derivationName":"D","derivationValue":"465758917","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/0/465758917"}}],"data":{"derivationName":"C","derivationValue":"0","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/0"}},{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[],"data":{"derivationName":"E","derivationValue":"1522507978","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/363038746/706880473/1522507978","objectID":"0xfdeed2112cb6cd4119c73bc85b7fb4546bd2502833c3ded8983d2694512c6b1a","objectKind":"Credential","objectDerivation":"m/363038746/706880473/1522507978","objectUserDerivation":"363038746/706880473","objectEntityDerivation":"1522507978"}}],"data":{"derivationName":"D","derivationValue":"706880473","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/363038746/706880473"}}],"data":{"derivationName":"D","derivationValue":"363038746","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/363038746"}},{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[],"data":{"derivationName":"E","derivationValue":"1391370147","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/480025365/529433417/1391370147","objectID":"0xf1279dc4e92cdd6e89c53edefb7b56563bd96cafbeec185e22002e254d803f8f","objectKind":"Credential","objectDerivation":"m/480025365/529433417/1391370147","objectUserDerivation":"480025365/529433417","objectEntityDerivation":"1391370147"}}],"data":{"derivationName":"D","derivationValue":"529433417","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/480025365/529433417"}}],"data":{"derivationName":"D","derivationValue":"480025365","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/480025365"}},{"parent":null,"descendants":[{"parent":null,"descendants":[{"parent":null,"descendants":[],"data":{"derivationName":"E","derivationValue":"1050802196","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/527864137/732888611/1050802196","objectID":"0x0abb3e4bc1becb6dce490e69668906787149a197c307326ccc1f87b87126a190","objectKind":"Credential","objectDerivation":"m/527864137/732888611/1050802196","objectUserDerivation":"527864137/732888611","objectEntityDerivation":"1050802196"}}],"data":{"derivationName":"D","derivationValue":"732888611","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/527864137/732888611"}}],"data":{"derivationName":"D","derivationValue":"527864137","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1/527864137"}}],"data":{"derivationValue":"1","derivationName":"C","validStatus":true,"path":"m/2064230635/131071/407/112212211/1685792389/1"}}],"data":{"derivationName":"B","derivationValue":"1685792389","entity":"AcmeDriving","validStatus":true,"own_HDWallet":{"_hdkey":{"xpriv":"xprvAFJxVkEbZJicL44hczJycEFpaLfY6fsgvpLM2j9ngSSkUDkozvx33JHesmvS1eZfj5zEHzZ1YvpEKbkSAhV8A7uDATzx86NmDeBSRD39fjh","xpub":"xpub6UJJuFmVPgGuYY9Aj1qyyNCZ8NW2W8bYJ3Fwq7ZQEmyjM25xYUGHb6c8j55aQRxgYWZLxqKBPGxCPaWDA9xzaeJ1xHxzUDRWHKpX96fnd9G"}},"own_extendedPublicKey":"xpub6UJJuFmVPgGuYY9Aj1qyyNCZ8NW2W8bYJ3Fwq7ZQEmyjM25xYUGHb6c8j55aQRxgYWZLxqKBPGxCPaWDA9xzaeJ1xHxzUDRWHKpX96fnd9G","path":"m/2064230635/131071/407/112212211/1685792389","other_ext_login_key":"xpub6MifNdhbJCzm2jFLr1eY8KiLh7cRuz2stPRHyMdyJULp78BMvfqSY9BhkFkYVN7HC6MDGK41rFsGM12KCx3D2SuaYFVTaB59zQ2uNB2yXWR","other_ext_cred_key":"xpub6MifNdhbJCzm5dBoxMFAtGXUVQLX3VMAh2SJx8DLN67rYCDC27TTe5htVPKNqv2HLNgY54Qrg4K5Pk1L5ZYFm4vy4pFN1CvvCVepF7wtQoK","other_ext_pres_key":"xpub6MifNdhbJCzm8tfjHZB5KnFG6Ss6Te9E44MUM2wjUmRdsdWwwmUw2RWujxJ83WSvnfKENvj8RQyavkyrgjjv1ifQuTMbUXcGDgoBiVWeYxc","loginDerivation":"465758917/971566831","loginWallet":{"_hdkey":{"xpriv":"xprvALp3VXpxskxwzWxipAmNuszr3bK8gBBRtkobjG9D5Zx8gYdQYvRG7zSxXQb7Ys2hubYZoB8YtE6DuwZmkRUaySuTVJZJKhG2zLe3cywSKJe","xpub":"xpub6ZoPu3Mri8XFD13BvCJPH1wabd9d5duHFyjCXeYpduV7ZLxZ6TjWfnmSNfsqNpKs1Jyn4RKWiRKyzFUBUSuyrsNubGMHNRnMVpU77dLaWP2"}},"loginExtendedPublicKey":"xpub6ZoPu3Mri8XFD13BvCJPH1wabd9d5duHFyjCXeYpduV7ZLxZ6TjWfnmSNfsqNpKs1Jyn4RKWiRKyzFUBUSuyrsNubGMHNRnMVpU77dLaWP2"}}],"data":{"derivationName":"N","defaultMTN":true,"MTN_alias":"newMTN","derivationValue":"112212211","validStatus":true,"path":"m/2064230635/131071/407/112212211"}}],"data":{"derivationName":"T","derivationValue":"407","validStatus":true,"path":"m/2064230635/131071/407"}}],"data":{"derivationName":"M","derivationValue":"131071","validStatus":true,"path":"m/2064230635/131071"}}],"data":{"derivationName":"W","derivationValue":"2064230635","path":"m/2064230635","validStatus":true}}],"data":{"derivationName":"m","path":"m"}},"identity_pattern":"mZRSSSSSWMTNBCDDE","identity_last_fixed_derivation_level":"N","identity_ExtPublicKey":"xpub6KMmC19jb9CzxTQpb2JfgQbUAPSvniVvgsTVoKsGHQm7H8v45MNr3mcCop75Pvywr7Gy345tT3XARkj95m2ugHhqDXucaQEGsYecLhWdvSu"}
+{
+  "mnemonic": "",
+  "base_HDWallet": "",
+  "identity_HDWallet": {
+    "_hdkey": {
+      "xpriv": "xprvA6NQnVcqkmehjyLMUzmfKGejcMcSPFn5KeXtzwTej5E8QLauXp4bVyHixXDbhx41z9fTiFtsc6hiAEeyR7uUdPkyQg5PvgbBcRgyFLKobBe",
+      "xpub": "xpub6KMmC19jb9CzxTQpb2JfgQbUAPSvniVvgsTVoKsGHQm7H8v45MNr3mcCop75Pvywr7Gy345tT3XARkj95m2ugHhqDXucaQEGsYecLhWdvSu"
+    }
+  },
+  "DTree": {
+    "parent": null,
+    "descendants": [
+      {
+        "parent": null,
+        "descendants": [
+          {
+            "parent": null,
+            "descendants": [
+              {
+                "parent": null,
+                "descendants": [
+                  {
+                    "parent": null,
+                    "descendants": [],
+                    "data": {
+                      "derivationName": "N",
+                      "defaultMTN": false,
+                      "MTN_alias": "default-MTN",
+                      "derivationValue": "10011001",
+                      "validStatus": true,
+                      "path": "m/2064230635/131071/407/10011001"
+                    }
+                  },
+                  {
+                    "parent": null,
+                    "descendants": [
+                      {
+                        "parent": null,
+                        "descendants": [
+                          {
+                            "parent": null,
+                            "descendants": [
+                              {
+                                "parent": null,
+                                "descendants": [
+                                  {
+                                    "parent": null,
+                                    "descendants": [],
+                                    "data": {
+                                      "derivationName": "D",
+                                      "derivationValue": "971566831",
+                                      "validStatus": true,
+                                      "path": "m/2064230635/131071/407/112212211/1685792389/0/465758917/971566831"
+                                    },
+                                    "objectKind": "Login"
+                                  }
+                                ],
+                                "data": {
+                                  "derivationName": "D",
+                                  "derivationValue": "465758917",
+                                  "validStatus": true,
+                                  "path": "m/2064230635/131071/407/112212211/1685792389/0/465758917"
+                                }
+                              }
+                            ],
+                            "data": {
+                              "derivationName": "C",
+                              "derivationValue": "0",
+                              "validStatus": true,
+                              "path": "m/2064230635/131071/407/112212211/1685792389/0"
+                            }
+                          },
+                          {
+                            "parent": null,
+                            "descendants": [
+                              {
+                                "parent": null,
+                                "descendants": [
+                                  {
+                                    "parent": null,
+                                    "descendants": [
+                                      {
+                                        "parent": null,
+                                        "descendants": [],
+                                        "data": {
+                                          "derivationName": "E",
+                                          "derivationValue": "1522507978",
+                                          "validStatus": true,
+                                          "path": "m/2064230635/131071/407/112212211/1685792389/1/363038746/706880473/1522507978",
+                                          "objectID": "0xfdeed2112cb6cd4119c73bc85b7fb4546bd2502833c3ded8983d2694512c6b1a",
+                                          "objectKind": "Credential",
+                                          "objectDerivation": "m/363038746/706880473/1522507978",
+                                          "objectUserDerivation": "363038746/706880473",
+                                          "objectEntityDerivation": "1522507978"
+                                        }
+                                      }
+                                    ],
+                                    "data": {
+                                      "derivationName": "D",
+                                      "derivationValue": "706880473",
+                                      "validStatus": true,
+                                      "path": "m/2064230635/131071/407/112212211/1685792389/1/363038746/706880473"
+                                    }
+                                  }
+                                ],
+                                "data": {
+                                  "derivationName": "D",
+                                  "derivationValue": "363038746",
+                                  "validStatus": true,
+                                  "path": "m/2064230635/131071/407/112212211/1685792389/1/363038746"
+                                }
+                              },
+                              {
+                                "parent": null,
+                                "descendants": [
+                                  {
+                                    "parent": null,
+                                    "descendants": [
+                                      {
+                                        "parent": null,
+                                        "descendants": [],
+                                        "data": {
+                                          "derivationName": "E",
+                                          "derivationValue": "1391370147",
+                                          "validStatus": true,
+                                          "path": "m/2064230635/131071/407/112212211/1685792389/1/480025365/529433417/1391370147",
+                                          "objectID": "0xf1279dc4e92cdd6e89c53edefb7b56563bd96cafbeec185e22002e254d803f8f",
+                                          "objectKind": "Credential",
+                                          "objectDerivation": "m/480025365/529433417/1391370147",
+                                          "objectUserDerivation": "480025365/529433417",
+                                          "objectEntityDerivation": "1391370147"
+                                        }
+                                      }
+                                    ],
+                                    "data": {
+                                      "derivationName": "D",
+                                      "derivationValue": "529433417",
+                                      "validStatus": true,
+                                      "path": "m/2064230635/131071/407/112212211/1685792389/1/480025365/529433417"
+                                    }
+                                  }
+                                ],
+                                "data": {
+                                  "derivationName": "D",
+                                  "derivationValue": "480025365",
+                                  "validStatus": true,
+                                  "path": "m/2064230635/131071/407/112212211/1685792389/1/480025365"
+                                }
+                              },
+                              {
+                                "parent": null,
+                                "descendants": [
+                                  {
+                                    "parent": null,
+                                    "descendants": [
+                                      {
+                                        "parent": null,
+                                        "descendants": [],
+                                        "data": {
+                                          "derivationName": "E",
+                                          "derivationValue": "1050802196",
+                                          "validStatus": true,
+                                          "path": "m/2064230635/131071/407/112212211/1685792389/1/527864137/732888611/1050802196",
+                                          "objectID": "0x0abb3e4bc1becb6dce490e69668906787149a197c307326ccc1f87b87126a190",
+                                          "objectKind": "Credential",
+                                          "objectDerivation": "m/527864137/732888611/1050802196",
+                                          "objectUserDerivation": "527864137/732888611",
+                                          "objectEntityDerivation": "1050802196"
+                                        }
+                                      }
+                                    ],
+                                    "data": {
+                                      "derivationName": "D",
+                                      "derivationValue": "732888611",
+                                      "validStatus": true,
+                                      "path": "m/2064230635/131071/407/112212211/1685792389/1/527864137/732888611"
+                                    }
+                                  }
+                                ],
+                                "data": {
+                                  "derivationName": "D",
+                                  "derivationValue": "527864137",
+                                  "validStatus": true,
+                                  "path": "m/2064230635/131071/407/112212211/1685792389/1/527864137"
+                                }
+                              }
+                            ],
+                            "data": {
+                              "derivationValue": "1",
+                              "derivationName": "C",
+                              "validStatus": true,
+                              "path": "m/2064230635/131071/407/112212211/1685792389/1"
+                            }
+                          }
+                        ],
+                        "data": {
+                          "derivationName": "B",
+                          "derivationValue": "1685792389",
+                          "entity": "AcmeDriving",
+                          "validStatus": true,
+                          "own_HDWallet": {
+                            "_hdkey": {
+                              "xpriv": "xprvAFJxVkEbZJicL44hczJycEFpaLfY6fsgvpLM2j9ngSSkUDkozvx33JHesmvS1eZfj5zEHzZ1YvpEKbkSAhV8A7uDATzx86NmDeBSRD39fjh",
+                              "xpub": "xpub6UJJuFmVPgGuYY9Aj1qyyNCZ8NW2W8bYJ3Fwq7ZQEmyjM25xYUGHb6c8j55aQRxgYWZLxqKBPGxCPaWDA9xzaeJ1xHxzUDRWHKpX96fnd9G"
+                            }
+                          },
+                          "own_extendedPublicKey": "xpub6UJJuFmVPgGuYY9Aj1qyyNCZ8NW2W8bYJ3Fwq7ZQEmyjM25xYUGHb6c8j55aQRxgYWZLxqKBPGxCPaWDA9xzaeJ1xHxzUDRWHKpX96fnd9G",
+                          "path": "m/2064230635/131071/407/112212211/1685792389",
+                          "other_ext_login_key": "xpub6MifNdhbJCzm2jFLr1eY8KiLh7cRuz2stPRHyMdyJULp78BMvfqSY9BhkFkYVN7HC6MDGK41rFsGM12KCx3D2SuaYFVTaB59zQ2uNB2yXWR",
+                          "other_ext_cred_key": "xpub6MifNdhbJCzm5dBoxMFAtGXUVQLX3VMAh2SJx8DLN67rYCDC27TTe5htVPKNqv2HLNgY54Qrg4K5Pk1L5ZYFm4vy4pFN1CvvCVepF7wtQoK",
+                          "other_ext_pres_key": "xpub6MifNdhbJCzm8tfjHZB5KnFG6Ss6Te9E44MUM2wjUmRdsdWwwmUw2RWujxJ83WSvnfKENvj8RQyavkyrgjjv1ifQuTMbUXcGDgoBiVWeYxc",
+                          "loginDerivation": "465758917/971566831",
+                          "loginWallet": {
+                            "_hdkey": {
+                              "xpriv": "xprvALp3VXpxskxwzWxipAmNuszr3bK8gBBRtkobjG9D5Zx8gYdQYvRG7zSxXQb7Ys2hubYZoB8YtE6DuwZmkRUaySuTVJZJKhG2zLe3cywSKJe",
+                              "xpub": "xpub6ZoPu3Mri8XFD13BvCJPH1wabd9d5duHFyjCXeYpduV7ZLxZ6TjWfnmSNfsqNpKs1Jyn4RKWiRKyzFUBUSuyrsNubGMHNRnMVpU77dLaWP2"
+                            }
+                          },
+                          "loginExtendedPublicKey": "xpub6ZoPu3Mri8XFD13BvCJPH1wabd9d5duHFyjCXeYpduV7ZLxZ6TjWfnmSNfsqNpKs1Jyn4RKWiRKyzFUBUSuyrsNubGMHNRnMVpU77dLaWP2"
+                        }
+                      },
+                      {
+                        "parent": null,
+                        "descendants": [],
+                        "data": {
+                          "derivationName": "B",
+                          "derivationValue": "1368230944",
+                          "entity": "Rent_a_K",
+                          "validStatus": true,
+                          "own_HDWallet": {
+                            "_hdkey": {
+                              "xpriv": "xprvAFJxVkEaKnRJ9QiG2zZr1j9HweHptDKPyRL188CBUNW6QhaLwW3TBJLX6mRFhj4c36SmE5RnG54N6VNf7sUuc5JVEzQMVyo8v5uKbwXMZRy",
+                              "xpub": "xpub6UJJuFmUA9ybMtnj926rNs62Vg8KHg3FLeFbvWbo2i35HVuVV3Mhj6ezx54CCme3m7Dkbgvh9AeCfYKJAtfpppfJNrz9BCtQYDfps6i1ZRt"
+                            }
+                          },
+                          "own_extendedPublicKey": "xpub6UJJuFmUA9ybMtnj926rNs62Vg8KHg3FLeFbvWbo2i35HVuVV3Mhj6ezx54CCme3m7Dkbgvh9AeCfYKJAtfpppfJNrz9BCtQYDfps6i1ZRt",
+                          "path": "m/2064230635/131071/407/112212211/1368230944",
+                          "other_ext_login_key": "xpub6Nam3PQanhzaEEDzrwe7bUcz1HvFRa8zWWvAT2Ta3HPN3ddSasHPp5GFVACsnr5pwcVBHcPeKUehP1sVtk4yBC7yjS6uf5EfH4TxvSnDN7R",
+                          "other_ext_cred_key": "xpub6Nam3PQanhzaFSVZe8TiM4ppwpuoR2zuzGykyduKVN7MXwgJyL6EGboitboFjMf1dhmmHkGLjfG1i8Sj9CrB8mVyp93BgmauDFRvxGW48J5",
+                          "other_ext_pres_key": "xpub6Nam3PQanhzaHbGQACy1UKs3YchKSfohvbWoRehwMTP7EYBeTwDcKVrxfuf68EQshrXQAAsLZxfGVw4LXHYhECPSm5Br8gr6ybmTswRjeBU"
+                        }
+                      }
+                    ],
+                    "data": {
+                      "derivationName": "N",
+                      "defaultMTN": true,
+                      "MTN_alias": "newMTN",
+                      "derivationValue": "112212211",
+                      "validStatus": true,
+                      "path": "m/2064230635/131071/407/112212211"
+                    }
+                  }
+                ],
+                "data": {
+                  "derivationName": "T",
+                  "derivationValue": "407",
+                  "validStatus": true,
+                  "path": "m/2064230635/131071/407"
+                }
+              }
+            ],
+            "data": {
+              "derivationName": "M",
+              "derivationValue": "131071",
+              "validStatus": true,
+              "path": "m/2064230635/131071"
+            }
+          }
+        ],
+        "data": {
+          "derivationName": "W",
+          "derivationValue": "2064230635",
+          "path": "m/2064230635",
+          "validStatus": true
+        }
+      }
+    ],
+    "data": { "derivationName": "m", "path": "m" }
+  },
+  "identity_pattern": "mZRSSSSSWMTNBCDDE",
+  "identity_last_fixed_derivation_level": "N",
+  "identity_ExtPublicKey": "xpub6KMmC19jb9CzxTQpb2JfgQbUAPSvniVvgsTVoKsGHQm7H8v45MNr3mcCop75Pvywr7Gy345tT3XARkj95m2ugHhqDXucaQEGsYecLhWdvSu"
+}

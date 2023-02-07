@@ -8,6 +8,7 @@
 
 
 
+
         {
             "type": "node",
             "request": "launch",
@@ -60,43 +61,49 @@
             "type": "node",
             "request": "launch",
             "name": "AE03_user_entity_relationship",
-            "program": "${workspaceFolder}/test/standarized/AE03_user_entity_relationship"
+            "program": "${workspaceFolder}/test/standarized/AE03_user_entity_relationship.js"
         },
         {
             "type": "node",
             "request": "launch",
+            "name": "AE03B_user_provider_relationship",
+            "program": "${workspaceFolder}/test/standarized/AE03B_user_provider_relationship.js"
+        },        
+        {
+            "type": "node",
+            "request": "launch",
             "name": "AE04_login",
-            "program": "${workspaceFolder}/test/standarized/AE04_login"
+            "program": "${workspaceFolder}/test/standarized/AE04_login.js"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "AE05_login_rotation",
-            "program": "${workspaceFolder}/test/standarized/AE05_login_rotation"
+            "program": "${workspaceFolder}/test/standarized/AE05_login_rotation.js"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "AE06_credential_issuance",
-            "program": "${workspaceFolder}/test/standarized/AE06_credential_issuance"
+            "program": "${workspaceFolder}/test/standarized/AE06_credential_issuance.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE06_B",
-            "program": "${workspaceFolder}/test/standarized/AE06_B"
+            "name": "AE06B_second_credential",
+            "program": "${workspaceFolder}/test/standarized/AE06B.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE06_C",
-            "program": "${workspaceFolder}/test/standarized/AE06_C"
+            "name": "AE06C_third_credential",
+            "program": "${workspaceFolder}/test/standarized/AE06C.js"
         },
         {
             "type": "node",
             "request": "launch",
             "name": "AE09_user_credential_presentation",
-            "program": "${workspaceFolder}/test/standarized/AE06_C"
+            "program": "${workspaceFolder}/test/standarized/AE09_user_credential_presentation.js"
         },
     ]
 }
