@@ -62,12 +62,13 @@ async function main() {
     console.log("AE03 - E - Relationships - User - \tUser receives 3 entity public key");
 
     // Entity tells the user their extended public keys
+    // This is a simplication of a PKI or a Blockchain registry
     let WNode = entityEpicWallet.DTree.findChildByData("derivationName","W")[0];
     commsD.SendTo("AcmeDriving","JohnDoe","entity_login_extPubK",WNode.data.login_extPublicKey);
     commsD.SendTo("AcmeDriving","JohnDoe","entity_credentialIssuance_extPubK",WNode.data.credencialIssuance_extPublicKey);
     commsD.SendTo("AcmeDriving","JohnDoe","entity_presentations_extPubK",WNode.data.presentations_extPublicKey);
 
-    // User receives 3 keys
+    // User receives 3 keys or queries Blockchain registry
     login_extPublicKey = commsD.Receive("AcmeDriving","JohnDoe","entity_login_extPubK");
     credencialIssuance_extPublicKey = commsD.Receive("AcmeDriving","JohnDoe","entity_credentialIssuance_extPubK");
     presentations_extPublicKey = commsD.Receive("AcmeDriving","JohnDoe","entity_presentations_extPubK");

@@ -84,7 +84,7 @@ async function main() {
     console.log("AE06_B - E - Credential issuance -  Entity -\tCalculate user DID for this credential");
     let user = entityEpicWallet.getCPlusDerivation("JohnDoe");
     let tmpUserWallet = AEL.createRO_HDWalletFromPublicExtendedKey(user.data.other_extendedPublicKey);
-    let userCredWallet = AEL.getHDWalletDerivation(tmpUserWallet,AEU.cleanDerivation(userDerivation+"/"+entityDerivation));
+    let userCredWallet = AEL.getHDWalletDerivation(tmpUserWallet,AEU.cleanDerivation("/1/" + userDerivation+"/"+entityDerivation));
     let userCredExtPubK = AEL.getPublicExtendedKey(userCredWallet);
 
     // Entity finishes the credential preparation

@@ -8,8 +8,9 @@ const AED = require("../../src/wallet/AE_data");
 const fs = require("fs");
 
 function aux_getPubkeyFromDummyCred(dummyCredStr) {
-    idx_Subject = dummyCredStr.indexOf("Subject:");
-    return dummyCredStr.substring(idx_Subject + 8, idx_Subject + 119);
+    idx_Subject = dummyCredStr.indexOf("Subject");
+    idx_id = dummyCredStr.indexOf("id",idx_Subject);
+    return dummyCredStr.substring(idx_id + 6, idx_Subject + 134);
   }
 
 async function main() {
@@ -63,9 +64,18 @@ async function main() {
     // GENERATE PRESENTATION PACK
     console.log("AE09 - U - Credential presentation -  User -\tCreate presentation object");
 
-    let credential_1_Text = userStorage.getData("0xfdeed2112cb6cd4119c73bc85b7fb4546bd2502833c3ded8983d2694512c6b1a");
-    let credential_2_Text = userStorage.getData("0xf1279dc4e92cdd6e89c53edefb7b56563bd96cafbeec185e22002e254d803f8f");
-    let credential_3_Text = userStorage.getData("0x0abb3e4bc1becb6dce490e69668906787149a197c307326ccc1f87b87126a190");
+    // In order to do this in the tests we will look for the credentials the user already has, in real life the user will select the credentials
+    // automatically from the presentation request or manually in his wallet
+
+    let credIDs = [];
+    let keys = userStorage.data.keys();    
+    credIDs.push(keys.next().value);
+    credIDs.push(keys.next().value);
+    credIDs.push(keys.next().value);
+
+    let credential_1_Text = userStorage.getData(credIDs[0]);
+    let credential_2_Text = userStorage.getData(credIDs[1]);
+    let credential_3_Text = userStorage.getData(credIDs[2]);
 
     let presentation =     
         "Presentation: [" +
@@ -90,10 +100,15 @@ async function main() {
     let presentationSignature = await userEpicWallet.signPresentation("Rent_a_K",presentationHash,presentation);
         
     console.log("AE09 - U - Credential presentation -  User -\tPrepare presentation data: credentials PubKs");
-    let cred1_der = userEpicWallet.getCredentialDerivation("AcmeDriving","0xfdeed2112cb6cd4119c73bc85b7fb4546bd2502833c3ded8983d2694512c6b1a");
-    let cred2_der = userEpicWallet.getCredentialDerivation("AcmeDriving","0xf1279dc4e92cdd6e89c53edefb7b56563bd96cafbeec185e22002e254d803f8f");
-    let cred3_der = userEpicWallet.getCredentialDerivation("AcmeDriving","0x0abb3e4bc1becb6dce490e69668906787149a197c307326ccc1f87b87126a190");
 
+    
+
+    let cred1_der = userEpicWallet.getCredentialDerivation("AcmeDriving",credIDs[0]);
+    let cred2_der = userEpicWallet.getCredentialDerivation("AcmeDriving",credIDs[1]);
+    let cred3_der = userEpicWallet.getCredentialDerivation("AcmeDriving",credIDs[2]);
+
+    // TEST ONLY, we need to extract the subject DID form the credential, this function only works 
+    // with the test credential, projects must implement its own parser
     let credential_pubk_set = [
         aux_getPubkeyFromDummyCred(credential_1_Text),
         aux_getPubkeyFromDummyCred(credential_2_Text),
@@ -106,10 +121,9 @@ async function main() {
     console.log("AE09 - U - Credential presentation -  User -\tPrepare presentation data: identity PublicKey");
     let user_identity_pubK = userEpicWallet.identity_ExtPublicKey;
 
-          // From the registration PubK to the derivation of the presentation
-    let rawPresentation = userEpicWallet.getPresentationDerivation("Rent_a_K",presentationHash);
-    let presentationDerivation = AEU.substractDerivations( "m/2",rawPresentation);
-
+    // From the registration PubK to the derivation of the presentation
+    let presentationDerivation = userEpicWallet.getPresentationDerivation("Rent_a_K",presentationHash);
+    
 
     // User sends the presentation data to the Service Provider
     console.log("AE09 - U - Credential presentation -  User -\tUser sends data to Service Provider 'Rent_a_K'");
@@ -150,7 +164,6 @@ async function main() {
         console.log("AE09 - P - Credential presentation -  Provider - INVALID presentation signature");
       }
 
-    
 
 
     /////////////////////////////////////////////////////

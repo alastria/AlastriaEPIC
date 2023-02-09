@@ -48,6 +48,8 @@ async function main() {
     let commonMTN = "/131071/407/10011001";
 
     console.log("AE01 - U - Create User identity - \tAssign identity derivations");
+
+    // In a real implementation 104162416 should be random, it is fixed for testing purposes
     let user_mZR = "m/1037171/104162416";
     let user_SSSSSW = "/" + AEL.getRandomIntDerivation().toString() +
         "/" + AEL.getRandomIntDerivation().toString() +
