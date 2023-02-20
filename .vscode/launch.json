@@ -48,6 +48,12 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "AE00_proof_of_tech",
+            "program": "${workspaceFolder}/test/standarized/AE00_proof_of_tech.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "AE01_identity_creation",
             "program": "${workspaceFolder}/test/standarized/AE01_identity_creation.js"
         },
