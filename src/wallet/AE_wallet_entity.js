@@ -132,6 +132,26 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     //this.Cplus_derivation[localCplusIdx] = localCplus;
   }
 
+  setObjectStatus(userStr, objectID, validStatus = true, MTN_alias) {
+    // TODO User wallet has similar function, maybe join and move to wallet?
+
+    // Locate the entity and the credential
+    let localCplus = this.getCPlusDerivation(userStr, MTN_alias);
+    let objectDerivation = localCplus.findChildByData("objectID", objectID);
+
+    if (Array.isArray(objectDerivation)) {
+      objectDerivation[0].data.validStatus = validStatus;
+    }
+    else{
+      objectDerivation.data.validStatus = validStatus;
+    }
+    
+    return validStatus;
+
+    
+
+  }
+
   addRenewCplusLoginDerivation(userStr, loginDerivationStr, MTN_alias ) {
     // Done MNT update via getDerivation update
 
@@ -168,6 +188,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
 
     child.data.objectKind = AEC.login;
+    child.data.objectSubject = userStr;
 
     return child;
   }
@@ -235,6 +256,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     child.data.objectKind = objectKind;
     child.data.objectUserDerivation = userDerivation;
     child.data.objectEntityDerivation = entityDerivation;
+    child.data.objectSubject = userStr;
 
     return child;
 

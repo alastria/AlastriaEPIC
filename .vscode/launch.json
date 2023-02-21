@@ -108,6 +108,18 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "AE07_user_credential_revocation",
+            "program": "${workspaceFolder}/test/standarized/AE07_user_credencial_revocation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE08_entity_credential_revocation",
+            "program": "${workspaceFolder}/test/standarized/AE08_entity_credential_revocation.js"
+        },        
+        {
+            "type": "node",
+            "request": "launch",
             "name": "AE09_user_credential_presentation",
             "program": "${workspaceFolder}/test/standarized/AE09_user_credential_presentation.js"
         },

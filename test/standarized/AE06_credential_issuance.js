@@ -117,6 +117,8 @@ async function main() {
     // Stores credential
     console.log("AE06 - U - Credential issuance -  User -\tStores credential and data");
     let userStorage = new AED.AE_data();
+
+    // TODO, maybe add the entity to the credential storage
     userStorage.addData(credentialHashSent,sampleCredentialSent);
 
     // Registers credential data

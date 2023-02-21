@@ -65,6 +65,9 @@ async function main() {
     let user_loginDerivation = commsD.Receive("JohnDoe","AcmeDriving","loginDerivation");
     entityEpicWallet.addRenewCplusLoginDerivation("JohnDoe",user_loginDerivation); 
 
+    // TODO Entity signs challenge
+    // USER verifies signature of challenge
+
     // NOW Signing the login challenge
     // Entity may also sign the challenge in the case of mutual authentication
     let acme_login_challenge = "Please sign with your Private Key to login";

@@ -177,6 +177,13 @@ async function main() {
         console.log("AE09 - P - Credential presentation -  Provider - Chain-of-Trust is NOT VALID");        
     }
 
+
+    /////////////////////////////////////////////////////
+    // SERVICE PROVIDER VALIDATES THE STATUS OF EACH CREDENTIAL IN THE BLOCKCHAIN
+    // TODO
+    
+
+
     /////////////////////////////////////////////////////
     // STORE USER CREDENTIALS
     AEWS.storeObjects(userStorage, "crendential_store.json");

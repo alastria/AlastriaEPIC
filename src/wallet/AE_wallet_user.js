@@ -355,6 +355,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
   setObjectDerivation(entityStr, objectID, entityObjectDerivation, objectKind, MTN_alias, userCredentialDerivation) {
 
+    // TODO validate that entityStr has been registered as BPlusDerivation, if not take action: create + warning? error?
+
   // Done MTN update via getBPlusDerivation
 
     if (!AEU.check_require("id_derivation", entityObjectDerivation)) {
@@ -431,6 +433,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     child.data.objectDerivation = AEU.cleanDerivation(userCredentialDerivation + "/" + entityObjectDerivation);
     child.data.objectUserDerivation = userCredentialDerivation;
     child.data.objectEntityDerivation = entityObjectDerivation;
+    child.data.objectIssuer = entityStr;
     return child;
   }
 
@@ -468,6 +471,24 @@ class AE_userWallet extends AEW.AE_rootWallet {
       );
 
     return objectDerivationStr;
+  }
+
+  setObjectStatus(entityStr, objectID, validStatus = true, MTN_alias) {
+
+    // Locate the entity and the credential
+    let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
+    let objectDerivation = localBplus.findChildByData("objectID", objectID);
+
+    if (Array.isArray(objectDerivation)) {
+      objectDerivation[0].data.validStatus = validStatus;
+    }
+    else{
+      objectDerivation.data.validStatus = validStatus;
+    }
+
+    
+    return validStatus;
+
   }
 
   getObjectExtendedPublicKey(entityStr, objectID, MTN_alias) {
