@@ -13,7 +13,7 @@ const { userInfo } = require("os");
 
 async function main() {
 
-    // TODO - Executing more than once this test return NON VALID LOGIN
+    // TO-DO - Executing more than once this test return NON VALID LOGIN
     console.log("AE08_entity_credential_revocation STARTED");
 
     // Change to your storage path

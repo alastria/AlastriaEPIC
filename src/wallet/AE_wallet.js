@@ -25,7 +25,7 @@ class AE_rootWallet {
   
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
 
-    // TODO identity derivation must point to W derivation not N derivation
+    // TO-DO identity derivation must point to W derivation not N derivation
     // let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
     let identityDerivationStr = mZR_der + SSSSSW_der;
 
@@ -107,7 +107,7 @@ class AE_rootWallet {
       data = {};
       data.derivationName = derName;  
 
-      // TODO in the case of MTNs it is possible to re-use MT with a new N
+      // TO-DO in the case of MTNs it is possible to re-use MT with a new N
       let mNodes = child.findChildByData("derivationName",derName);
       let fmNode = mNodes.filter(x => ((x.data.validStatus == true) && (x.data.derivationValue == element)));      
       if (fmNode.length == 0) {
@@ -246,7 +246,7 @@ class AE_rootWallet {
       Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
     }
 
-    // TODO: entities credentialIssuance_HDWallet, login_HDWallet and presentations_HDWallet required also special treatment
+    // TO-DO: entities credentialIssuance_HDWallet, login_HDWallet and presentations_HDWallet required also special treatment
 
     if (this.constructor.name == "AE_entityWallet")
     {
@@ -281,7 +281,7 @@ class AE_rootWallet {
   findNodeByDerivation(derivationName, derivationValue = "", MTN_alias) {
 
     // DONE MTN update
-    // TODO ERROR in the case of W derivation
+    // TO-DO ERROR in the case of W derivation
     let networkNode;
 
     if (derivationName == "W") {

@@ -241,7 +241,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
   getOldCredentials(entityStr, oldDerivation, MTN_alias) {
 
     // Done MTN update via getOldBPlusDerivation
-    // TODO ERROR HERE!
+    // TO-DO ERROR HERE!
     let localOldBplus = this.getOldBPlusDerivation(entityStr, oldDerivation, MTN_alias);
     let leafs = localOldBplus.findAllLeafs(entityStr);
     let fLeafs = [];
@@ -355,7 +355,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
   setObjectDerivation(entityStr, objectID, entityObjectDerivation, objectKind, MTN_alias, userCredentialDerivation) {
 
-    // TODO validate that entityStr has been registered as BPlusDerivation, if not take action: create + warning? error?
+    // TO-DO validate that entityStr has been registered as BPlusDerivation, if not take action: create + warning? error?
 
   // Done MTN update via getBPlusDerivation
 
@@ -363,8 +363,8 @@ class AE_userWallet extends AEW.AE_rootWallet {
       throw "Invalid derivation";
     }
 
-    // TODO: Maybe add credential HASH?
-    // TODO: Pending if the wallet should store the presentation itself or if it should be an storage helper
+    // TO-DO: Maybe add credential HASH?
+    // TO-DO: Pending if the wallet should store the presentation itself or if it should be an storage helper
     let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
 
     let data = {};
@@ -498,7 +498,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     let objectDerivationStr = this.getObjectDerivation(entityStr, objectID, MTN_alias);
     let objectDerivationStrWitoutContainer = AEU.cleanDerivation(AEU.subDerivation(objectDerivationStr, 1));
 
-    // TODO, BUG, Extended Public Key of an object is calculated from the entity it belongs to, not the identity_wallet
+    // TO-DO, BUG, Extended Public Key of an object is calculated from the entity it belongs to, not the identity_wallet
     // DONE?
     let containerEntity = this.getBPlusDerivation(entityStr);
 
@@ -518,7 +518,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
   getCredentialDerivation(entityStr, credentialID, MTN_alias) {
     // DONE via getObjectDerivation
-    // TODO, BUG, missing MTN part in derivation as the objectDerivation is returned to B level, not the required W level
+    // TO-DO, BUG, missing MTN part in derivation as the objectDerivation is returned to B level, not the required W level
 
     let fromEntityObjectDerivation = this.getObjectDerivation(entityStr, credentialID, MTN_alias);
     let credentialDer = AEU.cleanDerivation(this.getMTNDerivation() + "/" + fromEntityObjectDerivation);
@@ -571,7 +571,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
       MTN_alias
     );
 
-    // TODO, BUG, missing MTN!    DONE!!!
+    // TO-DO, BUG, missing MTN!    DONE!!!
     let full_pres_entity_derivation = AEU.cleanDerivation(this.getMTNDerivation() +  "/" + pres_entity_derivation);
 
     let presentation_wallet = AEL.getHDWalletDerivation(
@@ -622,7 +622,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     }
   
 
-    // Listar todo lo revocado: Credenciales, Presentaciones y Login
+    // Listar TO-DO lo revocado: Credenciales, Presentaciones y Login
     let entities = this.getEntities();
     // Credentials in revoked identity
     let credentials = [];

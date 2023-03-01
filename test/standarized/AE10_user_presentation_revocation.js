@@ -8,7 +8,7 @@ const AET = require("../../src/utils/AE_constants");
 
 async function main() {
 
-    // TODO - Executing more than once this test return NON VALID LOGIN
+    // TO-DO - Executing more than once this test return NON VALID LOGIN
     console.log("AE10_user_presentation_revocation STARTED");
 
     // Change to your storage path
@@ -59,7 +59,8 @@ async function main() {
 
 
     /////////////////////////////////////////////////////
-    // ENTITIES DOES NOTHING MORE WITH CREDENTIAL REVOCATIONS
+    // Service Provider revokes presentation in its wallet
+    // TO-DO
     
 
     /////////////////////////////////////////////////////

@@ -7,7 +7,7 @@ const AEB = require("../../src/utils/AE_blockchain_dummy");
 
 async function main() {
 
-    // TODO - Executing more than once this test return NON VALID LOGIN
+    // TO-DO - Executing more than once this test return NON VALID LOGIN
     console.log("AE07_user_credential_revocation STARTED");
 
     // Change to your storage path

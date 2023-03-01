@@ -133,7 +133,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
   }
 
   setObjectStatus(userStr, objectID, validStatus = true, MTN_alias) {
-    // TODO User wallet has similar function, maybe join and move to wallet?
+    // TO-DO User wallet has similar function, maybe join and move to wallet?
 
     // Locate the entity and the credential
     let localCplus = this.getCPlusDerivation(userStr, MTN_alias);
@@ -148,7 +148,6 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     
     return validStatus;
 
-    
 
   }
 
@@ -274,11 +273,11 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     
   }
 
-  setPresentationInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation, MTN_alias) {
+  setPresentationInfo(userStr, presentationID, userExtPubK, userDerivation, entityDerivation, MTN_alias) {
 
     // DONE MTN update via setObjectDerivation
 
-    let child = this.setObjectDerivation(userStr, credentialID, userDerivation, entityDerivation, AEC.presentation, MTN_alias);
+    let child = this.setObjectDerivation(userStr, presentationID, userDerivation, entityDerivation, AEC.presentation, MTN_alias);
     child.data.userExtPubK = userExtPubK;
 
     return child;
@@ -286,7 +285,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
   }
 
   async signLoginChallenge(entityStr, signLoginChallenge) {
-    // TODO: this should be similar to user signature?
+    // TO-DO: this should be similar to user signature?
     // DISCUSS
 
     return;

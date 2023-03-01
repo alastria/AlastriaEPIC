@@ -9,7 +9,7 @@ const fs = require("fs");
 
 async function main() {
 
-    // TODO - Executing more than once this test return NON VALID LOGIN
+    // TO-DO - Executing more than once this test return NON VALID LOGIN
     console.log("AE06_B_credential_issuance STARTED");
 
     // Change to your storage path

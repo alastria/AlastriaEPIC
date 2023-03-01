@@ -7,7 +7,7 @@ const AEL = require("../../src/AE_library");
 
 async function main() {
 
-    // TODO - Executing more than once this test return NON VALID LOGIN
+    // TO-DO - Executing more than once this test return NON VALID LOGIN
     console.log("AE04_login STARTED");
 
     // Change to your storage path
@@ -65,7 +65,7 @@ async function main() {
     let user_loginDerivation = commsD.Receive("JohnDoe","AcmeDriving","loginDerivation");
     entityEpicWallet.addRenewCplusLoginDerivation("JohnDoe",user_loginDerivation); 
 
-    // TODO Entity signs challenge
+    // TO-DO Entity signs challenge
     // USER verifies signature of challenge
 
     // NOW Signing the login challenge

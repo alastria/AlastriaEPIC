@@ -15,7 +15,7 @@ function aux_getPubkeyFromDummyCred(dummyCredStr) {
 
 async function main() {
 
-    // TODO - Executing more than once this test return NON VALID LOGIN
+    // TO-DO - Executing more than once this test return NON VALID LOGIN
     console.log("AE09_credential_presentation STARTED");
 
     // Change to your storage path
@@ -87,11 +87,16 @@ async function main() {
         "]";
 
     /////////////////////////////////////////////////////
-    // REGISTER PRESENTATION
+    // REGISTER PRESENTATION - User
     console.log("AE09 - U - Credential presentation -  User -\tRegister presentation in wallet");
 
     let presentationHash = AEL.getHash(presentation);        
-    userEpicWallet.setPresentationDerivation("Rent_a_K",presentationHash,spPresDerivation);
+    let presentationChild = userEpicWallet.setPresentationDerivation("Rent_a_K",presentationHash,spPresDerivation);
+
+
+    /////////////////////////////////////////////////////
+    // SIGN PRESENTATION
+
 
     console.log("AE09 - U - Credential presentation -  User -\tGet presentation data for siganture");    
     subjectPublicKey = userEpicWallet.getPresentationExtendedPublicKey("Rent_a_K",presentationHash);
@@ -131,6 +136,9 @@ async function main() {
     commsD.SendTo("JohnDoe","Rent_a_K","presentation",presentation);
     commsD.SendTo("JohnDoe","Rent_a_K","presentationSignature",presentationSignature);
     commsD.SendTo("JohnDoe","Rent_a_K","presentationDerivation",presentationDerivation);
+    commsD.SendTo("JohnDoe","Rent_a_K","presentationHash",presentationHash);
+    commsD.SendTo("JohnDoe","Rent_a_K","presUserDer",presentationChild.data.objectUserDerivation);
+    
 
 
     commsD.SendTo("JohnDoe","Rent_a_K","user_identity_pubK",user_identity_pubK);
@@ -144,13 +152,30 @@ async function main() {
 
     console.log("AE09 - P - Credential presentation -  Provider -'Rent_a_K' receives user data");
 
-    let pres = commsD.Receive("JohnDoe","Rent_a_K","presentation",presentation);
-    let sign = commsD.Receive("JohnDoe","Rent_a_K","presentationSignature",presentationSignature);
-    let der = commsD.Receive("JohnDoe","Rent_a_K","presentationDerivation",presentationDerivation);
+    let pres = commsD.Receive("JohnDoe","Rent_a_K","presentation");
+    let sign = commsD.Receive("JohnDoe","Rent_a_K","presentationSignature");
+    let der = commsD.Receive("JohnDoe","Rent_a_K","presentationDerivation");
+    let presHash= commsD.Receive("JohnDoe","Rent_a_K","presentationHash");
+    let presentationUserDerivation = commsD.Receive("JohnDoe","Rent_a_K","presUserDer");
 
     let user_identity = commsD.Receive("JohnDoe","Rent_a_K","user_identity_pubK");
     let cred_derivations = commsD.Receive("JohnDoe","Rent_a_K","cred_derivation_set");
     let cred_pub_ks = commsD.Receive("JohnDoe","Rent_a_K","credential_pubk_set");
+
+
+    /////////////////////////////////////////////////////
+    // REGISTER PRESENTATION - Provider
+    // TO-DO similar to this
+    // Entity stores credential metaData
+    //     console.log("AE06 - E - Credential issuance -  Entity -\tStore Credential information");
+    //     entityEpicWallet.setCredentialInfo(
+    //         "JohnDoe",
+    //         credentialHash,
+    //         userCredExtPubK,
+    //         userDerivation,
+    //         entityDerivation);
+    
+    providerEpicWallet.setPresentationInfo("JohnDoe",presHash,user_identity,presentationUserDerivation,providerDer);
         
 
     /////////////////////////////////////////////////////
@@ -180,7 +205,7 @@ async function main() {
 
     /////////////////////////////////////////////////////
     // SERVICE PROVIDER VALIDATES THE STATUS OF EACH CREDENTIAL IN THE BLOCKCHAIN
-    // TODO
+    // TO-DO
     
 
 

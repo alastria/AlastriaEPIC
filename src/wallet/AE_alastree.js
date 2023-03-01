@@ -7,7 +7,7 @@ class AE_Alastree {
 
   parseJSON(serializedAlastree) {
 
-    // TODO
+    // TO-DO
     // First copy properties
     for (const property in serializedAlastree) {
       if (! (property == "descendants" || serializedAlastree[property] === undefined))

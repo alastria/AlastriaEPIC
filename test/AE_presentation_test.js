@@ -248,7 +248,7 @@ async function main() {
     "aed59aca-d62d-4e0a-a576-c2b34a8e6d8a"
   );
 
-  // TODO: Presentation packaging (or not) and entityWallet verifications
+  // TO-DO: Presentation packaging (or not) and entityWallet verifications
   // Presentation verification
   // - send the SP the derivation of the presentation *stored in THIS VARIABLE* presentation_derivation
   // - Calculate PresentationPubk form the Pubk he registered for the user

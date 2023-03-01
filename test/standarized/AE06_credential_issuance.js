@@ -9,7 +9,7 @@ const fs = require("fs");
 
 async function main() {
 
-    // TODO - Executing more than once this test return NON VALID LOGIN
+    // TO-DO - Executing more than once this test return NON VALID LOGIN
     console.log("AE06_credential_issuance STARTED");
 
     // Change to your storage path
@@ -118,7 +118,7 @@ async function main() {
     console.log("AE06 - U - Credential issuance -  User -\tStores credential and data");
     let userStorage = new AED.AE_data();
 
-    // TODO, maybe add the entity to the credential storage
+    // TO-DO, maybe add the entity to the credential storage
     userStorage.addData(credentialHashSent,sampleCredentialSent);
 
     // Registers credential data
