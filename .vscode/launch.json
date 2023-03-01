@@ -123,5 +123,11 @@
             "name": "AE09_user_credential_presentation",
             "program": "${workspaceFolder}/test/standarized/AE09_user_credential_presentation.js"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE10_user_presentation_revocation",
+            "program": "${workspaceFolder}/test/standarized/AE10_user_presentation_revocation.js"
+        },
     ]
 }

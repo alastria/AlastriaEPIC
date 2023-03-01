@@ -33,19 +33,25 @@ async function main() {
     let userStorageJSON = AEWS.recoverObjects(storagePath + "/test_data/crendential_store.json");
     userStorage.import(userStorageJSON);
     
-    // Recover one credential data to test revocation
+    /////////////////////////////////////////////////////
+    // Simulate the selection of a credential to revoke
     console.log("AE07 - U - User credential revocation -  User -\tRecover one credential data to test recovation");
     let credIDs = [];
     let keys = userStorage.data.keys();    
     credIDs.push(keys.next().value);    
 
-    console.log("AE07 - U - User credential revocation -  User -\tCall blockchain to ser credential hash estatus to revoked");
+    /////////////////////////////////////////////////////
+    // Set in Blockchain credential status to revoked
+    console.log("AE07 - U - User credential revocation -  User -\tCall blockchain to set credential hash estatus to revoked");
     // RevokeBLK implementation will take care of proper signature of tx
     AEB.RevokeBLK(credIDs);
 
     
     let entityFromCred = "AcmeDriving";
 
+
+    /////////////////////////////////////////////////////
+    // Revoke also the DID used in that credential
     console.log("AE07 - U - User credential revocation -  User -\tRecover the ExtPubK(aka DID) to register status to revoked");
     let cred1_der = userEpicWallet.getCredentialDerivation(entityFromCred,credIDs[0]);
     let userPubKWallet = AEL.createRO_HDWalletFromPublicExtendedKey(userEpicWallet.identity_ExtPublicKey)
