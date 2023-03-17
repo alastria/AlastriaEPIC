@@ -56,8 +56,6 @@ class AE_userWallet extends AEW.AE_rootWallet {
     data.own_HDWallet = entity_relationship_wallet;
     data.own_extendedPublicKey = my_entity_relationship_public_key;
 
-    
-
     // DONE: It requires checking the MNT derivation to add this to      
     // let child = networkNode.addChild(data);
     let child = this.safeAddChild(networkNode, data);
@@ -170,6 +168,29 @@ class AE_userWallet extends AEW.AE_rootWallet {
     child.objectKind = "Login";
   }
 
+  
+  renewBPlusDerivationPreserving(entityStr, newDerivationStr, MTN_alias) {
+
+    // MTN updated via getBPlusDerivation
+
+    if (!AEU.check_require("id_derivation", newDerivationStr)) {
+      throw "Invalid derivation";
+    }
+
+    let localBplus = this.getBPlusDerivation(entityStr, MTN_alias);
+
+    let oldDerivation = localBplus.data.derivationValue;
+    // Invalidate this entity derivation
+    localBplus.data.validStatus = false;
+
+    // Preseve existing  "D" and "E" derivations, do not change them
+
+    this.addBPlusDerivation(entityStr, newDerivationStr);
+
+    return oldDerivation;
+
+  }
+
   renewBPlusDerivation(entityStr, newDerivationStr, MTN_alias) {
 
     // MTN updated via getBPlusDerivation
@@ -184,7 +205,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     // Invalidate this entity derivation
     localBplus.data.validStatus = false;
 
-    // Find the other "D" adn "E" derivations and set to validStatus = false
+    // Find the other "D" and "E" derivations and set to validStatus = false
     let invalidate = localBplus.findChildByData("derivationName", "D");
     invalidate.forEach((element) => {
       element.data.validStatus = false;

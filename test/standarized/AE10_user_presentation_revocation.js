@@ -54,14 +54,11 @@ async function main() {
     // RevokeBLK implementation will take care of proper signature of tx
     AEB.RevokeBLK(presExtPubK);
 
+    /////////////////////////////////////////////////////
+    // Set Presentation status in user Wallet
     console.log("AE10 - U - User presentation revocation -  User -\tSet object status in wallet");
     userEpicWallet.setObjectStatus(entityFromPres,presentationHash,false);
 
-
-    /////////////////////////////////////////////////////
-    // Service Provider revokes presentation in its wallet
-    // TO-DO
-    
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET

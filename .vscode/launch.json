@@ -129,5 +129,17 @@
             "name": "AE10_user_presentation_revocation",
             "program": "${workspaceFolder}/test/standarized/AE10_user_presentation_revocation.js"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE11_entity_presentation_deletion",
+            "program": "${workspaceFolder}/test/standarized/AE11_entity_presentation_deletion.js"
+        },        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE12_user_onBoarding_rotation",
+            "program": "${workspaceFolder}/test/standarized/AE12_user_onBoarding_rotation.js"
+        },                        
     ]
 }
