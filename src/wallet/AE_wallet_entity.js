@@ -44,12 +44,12 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     // 1 -> credencial issuance
     data.credencialIssuance_derivation = "m/1";
-    data.credencialIssuance_HDWallet = AEL.getHDWalletDerivation(
+    data.credentialIssuance_HDWallet = AEL.getHDWalletDerivation(
       this.identity_HDWallet,
       data.credencialIssuance_derivation
     );
     data.credencialIssuance_extPublicKey = AEL.getPublicExtendedKey(
-      data.credencialIssuance_HDWallet
+      data.credentialIssuance_HDWallet
     );
 
     // 2 -> presentations
@@ -132,6 +132,25 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     //this.Cplus_derivation[localCplusIdx] = localCplus;
   }
 
+  setObjectStatus(userStr, objectID, validStatus = true, MTN_alias) {
+    // TO-DO User wallet has similar function, maybe join and move to wallet?
+
+    // Locate the entity and the credential
+    let localCplus = this.getCPlusDerivation(userStr, MTN_alias);
+    let objectDerivation = localCplus.findChildByData("objectID", objectID);
+
+    if (Array.isArray(objectDerivation)) {
+      objectDerivation[0].data.validStatus = validStatus;
+    }
+    else{
+      objectDerivation.data.validStatus = validStatus;
+    }
+    
+    return validStatus;
+
+
+  }
+
   addRenewCplusLoginDerivation(userStr, loginDerivationStr, MTN_alias ) {
     // Done MNT update via getDerivation update
 
@@ -168,19 +187,19 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     });
 
     child.data.objectKind = AEC.login;
+    child.data.objectSubject = userStr;
+
     return child;
   }
 
   getLoginDerivation(userStr, MTN_alias) {
     // MTN done via getCPlusDerivation
 
+    // DONE, this generates an error when the user has old login derivations, must re-code, avoid reduce
     let user = this.getCPlusDerivation(userStr, MTN_alias);
-    let derivationNodes = user.findChildByData("derivationName", "D");
-    let derivations = derivationNodes.map((x) => x.data.derivationValue);
-    let loginDer = derivations.reduce(
-      (accumulator, currentValue) => accumulator + "/" + currentValue,
-      ""
-    );
+    let loginNodes = user.findAllLeafs();
+    let fLoginNodes = loginNodes.filter( x => (x.data.objectKind == AEC.login && x.data.validStatus == true))
+    let loginDer = AEU.substractDerivations(user.data.path, fLoginNodes[0].data.path).substring(1);
 
     return loginDer;
   }
@@ -234,6 +253,9 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     // In the last level we can store the credential info
     child.data.objectID = objectID;
     child.data.objectKind = objectKind;
+    child.data.objectUserDerivation = userDerivation;
+    child.data.objectEntityDerivation = entityDerivation;
+    child.data.objectSubject = userStr;
 
     return child;
 
@@ -251,11 +273,11 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     
   }
 
-  setPresentationInfo(userStr, credentialID, userExtPubK, userDerivation, entityDerivation, MTN_alias) {
+  setPresentationInfo(userStr, presentationID, userExtPubK, userDerivation, entityDerivation, MTN_alias) {
 
     // DONE MTN update via setObjectDerivation
 
-    let child = this.setObjectDerivation(userStr, credentialID, userDerivation, entityDerivation, AEC.presentation, MTN_alias);
+    let child = this.setObjectDerivation(userStr, presentationID, userDerivation, entityDerivation, AEC.presentation, MTN_alias);
     child.data.userExtPubK = userExtPubK;
 
     return child;
@@ -263,7 +285,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
   }
 
   async signLoginChallenge(entityStr, signLoginChallenge) {
-    // TODO: this should be similar to user signature?
+    // TO-DO: this should be similar to user signature?
     // DISCUSS
 
     return;
@@ -303,7 +325,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     // DONE MTN update via gtHDWalletByPurpose
 
-    let peK = this.getHDWalletByPurpose("credencialIssuance_HDWallet", MTN_alias);
+    let peK = this.getHDWalletByPurpose("credentialIssuance_HDWallet", MTN_alias);
 
     let signature = AEL.signMessage(
       AEL.getEthereumWalletFromPrivateKey(
@@ -362,16 +384,16 @@ class AE_entityWallet extends AEW.AE_rootWallet {
 
     i = 0;
     cred_derived_pubK_array.every((element) => {
-      if (!(element === credential_pubK_set[i])) {
-        console.log("ERROR validating Chain Of Trust for credentials");
+      if (!(element === credential_pubK_set[i])) {        
+        // console.log("ERROR validating Chain Of Trust for credentials");
         result = false;
       }
       i++;
     });
 
-    if (result) {
-      console.log("Validation Chain Of Trust for credentials CORRECT");
-    }
+    //if (result) {
+    // console.log("Validation Chain Of Trust for credentials CORRECT");
+    //}
 
     // This requires later validation of user_base_identity_pubK in the blockchain network in case it has been revoked by the user
 
@@ -424,6 +446,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     let fCred = [];
     let fPres = [];
     let fLog = [];
+    let pKeys = [];
 
     // Los login no tienen derivación "E", en vez de buscar por "derivationName" habría que buscar los diferentes objectKind que se deberían revocar
     subjects.forEach((element) => {      
@@ -436,16 +459,34 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       presentations.push(...fPres);
       logins.push(...fLog);
     });
+    
+    let purpose = "identity_ExtPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+    
+    purpose = "login_extPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+
+    purpose = "credencialIssuance_extPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+    
+    purpose = "presentations_extPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+
 
     // Finally revoke everything
     if (!(typeof wNode === "undefined"))
     {
     let descendants = wNode.findAllDescendants();
     descendants.forEach((element) => {
-    element.data.validStatus = false;
-    });
+        
+        // DONE: MTN levels shouldn't be set to validStatus = false
+        if  (!(element.data.derivationName == "M" || element.data.derivationName == "T" || element.data.derivationName == "N")) {
+          element.data.validStatus = false;
+        }
+      });
     wNode.validStatus = false;
-  }
+    }
+
 
 
 
@@ -453,6 +494,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     revocations.credentials = credentials;
     revocations.presentations = presentations;
     revocations.logins = logins;
+    revocations.pubKs = pKeys;
 
     return revocations;
   }

@@ -7,6 +7,8 @@
 
 
 
+
+
         {
             "type": "node",
             "request": "launch",
@@ -46,6 +48,12 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "AE00_proof_of_tech",
+            "program": "${workspaceFolder}/test/standarized/AE00_proof_of_tech.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "AE01_identity_creation",
             "program": "${workspaceFolder}/test/standarized/AE01_identity_creation.js"
         },
@@ -55,5 +63,95 @@
             "name": "AE02_wallet_creation",
             "program": "${workspaceFolder}/test/standarized/AE02_wallet_creation.js"
         },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE03_user_entity_relationship",
+            "program": "${workspaceFolder}/test/standarized/AE03_user_entity_relationship.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE03B_user_provider_relationship",
+            "program": "${workspaceFolder}/test/standarized/AE03B_user_provider_relationship.js"
+        },        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE04_login",
+            "program": "${workspaceFolder}/test/standarized/AE04_login.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE05_login_rotation",
+            "program": "${workspaceFolder}/test/standarized/AE05_login_rotation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE06_credential_issuance",
+            "program": "${workspaceFolder}/test/standarized/AE06_credential_issuance.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE06B_second_credential",
+            "program": "${workspaceFolder}/test/standarized/AE06B.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE06C_third_credential",
+            "program": "${workspaceFolder}/test/standarized/AE06C.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE07_user_credential_revocation",
+            "program": "${workspaceFolder}/test/standarized/AE07_user_credencial_revocation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE08_entity_credential_revocation",
+            "program": "${workspaceFolder}/test/standarized/AE08_entity_credential_revocation.js"
+        },        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE09_user_credential_presentation",
+            "program": "${workspaceFolder}/test/standarized/AE09_user_credential_presentation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE10_user_presentation_revocation",
+            "program": "${workspaceFolder}/test/standarized/AE10_user_presentation_revocation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE11_entity_presentation_deletion",
+            "program": "${workspaceFolder}/test/standarized/AE11_entity_presentation_deletion.js"
+        },        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE12_user_onBoarding_rotation",
+            "program": "${workspaceFolder}/test/standarized/AE12_user_onBoarding_rotation.js"
+        },                        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE13_user_identity_rotation",
+            "program": "${workspaceFolder}/test/standarized/AE13_user_identity_rotation.js"
+        }, 
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE14_entity_identity_rotation",
+            "program": "${workspaceFolder}/test/standarized/AE14_entity_identity_rotation.js"
+        }, 
     ]
 }

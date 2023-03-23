@@ -27,6 +27,8 @@ module.exports = {
   verifyMessageByPublicExtendedKey,
   getRandomInt,
   getRandomIntDerivation,
+  getRandomMnemonic,
+  getHash,
 };
 
 function hexadice(value) {
@@ -36,7 +38,7 @@ function hexadice(value) {
 
 // Create HDWallet
 function createHDWalletFromMnemonic(mnemonic) {
-  const seed = bip39.mnemonicToSeedSync(mnemonic);
+  const seed = bip39.mnemonicToSeedSync(mnemonic);  
   return hdkey.fromMasterSeed(seed);
 }
 
@@ -146,10 +148,10 @@ function verifyMessageByPublicExtendedKey(
     toChecksumAddress(relationship_public_key_wallet_login_address) ===
     toChecksumAddress(signed_login_address)
   ) {
-    console.log("VALID SIGNATURE");
+    //console.log("VALID SIGNATURE");
     return true;
   } else {
-    console.log("INCORRECT SIGNATURE");
+    //console.log("INCORRECT SIGNATURE");
     return false;
   }
 }
@@ -160,4 +162,16 @@ function getRandomInt(max) {
 
 function getRandomIntDerivation() {
   return Math.floor(Math.random() * 2147483648);
+}
+
+function getRandomMnemonic(strength, rng, wordlist) {
+  return bip39.generateMnemonic(strength,rng,wordlist);
+}
+
+function getHash(objectStr) {
+
+  let utf8Encode = new TextEncoder();
+  let b = utf8Encode.encode(objectStr);
+
+  return ethers.utils.keccak256(b);
 }

@@ -2,7 +2,7 @@ const AEL = require("../src/AE_library");
 const { toChecksumAddress } = require("ethereum-checksum-address");
 const AEUW = require("../src/wallet/AE_wallet_user");
 const AEEW = require("../src/wallet/AE_wallet_entity");
-const AEWS = require("./AE_wallet_storage");
+const AEWS = require("../src/utils/AE_wallet_storage");
 const AEU = require("../src/utils/AE_utils");
 const AED = require("../src/wallet/AE_data");
 
@@ -32,6 +32,8 @@ async function  main()
     "} " +
     "}";
 
+    console.log(AEL.getHash(credentialText));
+
     let userStorage = new AED.AE_data();
     userStorage.addData(1,"1"+credentialText);
     userStorage.addData(2,"2"+credentialText);
@@ -57,7 +59,8 @@ async function  main()
 
 
     let cp = AEU.cleanPath("//3135////35315/33235/235");
-    cp = AEU.cleanDerivaton("//3135////35315/33235/235");
+    cp = AEU.cleanPath("/m/3135////35315/33235/235");
+    cp = AEU.cleanDerivation("//3135////35315/33235/235");
 
     console.log("Clean Path:", cp);
 
