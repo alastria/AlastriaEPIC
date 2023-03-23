@@ -25,7 +25,7 @@ class AE_rootWallet {
   
   setIdentityDerivation(mZR_der, SSSSSW_der, MTN_der, MTN_alias = "default-MTN") {
 
-    // TODO identity derivation must point to W derivation not N derivation
+    // TO-DO identity derivation must point to W derivation not N derivation
     // let identityDerivationStr = mZR_der + SSSSSW_der + MTN_der;
     let identityDerivationStr = mZR_der + SSSSSW_der;
 
@@ -101,10 +101,26 @@ class AE_rootWallet {
     let fMtnDers = mtnDers.filter(x => (x.length>0));
 
 
+    
     let derName = "M";
     fMtnDers.forEach(element => {
       data = {};
       data.derivationName = derName;  
+
+      // TO-DO in the case of MTNs it is possible to re-use MT with a new N
+      let mNodes = child.findChildByData("derivationName",derName);
+      let fmNode = mNodes.filter(x => ((x.data.validStatus == true) && (x.data.derivationValue == element)));      
+      if (fmNode.length == 0) {
+        child = this.safeAddChild(child,data);
+      }
+      else if (Array.isArray(fmNode))
+      {          
+        child = fmNode[0];        
+      }
+      else  {
+        child = fmNode;
+      }
+
       if (derName == "N") {
         // The first identity holds the default MNT (aka net), the rest would be secondary unless marked
         data.defaultMTN = true;  
@@ -113,18 +129,14 @@ class AE_rootWallet {
       if (derName == "T") {
         derName = "N";
       }
-      if (derName == "M") {
+      if (derName == "M") {      
+
         derName = "T";
       }     
 
       data.derivationValue = element;
       data.validStatus = true;
-      // safeAddChild
-      // child = child.addChild(data);
-      child = this.safeAddChild(child,data);
-
-      child.data.path =
-      child.parent.data.path + "/" + child.data.derivationValue;      
+      child.data.path = child.parent.data.path + "/" + child.data.derivationValue;      
     });
 
     return child;
@@ -154,6 +166,12 @@ class AE_rootWallet {
 
     return child;
 
+  }
+
+  getMTNDerivation(MTN_alias) {
+
+    let networkNode = this.getNetworkNode(MTN_alias); 
+    return AEU.subDerivation(AEU.cleanPath(networkNode.data.path),1);
   }
 
 
@@ -186,17 +204,17 @@ class AE_rootWallet {
     if (SSSSSW_der == "") {
       SSSSSW_der =
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation() +
+        AEL.getRandomIntDerivation().toString() +
         "/" +
-        AEL.getRandomIntDerivation();
+        AEL.getRandomIntDerivation().toString();
     }
     this.setIdentityDerivation(
       old_wallet.mZR_der,
@@ -208,13 +226,57 @@ class AE_rootWallet {
   readIdentityWallet(wallet) {
     // let wallet = super.readIdentityWallet();
     // As "this" object cannot be assigned we do need to reconstruct it
-    this.DTree = wallet.DTree;
+    
+    // DONE: Recovering DTree requires scpecial method: creating an Alastree and processing the string
+    this.DTree = new AEA.AE_Alastree;
+    this.DTree.parseJSON(wallet.DTree);
     this.identity_ExtPublicKey = wallet.identity_ExtPublicKey;
     this.identity_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(
       wallet.identity_HDWallet._hdkey.xpriv
     );
     this.identity_pattern = wallet.identity_pattern;
+    // DONE: ownWallet in B derivations needs special recovery as identity_HDWallet needed
+    let Bnodes = this.findNodeByDerivation("B","",false);
+    
+    if (!(Bnodes === undefined)) {
+      if (Array.isArray(Bnodes)) {
+        Bnodes.forEach(element => {
+          this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+        });
+      }
+      else{
+        Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
+      }
+    }
 
+    let Bnodes2 = this.findNodeByDerivation("B","",true);
+    if (!(Bnodes2 === undefined)) {
+      if (Array.isArray(Bnodes2)) {
+        Bnodes2.forEach(element => {
+          this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+        });
+      }
+      else{
+        Bnodes2.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes2.data.own_HDWallet._hdkey.xpriv);
+      }
+    }
+
+    // TO-DO: entities credentialIssuance_HDWallet, login_HDWallet and presentations_HDWallet required also special treatment
+
+    if (this.constructor.name == "AE_entityWallet")
+    {
+      let identityW = this.findNodeByDerivation("W");
+      let fIdentityW = identityW;
+      if (Array.isArray(identityW)) {
+        fIdentityW = identityW.filter((x) => x.data.validStatus == true);
+      }
+
+      fIdentityW.data.credentialIssuance_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(fIdentityW.data.credentialIssuance_HDWallet._hdkey.xpriv);
+      fIdentityW.data.login_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(fIdentityW.data.login_HDWallet._hdkey.xpriv);
+      fIdentityW.data.presentations_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(fIdentityW.data.presentations_HDWallet._hdkey.xpriv);
+    }
+
+    
   }
 
   readRecoveryWallet(wallet) {
@@ -228,10 +290,11 @@ class AE_rootWallet {
     );
   }
 
-  findNodeByDerivation(derivationName, derivationValue = "", MTN_alias) {
+  findNodeByDerivation(derivationName, derivationValue = "", validStatus=true, MTN_alias) {
 
     // DONE MTN update
-    // TODO ERROR in the case of W derivation
+    // Done ERROR in the case of W derivation
+    // TODO: add parameter for validStatus, defaulting to "true"
     let networkNode;
 
     if (derivationName == "W") {
@@ -251,12 +314,12 @@ class AE_rootWallet {
       return wTree;
     }
     if (derivationValue == "") {
-      fTree = wTree.filter((x) => x.data.validStatus == true);
+      fTree = wTree.filter((x) => x.data.validStatus == validStatus);
     } else {
       fTree = wTree.filter(
         (x) =>
           x.data.derivationValue == derivationValue &&
-          x.data.validStatus == true
+          x.data.validStatus == validStatus
       );
     }
     if (Array.isArray(fTree)) {

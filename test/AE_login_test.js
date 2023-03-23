@@ -2,7 +2,7 @@ const AEL = require("../src/AE_library");
 const { toChecksumAddress } = require("ethereum-checksum-address");
 const AEUW = require("../src/wallet/AE_wallet_user");
 const AEEW = require("../src/wallet/AE_wallet_entity");
-const AEWS = require("./AE_wallet_storage");
+const AEWS = require("../src/utils/AE_wallet_storage");
 const AEA = require("../src/wallet/AE_alastree");
 
 async function main() {
@@ -40,30 +40,30 @@ async function main() {
   // mZR_der, SSSSSW_der, MTN_der
   //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/407/10011001");
   newUserEpicWallet.setIdentityDerivation(
-    "m/1037171/104162416",
-    "/104162416/104162416/104162416/104162416/104162416/104162416",
+    "m/1037171/94367",
+    "/36514417/1996133064/444811548/120132567/3152038/848215",
     "/131071/407/10011001"
   );
   AEWS.storeRecoveryWallet(
-    "used rebel ahead harvest journey steak hub core opera wrong rate loan",
+    "access entry across few mixture island pluck lawn harvest fiction buddy decline",
     "m/1037171/94367",
     "/36514417/1996133064/444811548/120132567/3152038/848215",
-    "/131071/0407/10011001",
+    "/131071/407/10011001",
     "./User_recovery_wallet.json"
   );
 
   // Full derivation: "m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/0407/10011001"
   //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/407/10011001");
   newEntityEpicWallet.setIdentityDerivation(
-    "m/1037171/1241103461",
-    "/1241103461/1241103461/1241103461/1241103461/1241103461/1241103461",
+    "m/1037171/86307766",
+    "/1152697438/415781155/342717333/307131644/1042827527/324692716",
     "/131071/407/10011001"
   );
   AEWS.storeRecoveryWallet(
-    "manage wage hill kitten joke buyer topic focus observe valid december oyster",
-    "m/1037171/94367",
+    "arctic stage defense wink stone crumble buddy vital element shift earn deal",
+    "m/1037171/86307766",
     "/1152697438/415781155/342717333/307131644/1042827527/324692716",
-    "/131071/0407/10011001",
+    "/131071/407/10011001",
     "./Entity_recovery_wallet.json"
   );
 
@@ -100,11 +100,7 @@ async function main() {
   // AcmeAcademy as an entity does not have different derivations for users
   newEntityEpicWallet.addCPlusDerivation("User");
 
-  // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"
-  newEntityEpicWallet.addRenewCplusLoginDerivation(
-    "User",
-    newUserEpicWallet.getBPlusLoginDerivation("AcmeAcademy")
-  );
+  
 
   user = newEntityEpicWallet.getCPlusDerivation("User");
 
@@ -130,12 +126,18 @@ async function main() {
     user_acme_relationship_public_key
   );
 
+  // User also tells AcmeAcademy what is the derivation for login "m/0/" + "233612745/1482382413"
+  newEntityEpicWallet.addRenewCplusLoginDerivation(
+    "User",
+    newUserEpicWallet.getBPlusLoginDerivation("AcmeAcademy")
+  );
+
   console.log("\t3rd test, 2nd step: Login challenge");
   // acme sends me a login challenge, adding its Extended Public Key acting as DID
   //var acme_login_challenge =
   //  "{'message':'please sign with your Public Key to login','my_publicKey':'replace'}";
   var acme_login_challenge =
-  "Please sign with your Public Key to login";
+  "Please sign with your Private Key to login";
   
   
   

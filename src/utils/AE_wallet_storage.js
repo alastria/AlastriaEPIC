@@ -1,6 +1,6 @@
 // Stores wallet for recovery
 const fs = require("fs");
-const utils = require('../src/utils/AE_utils')
+const utils = require('./AE_utils')
 
 module.exports = {
   storeRecoveryWallet,
@@ -51,7 +51,8 @@ function readIdentityWallet(identityWalletFile) {
   walletData = fs.readFileSync(identityWalletFile);
   let wallet = JSON.parse(walletData);
 
-  utils.reParent(wallet.DTree);
+  utils.reParent(wallet.DTree);  
+  
   return wallet;
 }
 
@@ -62,7 +63,7 @@ function storeObjects(objects, objectsFile) {
 
 function recoverObjects(objectsFile) {
   let objectsStr = fs.readFileSync(objectsFile);
-  let objects = JSON.parse(objectsStr, reviver);
+  let objects = JSON.parse(objectsStr, reviver);  
   return objects;
   
 }

@@ -1,6 +1,6 @@
 const max_derivation = 2147483647; // 2^31 -1
 
-module.exports = { check_require, unParent, reParent, cleanPath, cleanDerivaton, addDerivations, substractDerivations, subDerivation };
+module.exports = { check_require, unParent, reParent, cleanPath, cleanDerivation, addDerivations, substractDerivations, subDerivation };
 
 function isNumeric(str) {
   if (typeof str != "string") return false; // we only process strings!
@@ -79,7 +79,7 @@ function cleanPath(path) {
   return builtSteps;
 }
 
-function cleanDerivaton(derivation) {
+function cleanDerivation(derivation) {
   
   let cleanD = this.cleanPath(derivation);
   cleanD = "m" + cleanD;
@@ -89,24 +89,32 @@ function cleanDerivaton(derivation) {
 
 function addDerivations(der1, der2) {
   
-  return this.cleanDerivaton(der1 + der2);
+  return this.cleanDerivation(der1 + der2);
 }
 
 function substractDerivations(der1, der2) {
   // result = der2 - der1
   
   derivacion = der2.replace(der1,"");
-  derivacion = this.cleanDerivaton(derivacion);
+  derivacion = this.cleanDerivation(derivacion);
   return derivacion;
 }
 
 function subDerivation(derivation, start, length) {
+
+  
+
   let path = derivation.replace("m","");
   let chunks = path.split("/");
   let cChunks = chunks.filter( x => (x.length >0) && (!(x === undefined)));
   let subD = "";
   let idx = 0;
   let len = 0;
+
+  if (length === undefined) {
+    length = cChunks.length+1;
+  }
+
   cChunks.forEach(
     element => {
       if (idx >= start && len < length) 

@@ -11,27 +11,27 @@ async function main() {
   console.log("1st test: create HDWallets");
   let newUserEpicWallet = new AEUW.AE_userWallet();
   newUserEpicWallet.setMnemonic(
-    "used rebel ahead harvest journey steak hub core opera wrong rate loan"
+    "access entry across few mixture island pluck lawn harvest fiction buddy decline"
   );
   // mZR_der, SSSSSW_der, MTN_der
   //newUserEpicWallet.setIdentityDerivation("m/1037171/94367/36514417/1996133064/444811548/120132567/3152038/848215/131071/0407/10011001");
   newUserEpicWallet.setIdentityDerivation(
     "m/1037171/94367",
     "/36514417/1996133064/444811548/120132567/3152038/848215",
-    "/131071/0407/10011001"
+    "/131071/407/10011001"
   );
-  newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "6385471");
+  newUserEpicWallet.addBPlusDerivation("AcmeAcademy", "484199084");
 
   let newEntityEpicWallet = new AEEW.AE_entityWallet();
   newEntityEpicWallet.setMnemonic(
-    "manage wage hill kitten joke buyer topic focus observe valid december oyster"
+    "arctic stage defense wink stone crumble buddy vital element shift earn deal"
   );
   // mZR_der, SSSSSW_der, MTN_der
   //newEntityEpicWallet.setIdentityDerivation("m/1037171/86307766/1152697438/415781155/342717333/307131644/1042827527/324692716/131071/0407/10011001");
   newEntityEpicWallet.setIdentityDerivation(
     "m/1037171/86307766",
     "/1152697438/415781155/342717333/307131644/1042827527/324692716",
-    "/131071/0407/10011001"
+    "/131071/407/10011001"
   );
   newEntityEpicWallet.addCPlusDerivation("User");
 
@@ -88,9 +88,34 @@ async function main() {
   );
 
 
-  let credentialDerivation = AEU.substractDerivations( newUserEpicWallet.getBPlusDerivation("AcmeAcademy").data.path+"/1" ,userCredentialChild.data.path);
-  let credUserDer  = AEU.subDerivation(credentialDerivation,0,2);
-  let credEntityDer = AEU.subDerivation(credentialDerivation,2,1);
+  // FROM login to proper test
+
+  // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
+  connect_to_acme_academy = newUserEpicWallet.getBPlusDerivation("AcmeAcademy");
+
+  //user_acme_relationship_public_key = connect_to_acme_academy.own_extendedPublicKey;
+  user_acme_relationship_public_key =
+  connect_to_acme_academy.data.own_extendedPublicKey;
+
+  newEntityEpicWallet.updateCPlusDerivationExtendedKeys(
+    "User",
+    user_acme_relationship_public_key
+  );
+
+  let credUserDer = userCredentialChild.data.objectUserDerivation;
+  let credEntityDer = userCredentialChild.data.objectEntityDerivation;
+
+
+  // Entity calculates credExtPubKey == DID for this credential
+  let user = newEntityEpicWallet.getCPlusDerivation("User");
+  let tmpUserWallet = AEL.createRO_HDWalletFromPublicExtendedKey(user.data.other_extendedPublicKey);
+  let credDer = AEU.cleanDerivation("1/" + credUserDer + "/" + credEntityDer);
+  let userCredWallet = AEL.getHDWalletDerivation(tmpUserWallet, credDer);
+  let userCredExtPubK = AEL.getPublicExtendedKey(userCredWallet);
+
+
+
+
 
   // The issuer saves the user related info for the credential, just in case is needed in the future (like revocations)
   newEntityEpicWallet.setCredentialInfo(
@@ -109,13 +134,18 @@ async function main() {
   // and the user (or anyone) can verify the signature
   // it requires knowing the Public Key, that would be stored in a public shared system, like an smartContact
   let peK = AEL.getPrivateExtendedKey(
-    newEntityEpicWallet.getHDWalletByPurpose("credencialIssuance_HDWallet")
+    newEntityEpicWallet.getHDWalletByPurpose("credentialIssuance_HDWallet")
   );
-  AEL.verifyMessageByPublicExtendedKey(
+   if (AEL.verifyMessageByPublicExtendedKey(
     credentialText,
     credentialSignature,
     peK
-  );
+  )) {
+    console.log("VALID SIGNATURE");
+  }
+  else {
+    console.log("INCORRECT SIGNATURE");
+  }
 }
 
 main();
