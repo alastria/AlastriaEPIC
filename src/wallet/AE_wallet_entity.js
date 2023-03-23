@@ -446,6 +446,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     let fCred = [];
     let fPres = [];
     let fLog = [];
+    let pKeys = [];
 
     // Los login no tienen derivación "E", en vez de buscar por "derivationName" habría que buscar los diferentes objectKind que se deberían revocar
     subjects.forEach((element) => {      
@@ -458,16 +459,34 @@ class AE_entityWallet extends AEW.AE_rootWallet {
       presentations.push(...fPres);
       logins.push(...fLog);
     });
+    
+    let purpose = "identity_ExtPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+    
+    purpose = "login_extPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+
+    purpose = "credencialIssuance_extPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+    
+    purpose = "presentations_extPublicKey";
+    pKeys.push(this.getPurposePublicKey(purpose));
+
 
     // Finally revoke everything
     if (!(typeof wNode === "undefined"))
     {
     let descendants = wNode.findAllDescendants();
     descendants.forEach((element) => {
-    element.data.validStatus = false;
-    });
+        
+        // DONE: MTN levels shouldn't be set to validStatus = false
+        if  (!(element.data.derivationName == "M" || element.data.derivationName == "T" || element.data.derivationName == "N")) {
+          element.data.validStatus = false;
+        }
+      });
     wNode.validStatus = false;
-  }
+    }
+
 
 
 
@@ -475,6 +494,7 @@ class AE_entityWallet extends AEW.AE_rootWallet {
     revocations.credentials = credentials;
     revocations.presentations = presentations;
     revocations.logins = logins;
+    revocations.pubKs = pKeys;
 
     return revocations;
   }

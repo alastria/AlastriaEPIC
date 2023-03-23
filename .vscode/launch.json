@@ -147,5 +147,11 @@
             "name": "AE13_user_identity_rotation",
             "program": "${workspaceFolder}/test/standarized/AE13_user_identity_rotation.js"
         }, 
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE14_entity_identity_rotation",
+            "program": "${workspaceFolder}/test/standarized/AE14_entity_identity_rotation.js"
+        }, 
     ]
 }

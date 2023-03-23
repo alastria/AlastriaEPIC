@@ -37,7 +37,6 @@ async function main() {
     console.log("AE13 - U - Identity Rotation - User -\t\Read recovery wallet");
     let storedRecoveryWallet = AEWS.readRecoveryWallet(storagePath + "/test_data/AE01_User_Recovery_Wallet.json");
 
-
     // GENERATE NEW DERIVATIONS FOR S(ecurity) levels and W(allet) SSSSSW
     console.log("AE13 - U - Identity Rotation - User -\t\tGenerate new SSSSSW derivations");
     let newUser_SSSSSW = "/" + AEL.getRandomIntDerivation().toString() +
@@ -55,13 +54,14 @@ async function main() {
     // Revoke in blockchain credentials
     console.log("AE13 - U - Identity Rotation - User -\t\tRevoke credentials");
     AEB.RevokeBLK(revocations.credentials);
-    // Revoke in blochain main DID
-    console.log("AE13 - U - Identity Rotation - User -\t\tRevoke identity DID/Pubk");
-    AEB.RevokeBLK(userEpicWallet.identity_ExtPublicKey);
-    // Revoke in blochain all DIDs used with Entities
+    
+    // Revoke in blockchain all DIDs used with Entities
     console.log("AE13 - U - Identity Rotation - User -\t\tRevoke Entity related DIDs/PubKs");
     let BplusPubKeys = revocations.entities.map(x => x.data.own_extendedPublicKey);
     AEB.RevokeBLK(BplusPubKeys);
+
+    // Revoke in blockchain my main DID
+    AEB.RevokeBLK(revocations.pubKs);
     
     // Store recovery wallet
     console.log("AE13 - U - Identity Rotation - \tStore Recovery Wallet");

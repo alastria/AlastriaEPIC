@@ -236,14 +236,29 @@ class AE_rootWallet {
     );
     this.identity_pattern = wallet.identity_pattern;
     // DONE: ownWallet in B derivations needs special recovery as identity_HDWallet needed
-    let Bnodes = this.findNodeByDerivation("B");
-    if (Array.isArray(Bnodes)) {
-      Bnodes.forEach(element => {
-        this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
-      });
+    let Bnodes = this.findNodeByDerivation("B","",false);
+    
+    if (!(Bnodes === undefined)) {
+      if (Array.isArray(Bnodes)) {
+        Bnodes.forEach(element => {
+          this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+        });
+      }
+      else{
+        Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
+      }
     }
-    else{
-      Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
+
+    let Bnodes2 = this.findNodeByDerivation("B","",true);
+    if (!(Bnodes2 === undefined)) {
+      if (Array.isArray(Bnodes2)) {
+        Bnodes2.forEach(element => {
+          this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+        });
+      }
+      else{
+        Bnodes2.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes2.data.own_HDWallet._hdkey.xpriv);
+      }
     }
 
     // TO-DO: entities credentialIssuance_HDWallet, login_HDWallet and presentations_HDWallet required also special treatment
@@ -262,9 +277,6 @@ class AE_rootWallet {
     }
 
     
-    
-
-
   }
 
   readRecoveryWallet(wallet) {
@@ -278,10 +290,11 @@ class AE_rootWallet {
     );
   }
 
-  findNodeByDerivation(derivationName, derivationValue = "", MTN_alias) {
+  findNodeByDerivation(derivationName, derivationValue = "", validStatus=true, MTN_alias) {
 
     // DONE MTN update
-    // TO-DO ERROR in the case of W derivation
+    // Done ERROR in the case of W derivation
+    // TODO: add parameter for validStatus, defaulting to "true"
     let networkNode;
 
     if (derivationName == "W") {
@@ -301,12 +314,12 @@ class AE_rootWallet {
       return wTree;
     }
     if (derivationValue == "") {
-      fTree = wTree.filter((x) => x.data.validStatus == true);
+      fTree = wTree.filter((x) => x.data.validStatus == validStatus);
     } else {
       fTree = wTree.filter(
         (x) =>
           x.data.derivationValue == derivationValue &&
-          x.data.validStatus == true
+          x.data.validStatus == validStatus
       );
     }
     if (Array.isArray(fTree)) {

@@ -119,7 +119,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
 
     // Cogemos la C/0 que cuelgue de Entity (localBPlus) no cualquiera
     let child;
-    // child = this.findNodeByDerivation("C","0");
+    
 
     let wTree = localBplus.findChildByData("derivationName", "C");
     if (wTree.length == 0) {
@@ -639,8 +639,9 @@ class AE_userWallet extends AEW.AE_rootWallet {
     
 
       descendants.forEach((element) => {
-        // TODO, BUG: MTN levels shouldn't be set to validStatus = false
-        if (element.data.derivationName != "N") {
+        // DONE: MTN levels shouldn't be set to validStatus = false
+        if  (!(element.data.derivationName == "M" || element.data.derivationName == "T" || element.data.derivationName == "N"))
+        {
           element.data.validStatus = false;
         }
       
@@ -658,6 +659,7 @@ class AE_userWallet extends AEW.AE_rootWallet {
     let uCred = [];
     let fCred = [];
     let fPres = [];
+    let pKeys = [];
 
     entities.forEach((element) => {
       uCred = element.findChildByData("derivationName", "E");
@@ -667,10 +669,13 @@ class AE_userWallet extends AEW.AE_rootWallet {
       presentations.push(...fPres);
     });
 
+    pKeys.push(this.identity_ExtPublicKey);
+
     let revocations = {};
     revocations.entities = entities;
     revocations.credentials = credentials;
     revocations.presentations = presentations;
+    revocations.pubKs = pKeys;
 
     return revocations;
   }
