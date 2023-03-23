@@ -636,14 +636,20 @@ class AE_userWallet extends AEW.AE_rootWallet {
     if (!(typeof wNode === "undefined"))
       {
       let descendants = wNode.findAllDescendants();
+    
+
       descendants.forEach((element) => {
-      element.data.validStatus = false;
+        // TODO, BUG: MTN levels shouldn't be set to validStatus = false
+        if (element.data.derivationName != "N") {
+          element.data.validStatus = false;
+        }
+      
       });
       wNode.validStatus = false;
     }
   
 
-    // Listar TO-DO lo revocado: Credenciales, Presentaciones y Login
+    // Listar los objetos revocado: Credenciales, Presentaciones y Login
     let entities = this.getEntities();
     // Credentials in revoked identity
     let credentials = [];
