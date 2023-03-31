@@ -253,13 +253,18 @@ class AE_rootWallet {
     if (!(Bnodes2 === undefined)) {
       if (Array.isArray(Bnodes2)) {
         Bnodes2.forEach(element => {
+          this.data.loginWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.loginWallet._hdkey.xpriv);
           this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
         });
       }
       else{
+        Bnodes2.data.loginWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes2.data.loginWallet._hdkey.xpriv);
         Bnodes2.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes2.data.own_HDWallet._hdkey.xpriv);
       }
     }
+
+    
+
 
     // TO-DO: entities credentialIssuance_HDWallet, login_HDWallet and presentations_HDWallet required also special treatment
 
