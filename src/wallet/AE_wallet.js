@@ -32,25 +32,6 @@ class AE_rootWallet {
 
     //Check identityDerivsationStr
     AEU.check_require("id_derivation", identityDerivationStr);
-    derivations = identityDerivationStr.split("/");
-
-    // Adjust derivation length depending of kind of wallet
-    let substract;
-    if (this.constructor.name == "AE_entityWallet"){
-      substract = 7;
-    }
-    else if (this.constructor.name == "AE_userWallet") {
-      substract = 8;
-    }
-    // Substract MTNBCDDE length IF User, -7 IF entity
-    if (!(derivations.length === (this.identity_pattern.length-substract))) {
-      console.log(
-        "Identity Derivation Str has ",
-        derivations.length,
-        "depth not the required ",        
-        this.identity_pattern.length-substract // Substract 8 length IF User, 7 IF entity
-      );
-    }
 
     // 20221024 Do not store identityDerivationStr, it is not necessary to use the wallet after the inizialization, this is more secure
     // identity_HDWallet is the only necessary working point
@@ -241,11 +222,22 @@ class AE_rootWallet {
     if (!(Bnodes === undefined)) {
       if (Array.isArray(Bnodes)) {
         Bnodes.forEach(element => {
-          this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+          if (!(element.data.loginWallet === undefined)) {
+            element.data.loginWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.loginWallet._hdkey.xpriv);
+          }
+          if (!(element.data.own_HDWallet === undefined)) {
+            element.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+          }
         });
       }
       else{
-        Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
+        if (!(Bnodes.data.loginWallet === undefined)) {
+          Bnodes.data.loginWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.loginWallet._hdkey.xpriv);
+        }
+        if (!(Bnodes.data.own_HDWallet === undefined)) {
+          Bnodes.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes.data.own_HDWallet._hdkey.xpriv);
+        }
+
       }
     }
 
@@ -253,13 +245,26 @@ class AE_rootWallet {
     if (!(Bnodes2 === undefined)) {
       if (Array.isArray(Bnodes2)) {
         Bnodes2.forEach(element => {
-          this.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+          if (!(element.data.loginWallet === undefined)) {
+            element.data.loginWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.loginWallet._hdkey.xpriv);
+          }
+          if (!(element.data.own_HDWallet === undefined)) {
+            element.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(element.data.own_HDWallet._hdkey.xpriv);
+          }
         });
       }
       else{
-        Bnodes2.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes2.data.own_HDWallet._hdkey.xpriv);
+        if (!(Bnodes2.data.loginWallet === undefined)) {
+          Bnodes2.data.loginWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes2.data.loginWallet._hdkey.xpriv);
+        }
+        if (!(Bnodes2.data.own_HDWallet === undefined)) {
+          Bnodes2.data.own_HDWallet = AEL.createHDWalletFromPrivateExtendedKey(Bnodes2.data.own_HDWallet._hdkey.xpriv);
+        }
       }
     }
+
+    
+
 
     // TO-DO: entities credentialIssuance_HDWallet, login_HDWallet and presentations_HDWallet required also special treatment
 
