@@ -17,7 +17,7 @@ async function main() {
     console.log("AE14_entity_identity_rotation STARTED");
 
     // Change to your storage path
-    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
+    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
     // Create communications dummy object
     let commsD = new AEC.AE_comms_dummy;

@@ -13,7 +13,7 @@ async function main() {
     console.log("AE06_C_credential_issuance STARTED");
 
     // Change to your storage path
-    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
+    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
     // Create communications dummy object
     let commsD = new AEC.AE_comms_dummy;

@@ -7,7 +7,7 @@ async function main() {
     console.log("AE01_identity_creation STARTED");
 
     // Change to your storage path
-    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
+    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS

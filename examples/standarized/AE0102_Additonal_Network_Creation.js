@@ -8,7 +8,7 @@ async function main() {
     console.log("AE02_wallet_creation STARTED");
 
     // Change to your storage path
-    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
+    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
 
     // Either follow steps in AE01_identity_creation.js o recover form recovery wallet file

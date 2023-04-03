@@ -10,7 +10,7 @@ async function main() {
     console.log("AE03_user_entity_relationship STARTED");
 
     // Change to your storage path
-    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
+    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
     // Create communications dummy object
     let commsD = new AEC.AE_comms_dummy;
