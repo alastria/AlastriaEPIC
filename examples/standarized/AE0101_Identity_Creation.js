@@ -4,37 +4,44 @@ const AEWS = require("../../src/utils/AE_wallet_storage");
 const AEL = require("../../src/AE_library");
 
 async function main() {
-    console.log("AE01_identity_creation STARTED");
+
+
+    const exampleNumber = "AE0101";
+    const exampleText = "Identity Creation";
+    const logTxt = exampleNumber + " " + exampleText + ":\t";
+
+
+    console.log(logTxt, "STARTED");    
 
     // Change to your storage path
     let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS
-    console.log("AE01 - U - Create User wallet -\t\tCreate object");
+    console.log(logTxt, "U - Create User wallet");
     let userEpicWallet = new AEUW.AE_userWallet();
 
-    console.log("AE01 - E - Create Entity wallet -\tCreate object");
+    console.log(logTxt, "E - Create Entity wallet");
     let entityEpicWallet = new AEEW.AE_entityWallet();
 
-    console.log("AE01 - P - Create Provider wallet -\tCreate object");
+    console.log(logTxt, "P - Create Provider wallet");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     /////////////////////////////////////////////////////
 
 
     // SEED THE WALLET
     // These seed MUST be randomly generated using BIP-39 generation
-    console.log("AE01 - U - Create User identity - \tAssign Mnemonic");
+    console.log(logTxt, "U - Assign Mnemonic");
     let userMnemonic = AEL.getRandomMnemonic();
     //let userMnemonic = "access entry across few mixture island pluck lawn harvest fiction buddy decline";
     userEpicWallet.setMnemonic(userMnemonic);
 
-    console.log("AE01 - E - Create Entity identity - \tAssign Mnemonic");
+    console.log(logTxt, "E - Assign Mnemonic");
     let entityMnemonic = AEL.getRandomMnemonic();
     // let entityMnemonic = "arctic stage defense wink stone crumble buddy vital element shift earn deal";
     entityEpicWallet.setMnemonic(entityMnemonic);
 
-    console.log("AE01 - P - Create Provider identity - \tAssign Mnemonic");
+    console.log(logTxt, "P - Assign Mnemonic");
     let providerMnemonic = AEL.getRandomMnemonic();
     // let providerMnemonic = "hunt angle stage hurt promote daring burger loan ignore kind reform dry";
     providerEpicWallet.setMnemonic(providerMnemonic);
@@ -47,7 +54,7 @@ async function main() {
 
     let commonMTN = "/131071/407/10011001";
 
-    console.log("AE01 - U - Create User identity - \tAssign identity derivations");
+    console.log(logTxt, "U - Assign identity derivations");
 
     // In a real implementation 104162416 should be random, it is fixed for testing purposes
     let user_mZR = "m/1037171/104162416";
@@ -60,7 +67,7 @@ async function main() {
     
     userEpicWallet.setIdentityDerivation(user_mZR, user_SSSSSW, commonMTN);
 
-    console.log("AE01 - E - Create Entity identity - \tAssign identity derivations");
+    console.log(logTxt, "E - Assign identity derivations");
     let entity_mZR = "m/1037171/1241103461";
 
     let entity_SSSSSW = "/" + AEL.getRandomIntDerivation().toString() +
@@ -73,7 +80,7 @@ async function main() {
     entityEpicWallet.setIdentityDerivation(entity_mZR, entity_SSSSSW, commonMTN);
 
 
-    console.log("AE01 - P - Create Provider identity - \tAssign identity derivations");
+    console.log(logTxt, "P - Assign identity derivations");
     let provider_mZR = "m/1037171/415581744";
 
     let provider_SSSSSW = "/" + AEL.getRandomIntDerivation().toString() +
@@ -89,17 +96,17 @@ async function main() {
 
     // STORE IDENTITIES
     // Identities are stored in files and not used on a regular basis, only for identity recovery
-    console.log("AE01 - U - Create User identity - \tStore Recovery Wallet");
+    console.log(logTxt, "U - Store Recovery Wallet");    
     AEWS.storeRecoveryWallet(userMnemonic, user_mZR, user_SSSSSW, commonMTN, storagePath + "/test_data/AE01_User_Recovery_Wallet.json");
 
 
-    console.log("AE01 - E - Create Entity identity - \tStore Recovery Wallet");
+    console.log(logTxt, "E - Store Recovery Wallet");
     AEWS.storeRecoveryWallet(entityMnemonic, entity_mZR, entity_SSSSSW, commonMTN, storagePath + "/test_data/AE01_Entity_Recovery_Wallet.json");
 
-    console.log("AE01 - P - Create Provider identity - \tStore Recovery Wallet");
+    console.log(logTxt, "P - Store Recovery Wallet");
     AEWS.storeRecoveryWallet(providerMnemonic, provider_mZR, provider_SSSSSW, commonMTN, storagePath + "/test_data/AE01_Provider_Recovery_Wallet.json");
 
-    console.log("AE01_identity_creation FINISHED");
+    console.log(logTxt, "FINISHED");
     
 }
 

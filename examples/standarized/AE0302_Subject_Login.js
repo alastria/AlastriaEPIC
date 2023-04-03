@@ -8,7 +8,11 @@ const AEL = require("../../src/AE_library");
 async function main() {
 
     // TO-DO - Executing more than once this test return NON VALID LOGIN
-    console.log("AE04_login STARTED");
+    const exampleNumber = "AE0302";
+    const exampleText = "Subject Login ";
+    const logTxt = exampleNumber + " " + exampleText + ":\t";
+
+    console.log(logTxt, "STARTED"); 
 
     // Change to your storage path
     let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
@@ -20,19 +24,19 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    console.log("AE04 - U - Login - User -\tCreate object and load identity");
+    lconsole.log(logTxt,"U - Login - User -\tCreate object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
    
-    console.log("AE04 - E - Login - Entity -\tCreate object and load identity");
+    lconsole.log(logTxt,"E - Login - Entity -\tCreate object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
 
-    console.log("AE04 - P - Login - Provider -\tCreate object and load identity");
+    lconsole.log(logTxt,"P - Login - Provider -\tCreate object and load identity");
     let providerIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Provider_Identity_Wallet.json");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON);
@@ -46,36 +50,36 @@ async function main() {
     // Entity may also sign the challenge in the case of mutual authentication
     let acme_login_challenge = "Please sign with your Private Key to login";
 
-    console.log("AE04 - U - Login - User -\tUser signs login challenge");
+    lconsole.log(logTxt,"U - Login - User -\tUser signs login challenge");
     let acme_login_challenge_signature = await userEpicWallet.signLoginChallenge("AcmeDriving",acme_login_challenge);
     // user sends challenge signature
     commsD.SendTo("JohnDoe","AcmeDriving","Login_challenge_signature",acme_login_challenge_signature);
     
-    console.log("AE04 - E - Login - Entity -\tEntity receives and checks signature");
+    lconsole.log(logTxt,"E - Login - Entity -\tEntity receives and checks signature");
     // entity receives the signature
     let user_login_signature = commsD.Receive("JohnDoe","AcmeDriving","Login_challenge_signature");
 
     // entity verifies signature
     if (entityEpicWallet.verifyLoginChallenge("JohnDoe",acme_login_challenge,user_login_signature)){
-        console.log("AE04 - E - Login - Entity -\tVALID LOGIN");
+        lconsole.log(logTxt,"E - Login - Entity -\tVALID LOGIN");
     }
     else {
-        console.log("AE04 - E - Login - Entity -\tNON VALID LOGIN");
+        lconsole.log(logTxt,"E - Login - Entity -\tNON VALID LOGIN");
     }
 
       /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    console.log("AE04 - U - Login - User -\tStore identity wallet");
+    lconsole.log(logTxt,"U - Login - User -\tStore identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    console.log("AE04 - E - Login - Entity - \tStore identity wallet");
+    lconsole.log(logTxt,"E - Login - Entity - \tStore identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
-    console.log("AE04 - P - Login - Provider -\tStore identity wallet");
+    lconsole.log(logTxt,"P - Login - Provider -\tStore identity wallet");
     AEWS.storeIdentityWallet(providerEpicWallet, storagePath + "/test_data/AE02_Provider_Identity_Wallet.json")
    
 
-    console.log("AE04_login FINISHED");
+    console.log(logTxt, "FINSIHED"); 
 
     
 }

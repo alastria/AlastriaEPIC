@@ -14,7 +14,11 @@ const { userInfo } = require("os");
 async function main() {
 
     // TO-DO - Executing more than once this test return NON VALID LOGIN
-    console.log("AE08_entity_credential_revocation STARTED");
+    const exampleNumber = "AE0403";
+    const exampleText = "Entity Credential Revocation";
+    const logTxt = exampleNumber + " " + exampleText + ":\t";
+
+    console.log(logTxt, "STARTED"); 
 
     // Change to your storage path
     let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
@@ -26,25 +30,25 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    console.log("AE08 - E - Entity credential revocation -  Entity -\tCreate object and load identity");
+    lconsole.log(logTxt,"E - Entity credential revocation -  Entity -\tCreate object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
     /////////////////////////////////////////////////////
     // Simulate the selection of a credential to revoke
-    console.log("AE08 - E - Entity credential revocation -  Entity -\tSelect a credential to revocate");
+    lconsole.log(logTxt,"E - Entity credential revocation -  Entity -\tSelect a credential to revocate");
     let leafs = entityEpicWallet.DTree.findAllLeafs();
     let creds = leafs.filter( x => x.data.objectKind == AET.credential);
     let curCred = creds[0];
 
     // REVOKE IN BLOCKCHAIN
     // RevokeBLK implementation will take care of proper signature of tx
-    console.log("AE08 - E - Entity credential revocation -  Entity -\tRevoke credential in Blockchain");
+    lconsole.log(logTxt,"E - Entity credential revocation -  Entity -\tRevoke credential in Blockchain");
     AEB.RevokeBLK(curCred.data.objectID);    
 
     // UPDATE OBJECT STATUS IN WALLET
-    console.log("AE08 - E - Entity credential revocation -  Entity -\tUpdate object status");
+    lconsole.log(logTxt,"E - Entity credential revocation -  Entity -\tUpdate object status");
 
     let userInfo = curCred.data.objectSubject;
 
@@ -57,10 +61,10 @@ async function main() {
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
 
-    console.log("AE08 - E - Entity credential revocation -  Entity - \tStore identity wallet");
+    lconsole.log(logTxt,"E - Entity credential revocation -  Entity - \tStore identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
-    console.log("AE08_entity_credential_revocation FINISHED");
+    console.log(logTxt, "FINSIHED"); 
 
 }
 

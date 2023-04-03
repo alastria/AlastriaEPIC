@@ -14,7 +14,11 @@ const { userInfo } = require("os");
 async function main() {
 
     // TO-DO - Executing more than once this test return NON VALID LOGIN
-    console.log("AE11_service_provider_presentation_deletion STARTED");
+    const exampleNumber = "AE0502";
+    const exampleText = "Entity Presentation Deletion";
+    const logTxt = exampleNumber + " " + exampleText + ":\t";
+
+    console.log(logTxt, "STARTED"); 
 
     // Change to your storage path
     let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
@@ -28,14 +32,14 @@ async function main() {
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
 
     // THIS IS DONE ONLY TO SIMULATE THE SELECTION OF A PRESENTATION TO DELETE
-    console.log("AE11 - U - Presentation deletion -  User -\tCreate object and load identity");
+    lconsole.log(logTxt,"U - Presentation deletion -  User -\tCreate object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
 
 
-    console.log("AE11 - P - Presentation deletion -  Provider - Create object and load identity");
+    lconsole.log(logTxt,"P - Presentation deletion -  Provider - Create object and load identity");
     let providerIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Provider_Identity_Wallet.json");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON);
@@ -43,7 +47,7 @@ async function main() {
 
     /////////////////////////////////////////////////////
     // Simulate the selection of a presentation to delete
-    console.log("AE11 - U - Presentation deletion -  User -\tTell the Service Provider the presentation to be deleted");
+    lconsole.log(logTxt,"U - Presentation deletion -  User -\tTell the Service Provider the presentation to be deleted");
     let leafs = userEpicWallet.DTree.findAllLeafs();
     let presentations = leafs.filter(x => x.data.objectKind == AET.presentation);
     let presentationHash = presentations[0].data.objectID;
@@ -55,24 +59,24 @@ async function main() {
     // Set Presentation status in Service Provider wallet
     let presentationToDelete = commsD.Receive("BlockchainNetwork","Rent_a_K","PresentationHASH");
 
-    console.log("AE11 - U - User presentation revocation -  User -\tSet object status in wallet");    
+    lconsole.log(logTxt,"U - User presentation revocation -  User -\tSet object status in wallet");    
     providerEpicWallet.setObjectStatus("JohnDoe",presentationToDelete,false);
 
 
 
     /////////////////////////////////////////////////////
     // Set in Blockchain presentation status to deleted
-    console.log("AE11 - P - Presentation deletion -  Provider -\tMark the presentation as deleted in blockchain");
+    lconsole.log(logTxt,"P - Presentation deletion -  Provider -\tMark the presentation as deleted in blockchain");
     AEB.DeleteBLK(presentationToDelete);
 
     
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
 
-    console.log("AE11 - P - Presentation deletion -  Provider - \tStore identity wallet");
+    lconsole.log(logTxt,"P - Presentation deletion -  Provider - \tStore identity wallet");
     AEWS.storeIdentityWallet(providerEpicWallet, storagePath + "/test_data/AE02_Provider_Identity_Wallet.json")
 
-    console.log("AE11_service_provider_presentation_deletion FINISHED");
+    console.log(logTxt, "FINSIHED"); 
 
 }
 

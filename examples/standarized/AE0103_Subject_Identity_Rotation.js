@@ -8,7 +8,13 @@ const AEB = require("../../src/utils/AE_blockchain_dummy");
 
 async function main() {
 
-    console.log("AE13_user_identity_rotation STARTED");
+    const exampleNumber = "AE0103";
+    const exampleText = "Subject Identity Rotation";
+    const logTxt = exampleNumber + " " + exampleText + ":\t";
+
+
+    console.log(logTxt, "STARTED");  
+
 
     // Change to your storage path
     let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
@@ -20,7 +26,7 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    console.log("AE13 - U - Identity Rotation - User -\t\tCreate object and load identity");
+    lconsole.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
@@ -34,11 +40,11 @@ async function main() {
     
 
     // READ THE RECOVERY WALLET 
-    console.log("AE13 - U - Identity Rotation - User -\t\Read recovery wallet");
+    lconsole.log(logTxt,"U - Read recovery wallet");
     let storedRecoveryWallet = AEWS.readRecoveryWallet(storagePath + "/test_data/AE01_User_Recovery_Wallet.json");
 
     // GENERATE NEW DERIVATIONS FOR S(ecurity) levels and W(allet) SSSSSW
-    console.log("AE13 - U - Identity Rotation - User -\t\tGenerate new SSSSSW derivations");
+    lconsole.log(logTxt,"U - Generate new SSSSSW derivations");
     let newUser_SSSSSW = "/" + AEL.getRandomIntDerivation().toString() +
     "/" + AEL.getRandomIntDerivation().toString() +
     "/" + AEL.getRandomIntDerivation().toString() +
@@ -46,17 +52,17 @@ async function main() {
     "/" + AEL.getRandomIntDerivation().toString();
 
     // Generate new identity includes marking the previous as non-valid
-    console.log("AE13 - U - Identity Rotation - User -\t\tGenerate new identity");
+    lconsole.log(logTxt,"U - Generate new identity");
     let revocations = userEpicWallet.generateNewIdentity(storedRecoveryWallet,newUser_SSSSSW);
 
     // Proceed with blockchain revocations    
     
     // Revoke in blockchain credentials
-    console.log("AE13 - U - Identity Rotation - User -\t\tRevoke credentials");
+    lconsole.log(logTxt,"U - Revoke credentials");
     AEB.RevokeBLK(revocations.credentials);
     
     // Revoke in blockchain all DIDs used with Entities
-    console.log("AE13 - U - Identity Rotation - User -\t\tRevoke Entity related DIDs/PubKs");
+    lconsole.log(logTxt,"U - Revoke Entity related DIDs/PubKs");
     let BplusPubKeys = revocations.entities.map(x => x.data.own_extendedPublicKey);
     AEB.RevokeBLK(BplusPubKeys);
 
@@ -64,16 +70,16 @@ async function main() {
     AEB.RevokeBLK(revocations.pubKs);
     
     // Store recovery wallet
-    console.log("AE13 - U - Identity Rotation - \tStore Recovery Wallet");
+    lconsole.log(logTxt,"U - Store Recovery Wallet");
     AEWS.storeRecoveryWallet(storedRecoveryWallet.mnemonic, storedRecoveryWallet.mZR_der, newUser_SSSSSW, storedRecoveryWallet.MTN_der, storagePath + "/test_data/AE01_User_Recovery_Wallet.json");
 
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    console.log("AE13 - U - Identity Rotation -\t\tStore identity wallet");
+    lconsole.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    console.log("AE13_user_Identity_rotation FINISHED");
+    console.log(logTxt, "FINISHED");  
 
 };
 
