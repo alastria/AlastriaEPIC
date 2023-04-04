@@ -9,116 +9,117 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "AE00_proof_of_tech",
-            "program": "${workspaceFolder}/test/standarized/AE00_proof_of_tech.js"
+            "name": "AE0000: Proof of Tech",
+            "program": "${workspaceFolder}/examples/standarized/AE0000_Proof_of_Tech.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE01_identity_creation",
-            "program": "${workspaceFolder}/test/standarized/AE01_identity_creation.js"
+            "name": "AE0101: Indentity Creation",
+            "program": "${workspaceFolder}/examples/standarized/AE0101_Identity_Creation.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE02_wallet_creation",
-            "program": "${workspaceFolder}/test/standarized/AE02_wallet_creation.js"
+            "name": "AE0102: Additional Network Creation ",
+            "program": "${workspaceFolder}/examples/standarized/AE0102_Additonal_Network_Creation.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE03_user_entity_relationship",
-            "program": "${workspaceFolder}/test/standarized/AE03_user_entity_relationship.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE03B_user_provider_relationship",
-            "program": "${workspaceFolder}/test/standarized/AE03B_user_provider_relationship.js"
+            "name": "AE0103: Subject Identity Rotation",
+            "program": "${workspaceFolder}/examples/standarized/AE0103_Subject_Identity_Rotation.js"
         },        
         {
             "type": "node",
             "request": "launch",
-            "name": "AE04_01_onBoarding",
-            "program": "${workspaceFolder}/test/standarized/AE04_01_onBoarding.js"
+            "name": "AE0104: Entity Identity Rotation",
+            "program": "${workspaceFolder}/examples/standarized/AE0104_Entity_Identity_Rotation.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE04_login",
-            "program": "${workspaceFolder}/test/standarized/AE04_login.js"
+            "name": "AE0201: Subject-Entity Mutual OnBoarding",
+            "program": "${workspaceFolder}/examples/standarized/AE0201_Subject_Entity_Mutual_OnBoarding.js"
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE05_login_rotation",
-            "program": "${workspaceFolder}/test/standarized/AE05_login_rotation.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE06_credential_issuance",
-            "program": "${workspaceFolder}/test/standarized/AE06_credential_issuance.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE06B_second_credential",
-            "program": "${workspaceFolder}/test/standarized/AE06B.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE06C_third_credential",
-            "program": "${workspaceFolder}/test/standarized/AE06C.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE07_user_credential_revocation",
-            "program": "${workspaceFolder}/test/standarized/AE07_user_credencial_revocation.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE08_entity_credential_revocation",
-            "program": "${workspaceFolder}/test/standarized/AE08_entity_credential_revocation.js"
+            "name": "AE0201B: Subject-Entity Mutual OnBoarding",
+            "program": "${workspaceFolder}/examples/standarized/AE0201B_Subject_Entity_Mutual_OnBoarding.js"
         },        
         {
             "type": "node",
             "request": "launch",
-            "name": "AE09_user_credential_presentation",
-            "program": "${workspaceFolder}/test/standarized/AE09_user_credential_presentation.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE10_user_presentation_revocation",
-            "program": "${workspaceFolder}/test/standarized/AE10_user_presentation_revocation.js"
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "AE11_entity_presentation_deletion",
-            "program": "${workspaceFolder}/test/standarized/AE11_entity_presentation_deletion.js"
+            "name": "AE0202: Subject OnBoarding Rotation",
+            "program": "${workspaceFolder}/examples/standarized/AE0202_Subject_onBoarding_Rotation.js"
         },        
         {
             "type": "node",
             "request": "launch",
-            "name": "AE12_user_onBoarding_rotation",
-            "program": "${workspaceFolder}/test/standarized/AE12_user_onBoarding_rotation.js"
-        },                        
+            "name": "AE0301: Subject-Entity Login Creation",
+            "program": "${workspaceFolder}/examples/standarized/AE0301_Subject_Entity_Login_Creation.js"
+        },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE13_user_identity_rotation",
-            "program": "${workspaceFolder}/test/standarized/AE13_user_identity_rotation.js"
-        }, 
+            "name": "AE0302: Subject Login",
+            "program": "${workspaceFolder}/examples/standarized/AE0302_Subject_Login.js"
+        },
         {
             "type": "node",
             "request": "launch",
-            "name": "AE14_entity_identity_rotation",
-            "program": "${workspaceFolder}/test/standarized/AE14_entity_identity_rotation.js"
-        }, 
+            "name": "AE0303: Subject Login Rotation",
+            "program": "${workspaceFolder}/examples/standarized/AE0303_Subject_Login_Rotation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0401: Credential Issuance",
+            "program": "${workspaceFolder}/examples/standarized/AE0401_Credential_Issuance.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0401B: Credential Issuance",
+            "program": "${workspaceFolder}/examples/standarized/AE0401B_Credential_Issuance.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0401C: Credential Issuance",
+            "program": "${workspaceFolder}/examples/standarized/AE0401C_Credential_Issuance.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0402: Subject Credential Revocation",
+            "program": "${workspaceFolder}/examples/standarized/AE0402_Subject_Credencial_Revocation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0403: Issuer Credential Revocation",
+            "program": "${workspaceFolder}/examples/standarized/AE0403_Entity_Credential_Revocation.js"
+        },        
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0501: Subject Credential Presentation",
+            "program": "${workspaceFolder}/examples/standarized/AE0501_Subject_Credential_Presentation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0502: Subject Presentation Revocation",
+            "program": "${workspaceFolder}/examples/standarized/AE0502_Subject_Presentation_Revocation.js"
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "AE0503: Relying Party Presentation Deletion",
+            "program": "${workspaceFolder}/examples/standarized/AE0503_Entity_Presentation_Deletion.js"
+        },        
+ 
     ]
 }

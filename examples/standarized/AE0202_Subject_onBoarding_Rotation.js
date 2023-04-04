@@ -7,10 +7,14 @@ const AEL = require("../../src/AE_library");
 
 async function main() {
 
-    console.log("AE12_user_onBoarding_rotation STARTED");
+    const exampleNumber = "AE0202";
+    const exampleText = "Subject OnBoarding Rotation";
+    const logTxt = exampleNumber + " " + exampleText + ":\t";
+
+    console.log(logTxt, "STARTED"); 
 
     // Change to your storage path
-    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
+    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
     // Create communications dummy object
     let commsD = new AEC.AE_comms_dummy;
@@ -19,13 +23,13 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    console.log("AE12 - U - OnBoarding Rotation - User -\t\tCreate object and load identity");
+    lconsole.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
    
-    console.log("AE12 - E - OnBoarding Rotation - Entity -\tCreate object and load identity");
+    lconsole.log(logTxt,"E - Create object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
@@ -41,30 +45,30 @@ async function main() {
 
 
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
-    console.log("AE12 - U - OnBoarding Rotation - Entity -\tUser send his public key");
+    lconsole.log(logTxt,"U - User send his public key");
     let acmeDrivingData = userEpicWallet.getBPlusDerivation("AcmeDriving");
     let user_acme_relationship_public_key = acmeDrivingData.data.own_extendedPublicKey;
     // SEND "AcmeDriving" my extendedPublicKey so it knows who am I
     commsD.SendTo("JohnDoe","AcmeDriving","userExtendedPublicKey",user_acme_relationship_public_key);
 
     // Entity received my new public key
-    console.log("AE12 - E - Relationships - Entity - \tEntity receives user public key");
+    lconsole.log(logTxt,"E - Entity receives user public key");
     let user_public_key = commsD.Receive("JohnDoe","AcmeDriving","userExtendedPublicKey");
     entityEpicWallet.updateCPlusDerivationExtendedKeys("JohnDoe",user_public_key);
 
 
-    // THEN A AE05_login_rotation.js SHOULD BE EXECUTED
+    // THEN A AE0303_Subjec_Login_Rotation.js SHOULD BE EXECUTED
 
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    console.log("AE12 - U - OnBoarding Rotation -\t\tStore identity wallet");
+    lconsole.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    console.log("AE12 - E - OnBoarding Rotation -\t\tStore identity wallet");
+    lconsole.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
-    console.log("AE12_user_onBoarding_rotation FINISHED");
+    console.log(logTxt, "FINISHED"); 
 
 };
 

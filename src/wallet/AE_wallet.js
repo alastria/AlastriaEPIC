@@ -217,7 +217,7 @@ class AE_rootWallet {
     );
     this.identity_pattern = wallet.identity_pattern;
     // DONE: ownWallet in B derivations needs special recovery as identity_HDWallet needed
-    let Bnodes = this.findNodeByDerivation("B","",false);
+    let Bnodes = this.findSeveralNodesByDerivation("B","",false);
     
     if (!(Bnodes === undefined)) {
       if (Array.isArray(Bnodes)) {
@@ -241,7 +241,7 @@ class AE_rootWallet {
       }
     }
 
-    let Bnodes2 = this.findNodeByDerivation("B","",true);
+    let Bnodes2 = this.findSeveralNodesByDerivation("B","",true);
     if (!(Bnodes2 === undefined)) {
       if (Array.isArray(Bnodes2)) {
         Bnodes2.forEach(element => {
@@ -295,7 +295,7 @@ class AE_rootWallet {
     );
   }
 
-  findNodeByDerivation(derivationName, derivationValue = "", validStatus=true, MTN_alias) {
+  findSeveralNodesByDerivation(derivationName, derivationValue = "", validStatus=true, MTN_alias) {
 
     // DONE MTN update
     // Done ERROR in the case of W derivation
@@ -327,11 +327,21 @@ class AE_rootWallet {
           x.data.validStatus == validStatus
       );
     }
-    if (Array.isArray(fTree)) {
-      return fTree[0];
+    
+    return fTree;   
+
+  }
+
+
+  findNodeByDerivation(derivationName, derivationValue = "", validStatus=true, MTN_alias) {
+
+    let nodos = this.findSeveralNodesByDerivation(derivationName, derivationValue,validStatus,MTN_alias);
+    if (Array.isArray(nodos)) {
+      return nodos[0];
     } else {
-      return fTree;
+      return nodos;
     }
+
   }
 
 

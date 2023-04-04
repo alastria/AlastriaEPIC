@@ -7,10 +7,14 @@ const AEL = require("../../src/AE_library");
 
 async function main() {
 
-    console.log("AE03_user_entity_relationship STARTED");
+    const exampleNumber = "AE0201B";
+    const exampleText = "Subject Entity Mutual OnBoarding";
+    const logTxt = exampleNumber + " " + exampleText + ":\t";
+
+    console.log(logTxt, "STARTED"); 
 
     // Change to your storage path
-    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/test/standarized";
+    let storagePath = "/home/juftavira/Proyectos/AlastriaEPIC/examples/standarized";
 
     // Create communications dummy object
     let commsD = new AEC.AE_comms_dummy;
@@ -19,47 +23,47 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    console.log("AE03 - U - Relationships - User -\t\tCreate object and load identity");
+    lconsole.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
    
-    console.log("AE03 - E - Relationships - Entity -\tCreate object and load identity");
+    lconsole.log(logTxt,"E - Create object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
 
-    console.log("AE03 - P - Relationships - Provider -\tCreate object and load identity");
+    lconsole.log(logTxt,"P - Create object and load identity");
     let providerIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Provider_Identity_Wallet.json");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON)
 
     
     // START RELATIONSHIP OF USER "JohnDoe" WITH ENTITY "Rent_a_K"
-    console.log("AE03 - U - Relationships - Entity -\tCreate derivation for Entity at User wallet");
+    lconsole.log(logTxt,"U - Create derivation for Entity at User wallet");
     let rent_a_K_derivation = AEL.getRandomIntDerivation().toString();
     userEpicWallet.addBPlusDerivation("Rent_a_K", rent_a_K_derivation);
 
 
     // when connecting with Rent_a_K the user will tell Rent_a_K his public key for the communications with Rent_a_K
-    console.log("AE03 - U - Relationships - Entity -\tUser send his public key");
+    lconsole.log(logTxt,"U - User send his public key");
     let Rent_a_KData = userEpicWallet.getBPlusDerivation("Rent_a_K");
     let user_rent_a_K_relationship_public_key = Rent_a_KData.data.own_extendedPublicKey;
     // SEND "Rent_a_K" my extendedPublicKey so it knows who am I
     commsD.SendTo("JohnDoe","Rent_a_K","userExtendedPublicKey",user_rent_a_K_relationship_public_key);
 
     // START RELATIONSHIP OF ENTITY "Rent_a_K" WITH USER "JohnDoe" 
-    console.log("AE03 - E - Relationships - Entity - \tCreate derivation for User at Entity wallet");
+    lconsole.log(logTxt,"E - Create derivation for User at Entity wallet");
     providerEpicWallet.addCPlusDerivation("JohnDoe");
 
-    console.log("AE03 - E - Relationships - Entity - \tEntity receives user public key");
+    lconsole.log(logTxt,"E - Entity receives user public key");
     let user_public_key = commsD.Receive("JohnDoe","Rent_a_K","userExtendedPublicKey");
     providerEpicWallet.updateCPlusDerivationExtendedKeys("JohnDoe",user_public_key);
 
 
-    console.log("AE03 - E - Relationships - User - \tUser receives 3 entity public key");
+    lconsole.log(logTxt,"E - User receives 3 entity public key");
 
     // Entity tells the user their extended public keys
     let WNode = providerEpicWallet.DTree.findChildByData("derivationName","W")[0];
@@ -78,16 +82,16 @@ async function main() {
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    console.log("AE03 - U - Relationships -\t\tStore identity wallet");
+    lconsole.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    console.log("AE03 - E - Relationships -\t\tStore identity wallet");
+    lconsole.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
-    console.log("AE03 - P - Relationships -\t\tStore identity wallet");
+    lconsole.log(logTxt,"P - tStore identity wallet");
     AEWS.storeIdentityWallet(providerEpicWallet, storagePath + "/test_data/AE02_Provider_Identity_Wallet.json")
 
-    console.log("AE03_user_entity_relationship FINISHED");
+    console.log(logTxt, "FINISHED"); 
 
 };
 
