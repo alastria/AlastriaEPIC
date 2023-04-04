@@ -32,14 +32,14 @@ async function main() {
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
 
     // THIS IS DONE ONLY TO SIMULATE THE SELECTION OF A PRESENTATION TO DELETE
-    lconsole.log(logTxt,"U - Create object and load identity");
+    console.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
 
 
-    lconsole.log(logTxt,"P - Create object and load identity");
+    console.log(logTxt,"P - Create object and load identity");
     let providerIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Provider_Identity_Wallet.json");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON);
@@ -47,7 +47,7 @@ async function main() {
 
     /////////////////////////////////////////////////////
     // Simulate the selection of a presentation to delete
-    lconsole.log(logTxt,"U - Tell the Service Provider the presentation to be deleted");
+    console.log(logTxt,"U - Tell the Service Provider the presentation to be deleted");
     let leafs = userEpicWallet.DTree.findAllLeafs();
     let presentations = leafs.filter(x => x.data.objectKind == AET.presentation);
     let presentationHash = presentations[0].data.objectID;
@@ -59,21 +59,21 @@ async function main() {
     // Set Presentation status in Service Provider wallet
     let presentationToDelete = commsD.Receive("BlockchainNetwork","Rent_a_K","PresentationHASH");
 
-    lconsole.log(logTxt,"U - Set object status in wallet");    
+    console.log(logTxt,"U - Set object status in wallet");    
     providerEpicWallet.setObjectStatus("JohnDoe",presentationToDelete,false);
 
 
 
     /////////////////////////////////////////////////////
     // Set in Blockchain presentation status to deleted
-    lconsole.log(logTxt,"P - Mark the presentation as deleted in blockchain");
+    console.log(logTxt,"P - Mark the presentation as deleted in blockchain");
     AEB.DeleteBLK(presentationToDelete);
 
     
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
 
-    lconsole.log(logTxt,"P - Store identity wallet");
+    console.log(logTxt,"P - Store identity wallet");
     AEWS.storeIdentityWallet(providerEpicWallet, storagePath + "/test_data/AE02_Provider_Identity_Wallet.json")
 
     console.log(logTxt, "FINSIHED"); 

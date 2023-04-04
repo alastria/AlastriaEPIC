@@ -23,13 +23,13 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    lconsole.log(logTxt,"U - Create object and load identity");
+    console.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
    
-    lconsole.log(logTxt,"E - Create object and load identity");
+    console.log(logTxt,"E - Create object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
@@ -45,14 +45,14 @@ async function main() {
 
 
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
-    lconsole.log(logTxt,"U - User send his public key");
+    console.log(logTxt,"U - User send his public key");
     let acmeDrivingData = userEpicWallet.getBPlusDerivation("AcmeDriving");
     let user_acme_relationship_public_key = acmeDrivingData.data.own_extendedPublicKey;
     // SEND "AcmeDriving" my extendedPublicKey so it knows who am I
     commsD.SendTo("JohnDoe","AcmeDriving","userExtendedPublicKey",user_acme_relationship_public_key);
 
     // Entity received my new public key
-    lconsole.log(logTxt,"E - Entity receives user public key");
+    console.log(logTxt,"E - Entity receives user public key");
     let user_public_key = commsD.Receive("JohnDoe","AcmeDriving","userExtendedPublicKey");
     entityEpicWallet.updateCPlusDerivationExtendedKeys("JohnDoe",user_public_key);
 
@@ -62,10 +62,10 @@ async function main() {
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    lconsole.log(logTxt,"U - Store identity wallet");
+    console.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    lconsole.log(logTxt,"E - Store identity wallet");
+    console.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
     console.log(logTxt, "FINISHED"); 

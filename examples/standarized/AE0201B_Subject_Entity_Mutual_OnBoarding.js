@@ -23,47 +23,47 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    lconsole.log(logTxt,"U - Create object and load identity");
+    console.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
    
-    lconsole.log(logTxt,"E - Create object and load identity");
+    console.log(logTxt,"E - Create object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
 
-    lconsole.log(logTxt,"P - Create object and load identity");
+    console.log(logTxt,"P - Create object and load identity");
     let providerIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Provider_Identity_Wallet.json");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON)
 
     
     // START RELATIONSHIP OF USER "JohnDoe" WITH ENTITY "Rent_a_K"
-    lconsole.log(logTxt,"U - Create derivation for Entity at User wallet");
+    console.log(logTxt,"U - Create derivation for Entity at User wallet");
     let rent_a_K_derivation = AEL.getRandomIntDerivation().toString();
     userEpicWallet.addBPlusDerivation("Rent_a_K", rent_a_K_derivation);
 
 
     // when connecting with Rent_a_K the user will tell Rent_a_K his public key for the communications with Rent_a_K
-    lconsole.log(logTxt,"U - User send his public key");
+    console.log(logTxt,"U - User send his public key");
     let Rent_a_KData = userEpicWallet.getBPlusDerivation("Rent_a_K");
     let user_rent_a_K_relationship_public_key = Rent_a_KData.data.own_extendedPublicKey;
     // SEND "Rent_a_K" my extendedPublicKey so it knows who am I
     commsD.SendTo("JohnDoe","Rent_a_K","userExtendedPublicKey",user_rent_a_K_relationship_public_key);
 
     // START RELATIONSHIP OF ENTITY "Rent_a_K" WITH USER "JohnDoe" 
-    lconsole.log(logTxt,"E - Create derivation for User at Entity wallet");
+    console.log(logTxt,"E - Create derivation for User at Entity wallet");
     providerEpicWallet.addCPlusDerivation("JohnDoe");
 
-    lconsole.log(logTxt,"E - Entity receives user public key");
+    console.log(logTxt,"E - Entity receives user public key");
     let user_public_key = commsD.Receive("JohnDoe","Rent_a_K","userExtendedPublicKey");
     providerEpicWallet.updateCPlusDerivationExtendedKeys("JohnDoe",user_public_key);
 
 
-    lconsole.log(logTxt,"E - User receives 3 entity public key");
+    console.log(logTxt,"E - User receives 3 entity public key");
 
     // Entity tells the user their extended public keys
     let WNode = providerEpicWallet.DTree.findChildByData("derivationName","W")[0];
@@ -82,13 +82,13 @@ async function main() {
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    lconsole.log(logTxt,"U - Store identity wallet");
+    console.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    lconsole.log(logTxt,"E - Store identity wallet");
+    console.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
-    lconsole.log(logTxt,"P - tStore identity wallet");
+    console.log(logTxt,"P - tStore identity wallet");
     AEWS.storeIdentityWallet(providerEpicWallet, storagePath + "/test_data/AE02_Provider_Identity_Wallet.json")
 
     console.log(logTxt, "FINISHED"); 
