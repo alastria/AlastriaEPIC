@@ -30,25 +30,25 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    lconsole.log(logTxt,"E - Create object and load identity");
+    console.log(logTxt,"E - Create object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
     /////////////////////////////////////////////////////
     // Simulate the selection of a credential to revoke
-    lconsole.log(logTxt,"E - Select a credential to revocate");
+    console.log(logTxt,"E - Select a credential to revocate");
     let leafs = entityEpicWallet.DTree.findAllLeafs();
     let creds = leafs.filter( x => x.data.objectKind == AET.credential);
     let curCred = creds[0];
 
     // REVOKE IN BLOCKCHAIN
     // RevokeBLK implementation will take care of proper signature of tx
-    lconsole.log(logTxt,"E - Revoke credential in Blockchain");
+    console.log(logTxt,"E - Revoke credential in Blockchain");
     AEB.RevokeBLK(curCred.data.objectID);    
 
     // UPDATE OBJECT STATUS IN WALLET
-    lconsole.log(logTxt,"E - Update object status");
+    console.log(logTxt,"E - Update object status");
 
     let userInfo = curCred.data.objectSubject;
 
@@ -61,7 +61,7 @@ async function main() {
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
 
-    lconsole.log(logTxt,"E - Store identity wallet");
+    console.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
     console.log(logTxt, "FINSIHED"); 

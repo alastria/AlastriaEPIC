@@ -24,19 +24,19 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    lconsole.log(logTxt,"U - Create object and load identity");
+    console.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
    
-    lconsole.log(logTxt,"E - Create object and load identity");
+    console.log(logTxt,"E - Create object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
 
-    lconsole.log(logTxt,"P - Create object and load identity");
+    console.log(logTxt,"P - Create object and load identity");
     let providerIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Provider_Identity_Wallet.json");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON);
@@ -50,32 +50,32 @@ async function main() {
     // Entity may also sign the challenge in the case of mutual authentication
     let acme_login_challenge = "Please sign with your Private Key to login";
 
-    lconsole.log(logTxt,"U - User signs login challenge");
+    console.log(logTxt,"U - User signs login challenge");
     let acme_login_challenge_signature = await userEpicWallet.signLoginChallenge("AcmeDriving",acme_login_challenge);
     // user sends challenge signature
     commsD.SendTo("JohnDoe","AcmeDriving","Login_challenge_signature",acme_login_challenge_signature);
     
-    lconsole.log(logTxt,"E - Entity receives and checks signature");
+    console.log(logTxt,"E - Entity receives and checks signature");
     // entity receives the signature
     let user_login_signature = commsD.Receive("JohnDoe","AcmeDriving","Login_challenge_signature");
 
     // entity verifies signature
     if (entityEpicWallet.verifyLoginChallenge("JohnDoe",acme_login_challenge,user_login_signature)){
-        lconsole.log(logTxt,"E - Login is CORRECT");
+        console.log(logTxt,"E - Login is CORRECT");
     }
     else {
-        lconsole.log(logTxt,"E - INVALID Login");
+        console.log(logTxt,"E - INVALID Login");
     }
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    lconsole.log(logTxt,"U - Store identity wallet");
+    console.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    lconsole.log(logTxt,"E - Store identity wallet");
+    console.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
-    lconsole.log(logTxt,"P - tStore identity wallet");
+    console.log(logTxt,"P - tStore identity wallet");
     AEWS.storeIdentityWallet(providerEpicWallet, storagePath + "/test_data/AE02_Provider_Identity_Wallet.json")
    
 
