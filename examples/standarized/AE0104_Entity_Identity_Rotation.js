@@ -30,19 +30,19 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    lconsole.log(logTxt,"E - Read recovery wallet");
+    console.log(logTxt,"E - Read recovery wallet");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
     // READ THE RECOVERY WALLET     
-    lconsole.log(logTxt,"E - Create object and load recovery");
+    console.log(logTxt,"E - Create object and load recovery");
     let entityRecoveryWalletJSON = AEWS.readRecoveryWallet( storagePath + "/test_data/AE01_Entity_Recovery_Wallet.json");
 
     
     
     // GENERATE NEW DERIVATIONS FOR S(ecurity) levels and W(allet) SSSSSW
-    lconsole.log(logTxt,"E - Generate new SSSSSW derivations");
+    console.log(logTxt,"E - Generate new SSSSSW derivations");
     let newEntity_SSSSSW = "/" + AEL.getRandomIntDerivation().toString() +
     "/" + AEL.getRandomIntDerivation().toString() +
     "/" + AEL.getRandomIntDerivation().toString() +
@@ -50,14 +50,14 @@ async function main() {
     "/" + AEL.getRandomIntDerivation().toString();
     
     // Generate new identity includes marking the previous as non-valid
-    lconsole.log(logTxt,"E - Generate new identity");
+    console.log(logTxt,"E - Generate new identity");
     let revocations = entityEpicWallet.generateNewIdentity(entityRecoveryWalletJSON,newEntity_SSSSSW);
     
     // Proceed with blockchain revocations    
     
     // Revoke in blockchain credentials
     // Only if the identity rotation was due to a security problem
-    lconsole.log(logTxt,"E - Revoke credentials");
+    console.log(logTxt,"E - Revoke credentials");
     AEB.RevokeBLK(revocations.credentials);
     
     
@@ -67,14 +67,14 @@ async function main() {
 
         
     // Store recovery wallet
-    lconsole.log(logTxt,"E - Store Recovery Wallet");
+    console.log(logTxt,"E - Store Recovery Wallet");
     AEWS.storeRecoveryWallet(entityRecoveryWalletJSON.mnemonic, entityRecoveryWalletJSON.mZR_der, newEntity_SSSSSW, entityRecoveryWalletJSON.MTN_der, storagePath + "/test_data/AE01_User_Recovery_Wallet.json");
 
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
 
-    lconsole.log(logTxt,"E - Store identity wallet");
+    console.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
     console.log(logTxt, "FINISHED"); 

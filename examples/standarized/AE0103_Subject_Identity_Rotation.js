@@ -26,7 +26,7 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    lconsole.log(logTxt,"U - Create object and load identity");
+    console.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
@@ -40,11 +40,11 @@ async function main() {
     
 
     // READ THE RECOVERY WALLET 
-    lconsole.log(logTxt,"U - Read recovery wallet");
+    console.log(logTxt,"U - Read recovery wallet");
     let storedRecoveryWallet = AEWS.readRecoveryWallet(storagePath + "/test_data/AE01_User_Recovery_Wallet.json");
 
     // GENERATE NEW DERIVATIONS FOR S(ecurity) levels and W(allet) SSSSSW
-    lconsole.log(logTxt,"U - Generate new SSSSSW derivations");
+    console.log(logTxt,"U - Generate new SSSSSW derivations");
     let newUser_SSSSSW = "/" + AEL.getRandomIntDerivation().toString() +
     "/" + AEL.getRandomIntDerivation().toString() +
     "/" + AEL.getRandomIntDerivation().toString() +
@@ -52,17 +52,17 @@ async function main() {
     "/" + AEL.getRandomIntDerivation().toString();
 
     // Generate new identity includes marking the previous as non-valid
-    lconsole.log(logTxt,"U - Generate new identity");
+    console.log(logTxt,"U - Generate new identity");
     let revocations = userEpicWallet.generateNewIdentity(storedRecoveryWallet,newUser_SSSSSW);
 
     // Proceed with blockchain revocations    
     
     // Revoke in blockchain credentials
-    lconsole.log(logTxt,"U - Revoke credentials");
+    console.log(logTxt,"U - Revoke credentials");
     AEB.RevokeBLK(revocations.credentials);
     
     // Revoke in blockchain all DIDs used with Entities
-    lconsole.log(logTxt,"U - Revoke Entity related DIDs/PubKs");
+    console.log(logTxt,"U - Revoke Entity related DIDs/PubKs");
     let BplusPubKeys = revocations.entities.map(x => x.data.own_extendedPublicKey);
     AEB.RevokeBLK(BplusPubKeys);
 
@@ -70,13 +70,13 @@ async function main() {
     AEB.RevokeBLK(revocations.pubKs);
     
     // Store recovery wallet
-    lconsole.log(logTxt,"U - Store Recovery Wallet");
+    console.log(logTxt,"U - Store Recovery Wallet");
     AEWS.storeRecoveryWallet(storedRecoveryWallet.mnemonic, storedRecoveryWallet.mZR_der, newUser_SSSSSW, storedRecoveryWallet.MTN_der, storagePath + "/test_data/AE01_User_Recovery_Wallet.json");
 
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    lconsole.log(logTxt,"U - Store identity wallet");
+    console.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
     console.log(logTxt, "FINISHED");  
