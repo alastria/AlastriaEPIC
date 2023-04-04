@@ -25,47 +25,47 @@ async function main() {
  
     /////////////////////////////////////////////////////
     // FIRST CREATE THE OBJECTS and RECOVER EXISTING IDENTITY WALLET
-    lconsole.log(logTxt,"U - Relationships - User -\t\tCreate object and load identity");
+    lconsole.log(logTxt,"U - Create object and load identity");
     let userIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_User_Identity_Wallet.json");
     let userEpicWallet = new AEUW.AE_userWallet();
     userEpicWallet.readIdentityWallet(userIdentityWalletJSON);
 
    
-    lconsole.log(logTxt,"E - Relationships - Entity -\tCreate object and load identity");
+    lconsole.log(logTxt,"E - Create object and load identity");
     let entityIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Entity_Identity_Wallet.json");
     let entityEpicWallet = new AEEW.AE_entityWallet();
     entityEpicWallet.readIdentityWallet(entityIdentityWalletJSON);
 
 
-    lconsole.log(logTxt,"P - Relationships - Provider -\tCreate object and load identity");
+    lconsole.log(logTxt,"P - Create object and load identity");
     let providerIdentityWalletJSON = AEWS.readIdentityWallet( storagePath + "/test_data/AE02_Provider_Identity_Wallet.json");
     let providerEpicWallet = new AEEW.AE_entityWallet();
     providerEpicWallet.readIdentityWallet(providerIdentityWalletJSON)
 
     
     // START RELATIONSHIP OF USER "JohnDoe" WITH ENTITY "AcmeDriving"
-    lconsole.log(logTxt,"U - Relationships - Entity -\tCreate derivation for Entity at User wallet");
+    lconsole.log(logTxt,"U - Create derivation for Entity at User wallet");
     let acmeDrivingDerivation = AEL.getRandomIntDerivation().toString();
     userEpicWallet.addBPlusDerivation("AcmeDriving", acmeDrivingDerivation);
 
 
     // when connecting with AcmeAcademy the user will tell AcmeAcademy his public key for the communications with AcmeAcademy
-    lconsole.log(logTxt,"U - Relationships - Entity -\tUser send his public key");
+    lconsole.log(logTxt,"U - User sends his public key");
     let acmeDrivingData = userEpicWallet.getBPlusDerivation("AcmeDriving");
     let user_acme_relationship_public_key = acmeDrivingData.data.own_extendedPublicKey;
     // SEND "AcmeDriving" my extendedPublicKey so it knows who am I
     commsD.SendTo("JohnDoe","AcmeDriving","userExtendedPublicKey",user_acme_relationship_public_key);
 
     // START RELATIONSHIP OF ENTITY "AcmeDriving" WITH USER "JohnDoe" 
-    lconsole.log(logTxt,"E - Relationships - Entity - \tCreate derivation for User at Entity wallet");
+    lconsole.log(logTxt,"E - Create derivation for User at Entity wallet");
     entityEpicWallet.addCPlusDerivation("JohnDoe");
 
-    lconsole.log(logTxt,"E - Relationships - Entity - \tEntity receives user public key");
+    lconsole.log(logTxt,"E - Entity receives user public key");
     let user_public_key = commsD.Receive("JohnDoe","AcmeDriving","userExtendedPublicKey");
     entityEpicWallet.updateCPlusDerivationExtendedKeys("JohnDoe",user_public_key);
 
 
-    lconsole.log(logTxt,"E - Relationships - User - \tUser receives 3 entity public key");
+    lconsole.log(logTxt,"E - User receives 3 entity public key");
 
     // Entity tells the user their extended public keys
     // This is a simplication of a PKI or a Blockchain registry
@@ -85,13 +85,13 @@ async function main() {
 
     /////////////////////////////////////////////////////
     // STORE IDENTITY WALLET
-    lconsole.log(logTxt,"U - Relationships -\t\tStore identity wallet");
+    lconsole.log(logTxt,"U - Store identity wallet");
     AEWS.storeIdentityWallet(userEpicWallet, storagePath + "/test_data/AE02_User_Identity_Wallet.json")
 
-    lconsole.log(logTxt,"E - Relationships -\t\tStore identity wallet");
+    lconsole.log(logTxt,"E - Store identity wallet");
     AEWS.storeIdentityWallet(entityEpicWallet, storagePath + "/test_data/AE02_Entity_Identity_Wallet.json")
 
-    lconsole.log(logTxt,"P - Relationships -\t\tStore identity wallet");
+    lconsole.log(logTxt,"P - tStore identity wallet");
     AEWS.storeIdentityWallet(providerEpicWallet, storagePath + "/test_data/AE02_Provider_Identity_Wallet.json")
 
     console.log(logTxt, "FINISHED"); 
