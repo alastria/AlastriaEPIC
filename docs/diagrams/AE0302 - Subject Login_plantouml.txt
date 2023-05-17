@@ -1,0 +1,70 @@
+@startuml
+Actor Subject
+Participant Wallet
+Participant Entity
+Participant "Entity Backend" as Backend
+Participant Blockchain
+skinparam responseMessageBelowArrow true
+Activate Subject
+	Activate Entity
+		Subject -> Entity: Login with Alastria SIOPv2
+		Entity -> Backend: Login with Alastria
+			Activate Backend
+				Backend -> Backend: Generates QR
+				note right
+					(contains tiny url which is an endpoint 
+					providing the information to be 
+					downloaded by the wallet)
+				end note
+				Backend --> Entity: QR
+			Deactivate Backend
+			note right
+				(request=signed JWT or 
+				request_uri=url_signed_jwt) 
+				or Presentation Definition Request 
+				should include response_type 
+				(ID_token, VP_token 
+				or both in a space sepparated string)
+			end note
+			Activate Wallet
+				Wallet -> Entity: Scan QR
+				Entity --> Wallet: request=signed JWT or \n request_uri=url_signed_jwt
+	Deactivate Entity
+		alt exists(request_uri)
+			Activate Backend
+				Wallet -> Backend: POST request_uri
+				Backend --> Wallet: Authentication request
+			Deactivate Backend
+			note over Entity
+				Response SIOP authentication request=signed JWT, 
+				body:response_type (ID_token, VP_token, etc) 
+				session ID, redirect uri, scope=openID, nonce
+			end note
+		end
+		Wallet -> Wallet: Extract Entity DID \n Public Key from signed JWT
+		alt not(cache(Entity DID/Pubk))
+			Activate Blockchain
+				Wallet -> Blockchain: Query ENS with Entity DID/ Public Key
+				Blockchain --> Wallet: Entity Identification
+			Deactivate Blockchain
+		end
+		Wallet -> Subject: Entity Identification + \n User authentication/authorization
+		Subject --> Wallet: User authentication/authorization input
+		Wallet -> Wallet: Generates Authorization code (ID token)
+		alt response_type VP_token
+			Activate Backend
+				Wallet -> Backend: POST redirect uri. Sends VP Token with Verifiable Presentation(s)
+				note over Entity
+					Subject DID for Entity, login derivation
+				end note
+			Backend --> Wallet: OK
+		else response_type ID_token
+			Wallet -> Backend: POST redirect uri. Sends ID Token
+			note over Entity
+				DID/PubK
+			end note
+			Backend --> Wallet: OK
+			Deactivate Backend
+		end
+	Deactivate Wallet
+Deactivate Subject
